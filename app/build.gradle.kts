@@ -52,7 +52,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
     implementation(project(":feature:todo:api"))
-    implementation(project(":feature:todo:impl"))
+    implementation(project(":feature:todo:entry"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

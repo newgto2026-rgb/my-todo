@@ -1,4 +1,4 @@
-package com.example.myfirstapp.feature.todo.impl.di
+package com.example.myfirstapp.feature.todo.entry.di
 
 import com.example.myfirstapp.core.ui.navigation.AppFeatureEntry
 import com.example.myfirstapp.feature.todo.impl.navigation.TodoFeatureEntryImpl
@@ -10,7 +10,7 @@ import dagger.multibindings.IntoSet
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class TodoFeatureModule {
+abstract class TodoFeatureEntryModule {
 
     @Binds
     @IntoSet
