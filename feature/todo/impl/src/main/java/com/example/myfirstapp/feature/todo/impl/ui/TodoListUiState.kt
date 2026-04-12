@@ -1,6 +1,7 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
 import androidx.compose.runtime.Immutable
+import androidx.annotation.StringRes
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
@@ -27,5 +28,5 @@ data class TodoListUiState(
     val draftReminderEnabled: Boolean = false,
     val draftReminderDateTimeInput: String = "",
     val draftReminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
-    val errorMessage: String? = null
+    @StringRes val errorMessageRes: Int? = null
 )

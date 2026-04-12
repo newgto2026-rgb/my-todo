@@ -6,7 +6,7 @@
 ## Scope
 - Review current modularization quality for `app`, `core:*`, `feature:*`.
 - Identify gaps and propose concrete improvement priorities.
-- Execute priority 1~2 immediately in a dedicated branch/PR.
+- Execute priority 1~4 in phased branches/PRs.
 
 ## Current Strengths
 - `feature:todo:api` + `feature:todo:impl` split exists.
@@ -52,9 +52,45 @@
 - Removed app hardcoded route dependency:
   - `app/src/main/java/com/example/myfirstapp/app/AppNavHost.kt`
 
+## Executed Changes (P3~P4)
+- P3. User-facing string resource migration
+  - Added todo feature string resources:
+    - `feature/todo/impl/src/main/res/values/strings.xml`
+  - Replaced hardcoded UI labels/messages in:
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoListScreen.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoFilterBar.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoCategoryFilterBar.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoEditorCategorySection.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoEditorReminderSection.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoEditBottomSheet.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoHeader.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoEmptyState.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/CategoryManagerBottomSheet.kt`
+  - Converted validation/snackbar messages from raw strings to `@StringRes` ids:
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoListInputValidator.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoListSideEffect.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoListUiState.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoListViewModel.kt`
+    - `feature/todo/impl/src/test/java/com/example/myfirstapp/feature/todo/impl/ui/TodoListViewModelTest.kt`
+  - Added app-level reminder notification title resource:
+    - `app/src/main/res/values/strings.xml`
+    - `app/src/main/java/com/example/myfirstapp/app/todo/reminder/TodoReminderNotificationHelper.kt`
+
+- P4. Type-safe navigation adoption for todo feature entry
+  - Added serializable typed route contract:
+    - `feature/todo/api/src/main/java/com/example/myfirstapp/feature/todo/api/TodoFeatureEntry.kt`
+  - Switched todo feature registration to `composable<TodoRoute>`:
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/navigation/TodoFeatureEntryImpl.kt`
+  - Enabled Kotlin serialization plugin/dependency for route contract module:
+    - `feature/todo/api/build.gradle.kts`
+    - `gradle/libs.versions.toml` (`kotlinx.serialization` version aligned with Kotlin 2.0.21)
+
+## Verification
+- Unit test:
+  - `./gradlew :feature:todo:impl:testDebugUnitTest` (PASS)
+- Lint:
+  - `./gradlew :feature:todo:api:lintDebug :feature:todo:impl:lintDebug :app:lintDebug` (PASS)
+
 ## Next Recommended Steps (Not in this change)
 1. Split `TodoRepository` into smaller repository contracts by responsibility.
 2. Consolidate reminder domain model direction (standalone vs embedded in todo).
-3. Move user-facing strings to `strings.xml` and support localization.
-4. Introduce type-safe navigation route model instead of raw strings.
-

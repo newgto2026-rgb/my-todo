@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyFirstApp</string>
+    <string name="todo_reminder_notification_title">할 일 리마인더</string>
 </resources>

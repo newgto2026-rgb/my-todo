@@ -24,8 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapp.core.model.TodoFilter
+import com.example.myfirstapp.feature.todo.impl.R
 
 @Composable
 internal fun BottomFilterBar(
@@ -46,19 +48,19 @@ internal fun BottomFilterBar(
         ) {
             BottomFilterItem(
                 selected = selectedFilter == TodoFilter.ALL,
-                label = "All",
+                label = stringResource(R.string.todo_filter_all),
                 icon = Icons.Default.GridView,
                 onClick = { onFilterSelected(TodoFilter.ALL) }
             )
             BottomFilterItem(
                 selected = selectedFilter == TodoFilter.TODAY,
-                label = "Today",
+                label = stringResource(R.string.todo_filter_today),
                 icon = Icons.Default.CalendarMonth,
                 onClick = { onFilterSelected(TodoFilter.TODAY) }
             )
             BottomFilterItem(
                 selected = selectedFilter == TodoFilter.COMPLETED,
-                label = "Completed",
+                label = stringResource(R.string.todo_filter_completed),
                 icon = Icons.Default.CheckCircle,
                 onClick = { onFilterSelected(TodoFilter.COMPLETED) }
             )

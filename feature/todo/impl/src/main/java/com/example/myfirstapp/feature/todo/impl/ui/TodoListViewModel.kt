@@ -19,6 +19,7 @@ import com.example.myfirstapp.core.domain.usecase.UpdateSelectedTodoFilterUseCas
 import com.example.myfirstapp.core.domain.usecase.UpdateTodoUseCase
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoFilter
+import com.example.myfirstapp.feature.todo.impl.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -138,8 +139,8 @@ class TodoListViewModel @Inject constructor(
     private fun saveTodo() {
         val current = uiLocalState.value
         val validation = validateTodoDraft(current)
-        if (validation.errorMessage != null) {
-            uiLocalState.value = current.copy(errorMessage = validation.errorMessage)
+        if (validation.errorMessageRes != null) {
+            uiLocalState.value = current.copy(errorMessageRes = validation.errorMessageRes)
             return
         }
 
@@ -171,7 +172,7 @@ class TodoListViewModel @Inject constructor(
                 result.getOrNull()?.let { syncTodoReminder(it) }
                 uiLocalState.value = current.dismissTodoEditor()
             } else {
-                sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar("저장에 실패했습니다."))
+                sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar(R.string.todo_error_save_failed))
             }
         }
     }
@@ -181,7 +182,9 @@ class TodoListViewModel @Inject constructor(
         val name = current.categoryNameInput.trim()
         if (name.isBlank()) {
             viewModelScope.launch {
-                sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar("카테고리 이름을 입력해주세요."))
+                sideEffectMutable.emit(
+                    TodoListSideEffect.ShowSnackbar(R.string.todo_error_category_name_required)
+                )
             }
             return
         }
@@ -199,7 +202,9 @@ class TodoListViewModel @Inject constructor(
             if (result.isSuccess) {
                 uiLocalState.value = current.clearCategoryEditor()
             } else {
-                sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar("카테고리 저장에 실패했습니다."))
+                sideEffectMutable.emit(
+                    TodoListSideEffect.ShowSnackbar(R.string.todo_error_category_save_failed)
+                )
             }
         }
     }
@@ -207,7 +212,11 @@ class TodoListViewModel @Inject constructor(
     private fun toggleDone(id: Long) {
         viewModelScope.launch {
             toggleTodoDoneUseCase(id)
-                .onFailure { sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar("완료 상태 변경에 실패했습니다.")) }
+                .onFailure {
+                    sideEffectMutable.emit(
+                        TodoListSideEffect.ShowSnackbar(R.string.todo_error_toggle_done_failed)
+                    )
+                }
         }
     }
 
@@ -222,7 +231,7 @@ class TodoListViewModel @Inject constructor(
             draftReminderDateTimeInput = target.reminderDateTimeText.orEmpty(),
             draftReminderRepeatType = target.reminderRepeatType.normalizeRepeatType(),
             draftCategoryId = target.categoryId,
-            errorMessage = null
+            errorMessageRes = null
         )
     }
 
@@ -230,28 +239,46 @@ class TodoListViewModel @Inject constructor(
         viewModelScope.launch {
             deleteTodoUseCase(id)
                 .onSuccess { todoReminderScheduler.cancel(id) }
-                .onFailure { sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar("삭제에 실패했습니다.")) }
+                .onFailure {
+                    sideEffectMutable.emit(
+                        TodoListSideEffect.ShowSnackbar(R.string.todo_error_delete_failed)
+                    )
+                }
         }
     }
 
     private fun deleteCategory(categoryId: Long) {
         viewModelScope.launch {
             deleteCategoryUseCase(categoryId)
-                .onFailure { sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar("카테고리 삭제에 실패했습니다.")) }
+                .onFailure {
+                    sideEffectMutable.emit(
+                        TodoListSideEffect.ShowSnackbar(R.string.todo_error_category_delete_failed)
+                    )
+                }
         }
     }
 
     private fun updateFilter(filter: TodoFilter) {
         viewModelScope.launch {
             updateSelectedTodoFilterUseCase(filter)
-                .onFailure { sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar("필터 변경에 실패했습니다.")) }
+                .onFailure {
+                    sideEffectMutable.emit(
+                        TodoListSideEffect.ShowSnackbar(R.string.todo_error_filter_change_failed)
+                    )
+                }
         }
     }
 
     private fun updateCategoryFilter(categoryId: Long?) {
         viewModelScope.launch {
             updateSelectedCategoryFilterUseCase(categoryId)
-                .onFailure { sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar("카테고리 필터 변경에 실패했습니다.")) }
+                .onFailure {
+                    sideEffectMutable.emit(
+                        TodoListSideEffect.ShowSnackbar(
+                            R.string.todo_error_category_filter_change_failed
+                        )
+                    )
+                }
         }
     }
 

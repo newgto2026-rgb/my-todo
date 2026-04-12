@@ -1,5 +1,7 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
+import androidx.annotation.StringRes
+import com.example.myfirstapp.feature.todo.impl.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -7,23 +9,23 @@ internal data class TodoDraftValidationResult(
     val normalizedTitle: String? = null,
     val parsedDueDate: LocalDate? = null,
     val reminderAtEpochMillis: Long? = null,
-    val errorMessage: String? = null
+    @StringRes val errorMessageRes: Int? = null
 )
 
 internal fun validateTodoDraft(state: TodoListUiState): TodoDraftValidationResult {
     val normalizedTitle = state.draftTitle.trim()
     if (normalizedTitle.isBlank()) {
-        return TodoDraftValidationResult(errorMessage = "제목을 입력해주세요.")
+        return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_title_required)
     }
 
     val parsedDueDate = parseIsoDateInput(state.draftDueDateInput)
     if (state.draftDueDateInput.isNotBlank() && parsedDueDate == null) {
-        return TodoDraftValidationResult(errorMessage = "날짜 형식은 yyyy-MM-dd 입니다.")
+        return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_due_date_format)
     }
 
     val reminderAtEpochMillis = reminderDateTimeToEpochMillis(state.draftReminderDateTimeInput)
     if (state.draftReminderEnabled && reminderAtEpochMillis == null) {
-        return TodoDraftValidationResult(errorMessage = "리마인더 형식은 yyyy-MM-dd HH:mm 입니다.")
+        return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_reminder_format)
     }
 
     return TodoDraftValidationResult(

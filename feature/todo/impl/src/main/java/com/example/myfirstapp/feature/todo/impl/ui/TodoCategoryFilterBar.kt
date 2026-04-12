@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalConfiguration
 import com.example.myfirstapp.core.model.TodoCategoryFilter
 import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
+import androidx.compose.ui.res.stringResource
+import com.example.myfirstapp.feature.todo.impl.R
 import kotlin.math.max
 
 @Composable
@@ -34,7 +36,7 @@ internal fun CategoryFilterBar(
     val chips = buildList {
         add(
             CategoryChipData(
-                label = "All Categories",
+                label = stringResource(R.string.todo_category_all),
                 selected = selectedCategoryId == null,
                 color = Color(0xFF5F78A6),
                 onClick = { onCategorySelected(null) }
@@ -42,7 +44,7 @@ internal fun CategoryFilterBar(
         )
         add(
             CategoryChipData(
-                label = "Uncategorized",
+                label = stringResource(R.string.todo_category_uncategorized),
                 selected = selectedCategoryId == TodoCategoryFilter.UNCATEGORIZED_FILTER_ID,
                 color = Color(0xFF8D95A8),
                 onClick = { onCategorySelected(TodoCategoryFilter.UNCATEGORIZED_FILTER_ID) }
@@ -85,7 +87,11 @@ internal fun CategoryFilterBar(
         }
         if (showToggle) {
             CategoryFilterChip(
-                label = if (expanded) "Less" else "More",
+                label = if (expanded) {
+                    stringResource(R.string.todo_toggle_less)
+                } else {
+                    stringResource(R.string.todo_toggle_more)
+                },
                 selected = false,
                 color = Color(0xFF8D95A8),
                 onClick = { expanded = !expanded }
