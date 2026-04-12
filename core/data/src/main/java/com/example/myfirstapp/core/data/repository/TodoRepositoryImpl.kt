@@ -7,7 +7,10 @@ import com.example.myfirstapp.core.database.dao.TodoDao
 import com.example.myfirstapp.core.database.entity.CategoryEntity
 import com.example.myfirstapp.core.database.entity.TodoEntity
 import com.example.myfirstapp.core.datastore.source.UserPreferencesDataSource
-import com.example.myfirstapp.core.domain.repository.TodoRepository
+import com.example.myfirstapp.core.domain.repository.TodoCategoryRepository
+import com.example.myfirstapp.core.domain.repository.TodoFilterRepository
+import com.example.myfirstapp.core.domain.repository.TodoItemRepository
+import com.example.myfirstapp.core.domain.repository.TodoReminderRepository
 import com.example.myfirstapp.core.model.Category
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoCategoryFilter
@@ -24,7 +27,7 @@ class TodoRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao,
     private val categoryDao: CategoryDao,
     private val userPreferencesDataSource: UserPreferencesDataSource
-) : TodoRepository {
+) : TodoItemRepository, TodoCategoryRepository, TodoFilterRepository, TodoReminderRepository {
 
     override fun observeTodos(): Flow<List<TodoItem>> =
         todoDao.observeTodos().map { entities -> entities.map { it.toDomain() } }

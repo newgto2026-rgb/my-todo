@@ -1,10 +1,10 @@
 package com.example.myfirstapp.core.domain.usecase
 
-import com.example.myfirstapp.core.domain.repository.TodoRepository
+import com.example.myfirstapp.core.domain.repository.TodoItemRepository
 import javax.inject.Inject
 
 class ToggleTodoDoneUseCase @Inject constructor(
-    private val repository: TodoRepository
+    private val repository: TodoItemRepository
 ) {
     suspend operator fun invoke(id: Long): Result<Unit> = repository.toggleTodoDone(id)
 }

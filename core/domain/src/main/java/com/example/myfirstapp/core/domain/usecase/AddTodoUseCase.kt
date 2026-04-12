@@ -1,12 +1,12 @@
 package com.example.myfirstapp.core.domain.usecase
 
-import com.example.myfirstapp.core.domain.repository.TodoRepository
+import com.example.myfirstapp.core.domain.repository.TodoItemRepository
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import java.time.LocalDate
 import javax.inject.Inject
 
 class AddTodoUseCase @Inject constructor(
-    private val repository: TodoRepository
+    private val repository: TodoItemRepository
 ) {
     suspend operator fun invoke(
         title: String,

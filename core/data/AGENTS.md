@@ -7,6 +7,7 @@
 ## Rules
 - Implement only domain contracts from `core:domain`.
 - Keep mapping explicit and side-effect boundaries clear.
+- A single implementation may bind to multiple focused contracts, but keep method ownership clear by concern.
 
 ## Change Checklist
 - If repository behavior changes, re-check related use cases.

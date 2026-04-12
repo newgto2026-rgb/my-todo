@@ -5,7 +5,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.myfirstapp.core.domain.scheduler.TodoReminderScheduler
-import com.example.myfirstapp.core.domain.usecase.GetTodosWithActiveReminderUseCase
+import com.example.myfirstapp.core.domain.usecase.GetActiveTodoRemindersUseCase
 import com.example.myfirstapp.core.model.TodoItem
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class WorkManagerTodoReminderScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val getTodosWithActiveReminderUseCase: GetTodosWithActiveReminderUseCase
+    private val getActiveTodoRemindersUseCase: GetActiveTodoRemindersUseCase
 ) : TodoReminderScheduler {
 
     private val workManager: WorkManager
@@ -46,7 +46,7 @@ class WorkManagerTodoReminderScheduler @Inject constructor(
     }
 
     override suspend fun rescheduleAll() {
-        val todos = getTodosWithActiveReminderUseCase()
+        val todos = getActiveTodoRemindersUseCase()
         todos.forEach { schedule(it) }
     }
 }

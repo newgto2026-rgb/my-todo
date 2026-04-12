@@ -1,7 +1,10 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
 import app.cash.turbine.test
-import com.example.myfirstapp.core.domain.repository.TodoRepository
+import com.example.myfirstapp.core.domain.repository.TodoCategoryRepository
+import com.example.myfirstapp.core.domain.repository.TodoFilterRepository
+import com.example.myfirstapp.core.domain.repository.TodoItemRepository
+import com.example.myfirstapp.core.domain.repository.TodoReminderRepository
 import com.example.myfirstapp.core.domain.scheduler.TodoReminderScheduler
 import com.example.myfirstapp.core.domain.usecase.AddCategoryUseCase
 import com.example.myfirstapp.core.domain.usecase.AddTodoUseCase
@@ -145,7 +148,7 @@ class TodoListViewModelTest {
         }
     }
 
-    private fun createViewModel(repository: TodoRepository): TodoListViewModel =
+    private fun createViewModel(repository: ConfigurableTodoRepository): TodoListViewModel =
         TodoListViewModel(
             observeTodosUseCase = ObserveTodosUseCase(repository),
             observeSelectedTodoFilterUseCase = ObserveSelectedTodoFilterUseCase(repository),
@@ -164,7 +167,11 @@ class TodoListViewModelTest {
             todoReminderScheduler = NoOpTodoReminderScheduler
         )
 
-    private class ConfigurableTodoRepository : TodoRepository {
+    private class ConfigurableTodoRepository :
+        TodoItemRepository,
+        TodoCategoryRepository,
+        TodoFilterRepository,
+        TodoReminderRepository {
         private val todos = MutableStateFlow<List<TodoItem>>(emptyList())
         private val selectedFilter = MutableStateFlow(TodoFilter.ALL)
         private val categories = MutableStateFlow<List<Category>>(emptyList())
