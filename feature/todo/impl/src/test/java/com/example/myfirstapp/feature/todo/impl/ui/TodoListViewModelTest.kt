@@ -23,6 +23,7 @@ import com.example.myfirstapp.core.model.TodoCategoryFilter
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.model.TodoItem
 import com.example.myfirstapp.core.testing.rule.MainDispatcherRule
+import com.example.myfirstapp.feature.todo.impl.R
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -137,7 +138,9 @@ class TodoListViewModelTest {
             viewModel.onAction(TodoListAction.OnCategorySaveClick)
             advanceUntilIdle()
 
-            assertThat(awaitItem()).isEqualTo(TodoListSideEffect.ShowSnackbar("카테고리 저장에 실패했습니다."))
+            assertThat(awaitItem()).isEqualTo(
+                TodoListSideEffect.ShowSnackbar(R.string.todo_error_category_save_failed)
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }

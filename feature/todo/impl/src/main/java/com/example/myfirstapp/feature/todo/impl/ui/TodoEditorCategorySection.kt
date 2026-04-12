@@ -24,8 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
+import com.example.myfirstapp.feature.todo.impl.R
 import kotlin.math.max
 
 @Composable
@@ -40,7 +42,7 @@ internal fun TodoEditorCategorySection(
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
         Text(
-            text = "CATEGORY",
+            text = stringResource(R.string.todo_editor_category_label),
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
             color = Color(0xFF7A7F8C)
         )
@@ -48,7 +50,11 @@ internal fun TodoEditorCategorySection(
         TextButton(onClick = onManageCategoriesClick) {
             Icon(Icons.Default.Settings, contentDescription = null, tint = Color(0xFF5F78A6))
             Spacer(Modifier.size(4.dp))
-            Text("Manage", color = Color(0xFF5F78A6), style = MaterialTheme.typography.labelLarge)
+            Text(
+                text = stringResource(R.string.todo_editor_manage),
+                color = Color(0xFF5F78A6),
+                style = MaterialTheme.typography.labelLarge
+            )
         }
     }
 
@@ -58,7 +64,7 @@ internal fun TodoEditorCategorySection(
     val chips = buildList {
         add(
             EditorCategoryChipData(
-                label = "Uncategorized",
+                label = stringResource(R.string.todo_category_uncategorized),
                 selected = selectedCategoryId == null,
                 colorHex = null,
                 onClick = { onCategorySelected(null) }
@@ -93,7 +99,11 @@ internal fun TodoEditorCategorySection(
         }
         if (showToggle) {
             SelectableCategoryChip(
-                label = if (expandedCategoryChips) "Less" else "More",
+                label = if (expandedCategoryChips) {
+                    stringResource(R.string.todo_toggle_less)
+                } else {
+                    stringResource(R.string.todo_toggle_more)
+                },
                 selected = false,
                 colorHex = null,
                 onClick = { expandedCategoryChips = !expandedCategoryChips }

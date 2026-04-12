@@ -21,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapp.core.model.TodoFilter
+import com.example.myfirstapp.feature.todo.impl.R
 
 @Composable
 internal fun AppHeader() {
@@ -37,7 +39,7 @@ internal fun AppHeader() {
             tint = Color(0xFF5A6D94)
         )
         Text(
-            text = "TODO",
+            text = stringResource(R.string.todo_app_header_title),
             modifier = Modifier.padding(start = 14.dp),
             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
             color = Color(0xFF2D3240)

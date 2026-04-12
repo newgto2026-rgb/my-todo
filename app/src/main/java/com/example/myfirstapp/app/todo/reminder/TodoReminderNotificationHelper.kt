@@ -52,7 +52,7 @@ object TodoReminderNotificationHelper {
 
         val notification = NotificationCompat.Builder(context, TodoReminderConstants.CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("할 일 리마인더")
+            .setContentTitle(context.getString(R.string.todo_reminder_notification_title))
             .setContentText(todo.title)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)

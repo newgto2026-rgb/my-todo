@@ -14,7 +14,7 @@ internal fun TodoListUiState.openNewTodoEditor(): TodoListUiState = copy(
     draftReminderDateTimeInput = "",
     draftReminderRepeatType = ReminderRepeatType.NONE,
     draftCategoryId = null,
-    errorMessage = null
+    errorMessageRes = null
 )
 
 internal fun TodoListUiState.dismissTodoEditor(): TodoListUiState = copy(
@@ -26,7 +26,7 @@ internal fun TodoListUiState.dismissTodoEditor(): TodoListUiState = copy(
     draftReminderDateTimeInput = "",
     draftReminderRepeatType = ReminderRepeatType.NONE,
     draftCategoryId = null,
-    errorMessage = null
+    errorMessageRes = null
 )
 
 internal fun TodoListUiState.openCategoryManager(): TodoListUiState = copy(

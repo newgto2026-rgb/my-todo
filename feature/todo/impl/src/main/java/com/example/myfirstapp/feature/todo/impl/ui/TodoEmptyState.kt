@@ -1,5 +1,6 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapp.core.model.TodoFilter
+import com.example.myfirstapp.feature.todo.impl.R
 
 @Composable
 internal fun EmptyState(
@@ -50,10 +52,11 @@ internal fun EmptyState(
     }
 }
 
-internal fun emptyMessage(filter: TodoFilter): String = when (filter) {
-    TodoFilter.ALL -> "No tasks yet.\nTap + to add your first task."
-    TodoFilter.TODAY -> "No tasks due today."
-    TodoFilter.COMPLETED -> "No completed tasks yet."
+@StringRes
+internal fun emptyMessage(filter: TodoFilter): Int = when (filter) {
+    TodoFilter.ALL -> R.string.todo_empty_all
+    TodoFilter.TODAY -> R.string.todo_empty_today
+    TodoFilter.COMPLETED -> R.string.todo_empty_completed
 }
 
 private fun Modifier.drawDashedBorder(

@@ -1,5 +1,6 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapp.core.model.ReminderRepeatType
+import com.example.myfirstapp.feature.todo.impl.R
 
 @Composable
 internal fun TodoEditorReminderSection(
@@ -33,7 +36,7 @@ internal fun TodoEditorReminderSection(
     onReminderRepeatTypeChange: (ReminderRepeatType) -> Unit
 ) {
     Text(
-        text = "REMINDER",
+        text = stringResource(R.string.todo_editor_reminder_label),
         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
         color = Color(0xFF7A7F8C)
     )
@@ -53,7 +56,7 @@ internal fun TodoEditorReminderSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Enable reminder",
+                    text = stringResource(R.string.todo_editor_enable_reminder),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -76,7 +79,7 @@ internal fun TodoEditorReminderSection(
             ) {
                 Text(
                     text = if (reminderDateTimeInput.isBlank()) {
-                        "Select reminder date/time"
+                        stringResource(R.string.todo_editor_select_reminder_datetime)
                     } else {
                         reminderDateTimeInput
                     },
@@ -87,7 +90,7 @@ internal fun TodoEditorReminderSection(
             }
             Spacer(Modifier.height(10.dp))
             Text(
-                text = "REPEAT",
+                text = stringResource(R.string.todo_editor_repeat_label),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = Color(0xFF7A7F8C)
             )
@@ -95,7 +98,7 @@ internal fun TodoEditorReminderSection(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TodoReminderRepeatOption.values().forEach { option ->
                     SelectableCategoryChip(
-                        label = option.label,
+                        label = stringResource(option.labelRes),
                         selected = reminderRepeatType == option.type,
                         colorHex = null,
                         enabled = reminderEnabled,
@@ -107,8 +110,11 @@ internal fun TodoEditorReminderSection(
     }
 }
 
-private enum class TodoReminderRepeatOption(val type: ReminderRepeatType, val label: String) {
-    NONE(ReminderRepeatType.NONE, "None"),
-    DAILY(ReminderRepeatType.DAILY, "Daily"),
-    WEEKLY(ReminderRepeatType.WEEKLY, "Weekly")
+private enum class TodoReminderRepeatOption(
+    val type: ReminderRepeatType,
+    @StringRes val labelRes: Int
+) {
+    NONE(ReminderRepeatType.NONE, R.string.todo_editor_repeat_none),
+    DAILY(ReminderRepeatType.DAILY, R.string.todo_editor_repeat_daily),
+    WEEKLY(ReminderRepeatType.WEEKLY, R.string.todo_editor_repeat_weekly)
 }

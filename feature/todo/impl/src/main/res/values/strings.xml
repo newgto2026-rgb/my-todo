@@ -1,0 +1,67 @@
+<resources>
+    <string name="todo_app_header_title">TODO</string>
+
+    <string name="todo_filter_all">All</string>
+    <string name="todo_filter_today">Today</string>
+    <string name="todo_filter_completed">Completed</string>
+
+    <string name="todo_header_all_title">All Tasks</string>
+    <string name="todo_header_all_subtitle">Sorted by due date</string>
+    <string name="todo_header_completed_title">Completed</string>
+    <string name="todo_header_completed_subtitle">Finished tasks</string>
+
+    <string name="todo_category_all">All Categories</string>
+    <string name="todo_category_uncategorized">Uncategorized</string>
+    <string name="todo_toggle_more">More</string>
+    <string name="todo_toggle_less">Less</string>
+
+    <string name="todo_editor_title_new_task">New Task</string>
+    <string name="todo_editor_task_description">TASK DESCRIPTION</string>
+    <string name="todo_editor_task_placeholder">What needs to be done?</string>
+    <string name="todo_editor_select_due_date">Select due date</string>
+    <string name="todo_editor_category_label">CATEGORY</string>
+    <string name="todo_editor_manage">Manage</string>
+    <string name="todo_editor_reminder_label">REMINDER</string>
+    <string name="todo_editor_enable_reminder">Enable reminder</string>
+    <string name="todo_editor_select_reminder_datetime">Select reminder date/time</string>
+    <string name="todo_editor_repeat_label">REPEAT</string>
+    <string name="todo_editor_repeat_none">None</string>
+    <string name="todo_editor_repeat_daily">Daily</string>
+    <string name="todo_editor_repeat_weekly">Weekly</string>
+    <string name="todo_editor_delete">Delete</string>
+    <string name="todo_editor_save">Save</string>
+    <string name="todo_editor_ok">OK</string>
+    <string name="todo_editor_cancel">Cancel</string>
+
+    <string name="todo_empty_all">No tasks yet.\nTap + to add your first task.</string>
+    <string name="todo_empty_today">No tasks due today.</string>
+    <string name="todo_empty_completed">No completed tasks yet.</string>
+
+    <string name="todo_row_subtitle_completed">Completed</string>
+    <string name="todo_row_subtitle_today">Today</string>
+    <string name="todo_row_subtitle_reminder">Reminder %1$s</string>
+
+    <string name="todo_category_manager_title">Manage categories</string>
+    <string name="todo_category_manager_name">Name</string>
+    <string name="todo_category_manager_color">Color</string>
+    <string name="todo_category_manager_icon_optional">Icon key (optional)</string>
+    <string name="todo_category_manager_add">Add category</string>
+    <string name="todo_category_manager_update">Update category</string>
+    <string name="todo_category_manager_current">Current categories</string>
+    <string name="todo_category_manager_close">Close</string>
+    <string name="todo_category_manager_no_color">None</string>
+    <string name="todo_category_manager_edit">Edit category</string>
+    <string name="todo_category_manager_delete">Delete category</string>
+
+    <string name="todo_error_title_required">Please enter a title.</string>
+    <string name="todo_error_due_date_format">Date format must be yyyy-MM-dd.</string>
+    <string name="todo_error_reminder_format">Reminder format must be yyyy-MM-dd HH:mm.</string>
+    <string name="todo_error_save_failed">Failed to save.</string>
+    <string name="todo_error_category_name_required">Please enter a category name.</string>
+    <string name="todo_error_category_save_failed">Failed to save category.</string>
+    <string name="todo_error_toggle_done_failed">Failed to change completion status.</string>
+    <string name="todo_error_delete_failed">Failed to delete.</string>
+    <string name="todo_error_category_delete_failed">Failed to delete category.</string>
+    <string name="todo_error_filter_change_failed">Failed to change filter.</string>
+    <string name="todo_error_category_filter_change_failed">Failed to change category filter.</string>
+</resources>

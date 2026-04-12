@@ -46,10 +46,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
+import com.example.myfirstapp.feature.todo.impl.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -66,7 +68,7 @@ internal fun EditTodoBottomSheet(
     reminderRepeatType: ReminderRepeatType,
     categories: List<CategoryUiModel>,
     selectedCategoryId: Long?,
-    errorMessage: String?,
+    errorMessageRes: Int?,
     onTitleChange: (String) -> Unit,
     onDateInputChange: (String) -> Unit,
     onReminderEnabledChange: (Boolean) -> Unit,
@@ -134,7 +136,7 @@ internal fun EditTodoBottomSheet(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "New Task",
+                    text = stringResource(R.string.todo_editor_title_new_task),
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color(0xFF323640)
                 )
@@ -151,7 +153,7 @@ internal fun EditTodoBottomSheet(
 
             Spacer(Modifier.height(22.dp))
             Text(
-                text = "TASK DESCRIPTION",
+                text = stringResource(R.string.todo_editor_task_description),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                 color = Color(0xFF7A7F8C)
             )
@@ -159,7 +161,7 @@ internal fun EditTodoBottomSheet(
             TextField(
                 value = title,
                 onValueChange = onTitleChange,
-                placeholder = { Text("What needs to be done?") },
+                placeholder = { Text(stringResource(R.string.todo_editor_task_placeholder)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(96.dp)
@@ -169,7 +171,7 @@ internal fun EditTodoBottomSheet(
                     },
                 singleLine = false,
                 shape = RoundedCornerShape(14.dp),
-                isError = errorMessage != null,
+                isError = errorMessageRes != null,
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color(0xFFEBEDF4),
                     unfocusedContainerColor = Color(0xFFEBEDF4),
@@ -200,7 +202,11 @@ internal fun EditTodoBottomSheet(
                     )
                     Spacer(Modifier.size(10.dp))
                     Text(
-                        text = if (dueDateInput.isBlank()) "Select due date" else dueDateInput,
+                        text = if (dueDateInput.isBlank()) {
+                            stringResource(R.string.todo_editor_select_due_date)
+                        } else {
+                            dueDateInput
+                        },
                         style = MaterialTheme.typography.bodyLarge,
                         color = if (dueDateInput.isBlank()) Color(0xFF8E94A3) else Color(0xFF2F3441)
                     )
@@ -225,9 +231,9 @@ internal fun EditTodoBottomSheet(
                 onReminderRepeatTypeChange = onReminderRepeatTypeChange
             )
 
-            if (errorMessage != null) {
+            if (errorMessageRes != null) {
                 Text(
-                    text = errorMessage,
+                    text = stringResource(errorMessageRes),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.padding(top = 10.dp)
@@ -237,7 +243,7 @@ internal fun EditTodoBottomSheet(
             Spacer(Modifier.height(18.dp))
             Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(10.dp)) {
                 if (showDelete) {
-                    TextButton(onClick = onDelete) { Text("Delete") }
+                    TextButton(onClick = onDelete) { Text(stringResource(R.string.todo_editor_delete)) }
                 }
                 Button(
                     onClick = onSave,
@@ -253,7 +259,7 @@ internal fun EditTodoBottomSheet(
                         disabledContentColor = Color(0xFFE9EDF7)
                     )
                 ) {
-                    Text("Save")
+                    Text(stringResource(R.string.todo_editor_save))
                 }
             }
             Spacer(Modifier.height(20.dp))
@@ -269,10 +275,12 @@ internal fun EditTodoBottomSheet(
                         onDateInputChange(utcMillisToIsoDate(datePickerState.selectedDateMillis))
                         showDatePicker = false
                     }
-                ) { Text("OK") }
+                ) { Text(stringResource(R.string.todo_editor_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancel") }
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(R.string.todo_editor_cancel))
+                }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -304,10 +312,12 @@ internal fun EditTodoBottomSheet(
                             true
                         ).show()
                     }
-                ) { Text("OK") }
+                ) { Text(stringResource(R.string.todo_editor_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showReminderDatePicker = false }) { Text("Cancel") }
+                TextButton(onClick = { showReminderDatePicker = false }) {
+                    Text(stringResource(R.string.todo_editor_cancel))
+                }
             }
         ) {
             DatePicker(state = reminderDatePickerState)

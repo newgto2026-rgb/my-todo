@@ -44,8 +44,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
+import com.example.myfirstapp.feature.todo.impl.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,7 +94,7 @@ internal fun CategoryManagerBottomSheet(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = "Manage categories",
+                text = stringResource(R.string.todo_category_manager_title),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -104,11 +106,11 @@ internal fun CategoryManagerBottomSheet(
                     .onFocusChanged { state ->
                         focusedInputCount = if (state.hasFocus || state.isCaptured) 1 else 0
                     },
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.todo_category_manager_name)) },
                 singleLine = true
             )
             Text(
-                text = "Color",
+                text = stringResource(R.string.todo_category_manager_color),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(top = 4.dp)
             )
@@ -135,7 +137,7 @@ internal fun CategoryManagerBottomSheet(
                     .onFocusChanged { state ->
                         focusedInputCount = if (state.hasFocus || state.isCaptured) 1 else 0
                     },
-                label = { Text("Icon key (optional)") },
+                label = { Text(stringResource(R.string.todo_category_manager_icon_optional)) },
                 singleLine = true
             )
 
@@ -143,11 +145,17 @@ internal fun CategoryManagerBottomSheet(
                 onClick = onSaveCategoryClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (editingCategoryId == null) "Add category" else "Update category")
+                Text(
+                    if (editingCategoryId == null) {
+                        stringResource(R.string.todo_category_manager_add)
+                    } else {
+                        stringResource(R.string.todo_category_manager_update)
+                    }
+                )
             }
 
             Text(
-                text = "Current categories",
+                text = stringResource(R.string.todo_category_manager_current),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(top = 8.dp)
             )
@@ -170,10 +178,20 @@ internal fun CategoryManagerBottomSheet(
                         Spacer(Modifier.weight(1f))
                         category.id?.let { categoryId ->
                             IconButton(onClick = { onCategoryEditClick(categoryId) }) {
-                                Icon(Icons.Default.Edit, contentDescription = "Edit")
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = stringResource(
+                                        R.string.todo_category_manager_edit
+                                    )
+                                )
                             }
                             IconButton(onClick = { onCategoryDeleteClick(categoryId) }) {
-                                Icon(Icons.Default.Delete, contentDescription = "Delete")
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(
+                                        R.string.todo_category_manager_delete
+                                    )
+                                )
                             }
                         }
                     }
@@ -184,7 +202,7 @@ internal fun CategoryManagerBottomSheet(
                 onClick = onDismiss,
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text("Close")
+                Text(stringResource(R.string.todo_category_manager_close))
             }
             Spacer(Modifier.size(10.dp))
         }
@@ -202,7 +220,7 @@ private fun NoColorChip(
         modifier = Modifier.clickable(onClick = onClick)
     ) {
         Text(
-            text = "None",
+            text = stringResource(R.string.todo_category_manager_no_color),
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
             style = MaterialTheme.typography.labelLarge,
             color = Color(0xFF4A6697)

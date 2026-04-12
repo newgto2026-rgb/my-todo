@@ -79,9 +79,7 @@ private fun TodoItem.toUiModel(categoriesById: Map<Long, Category>): TodoItemUiM
         isReminderEnabled = isReminderEnabled,
         reminderRepeatType = reminderRepeatType,
         categoryId = categoryId,
-        categoryName = category?.name ?: UNCATEGORIZED_LABEL,
+        categoryName = category?.name,
         categoryColorHex = category?.colorHex
     )
 }
-
-private const val UNCATEGORIZED_LABEL = "Uncategorized"

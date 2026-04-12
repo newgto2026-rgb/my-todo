@@ -13,6 +13,6 @@ data class TodoItemUiModel(
     val isReminderEnabled: Boolean,
     val reminderRepeatType: ReminderRepeatType,
     val categoryId: Long?,
-    val categoryName: String,
+    val categoryName: String?,
     val categoryColorHex: String?
 )

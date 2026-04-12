@@ -23,14 +23,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.ui.TodoItemRow
+import com.example.myfirstapp.feature.todo.impl.R
 
 @Composable
 fun TodoListRoute(
@@ -38,11 +41,14 @@ fun TodoListRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
-                is TodoListSideEffect.ShowSnackbar -> snackbarHostState.showSnackbar(sideEffect.message)
+                is TodoListSideEffect.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(context.getString(sideEffect.messageRes))
+                }
             }
         }
     }
@@ -60,8 +66,19 @@ private fun TodoListScreen(
     onAction: (TodoListAction) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    val (title, subtitle) = headerTextFor(uiState.selectedFilter)
+    val (title, subtitle) = headerTextFor(
+        filter = uiState.selectedFilter,
+        allTitle = stringResource(R.string.todo_header_all_title),
+        allSubtitle = stringResource(R.string.todo_header_all_subtitle),
+        todayTitle = stringResource(R.string.todo_filter_today),
+        completedTitle = stringResource(R.string.todo_header_completed_title),
+        completedSubtitle = stringResource(R.string.todo_header_completed_subtitle)
+    )
     val completionProgress = completionProgress(uiState)
+    val rowCompletedText = stringResource(R.string.todo_row_subtitle_completed)
+    val rowTodayText = stringResource(R.string.todo_row_subtitle_today)
+    val rowReminderFormat = stringResource(R.string.todo_row_subtitle_reminder)
+    val uncategorizedText = stringResource(R.string.todo_category_uncategorized)
 
     Scaffold(
         containerColor = Color(0xFFF5F6FB),
@@ -117,9 +134,11 @@ private fun TodoListScreen(
                 ) {
                     items(items = uiState.items, key = { item -> item.id }) { item ->
                         val rowSubtitle = when {
-                            item.isDone -> "Completed"
-                            item.isReminderEnabled && !item.reminderDateTimeText.isNullOrBlank() -> "Reminder ${item.reminderDateTimeText}"
-                            isToday(item.dueDateText) -> "Today"
+                            item.isDone -> rowCompletedText
+                            item.isReminderEnabled && !item.reminderDateTimeText.isNullOrBlank() -> {
+                                rowReminderFormat.format(item.reminderDateTimeText)
+                            }
+                            isToday(item.dueDateText) -> rowTodayText
                             !item.dueDateText.isNullOrBlank() -> formatDueDateLabel(item.dueDateText)
                             else -> null
                         }
@@ -127,10 +146,10 @@ private fun TodoListScreen(
                             title = item.title,
                             dueDateText = rowSubtitle,
                             isDone = item.isDone,
-                            isEmphasized = !item.isDone && rowSubtitle == "Today",
+                            isEmphasized = !item.isDone && rowSubtitle == rowTodayText,
                             onToggleDone = { onAction(TodoListAction.OnToggleDone(item.id)) },
                             onClick = { onAction(TodoListAction.OnEditClick(item.id)) },
-                            categoryName = item.categoryName,
+                            categoryName = item.categoryName ?: uncategorizedText,
                             categoryColorHex = item.categoryColorHex
                         )
                     }
@@ -140,7 +159,7 @@ private fun TodoListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp),
-                    message = emptyMessage(uiState.selectedFilter)
+                    message = stringResource(emptyMessage(uiState.selectedFilter))
                 )
             }
         }
@@ -155,7 +174,7 @@ private fun TodoListScreen(
             reminderRepeatType = uiState.draftReminderRepeatType,
             categories = uiState.categories,
             selectedCategoryId = uiState.draftCategoryId,
-            errorMessage = uiState.errorMessage,
+            errorMessageRes = uiState.errorMessageRes,
             onTitleChange = { onAction(TodoListAction.OnTitleChange(it)) },
             onDateInputChange = { onAction(TodoListAction.OnDueDateInputChange(it)) },
             onReminderEnabledChange = { onAction(TodoListAction.OnReminderEnabledChange(it)) },
@@ -191,10 +210,22 @@ private fun TodoListScreen(
     }
 }
 
-private fun headerTextFor(filter: TodoFilter): Pair<String, String> = when (filter) {
-    TodoFilter.ALL -> "All Tasks" to "Sorted by due date"
-    TodoFilter.TODAY -> "Today" to java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("MMMM d", java.util.Locale.ENGLISH))
-    TodoFilter.COMPLETED -> "Completed" to "Finished tasks"
+private fun headerTextFor(
+    filter: TodoFilter,
+    allTitle: String,
+    allSubtitle: String,
+    todayTitle: String,
+    completedTitle: String,
+    completedSubtitle: String
+): Pair<String, String> = when (filter) {
+    TodoFilter.ALL -> allTitle to allSubtitle
+    TodoFilter.TODAY -> {
+        val subtitle = java.time.LocalDate.now().format(
+            java.time.format.DateTimeFormatter.ofPattern("MMMM d", java.util.Locale.getDefault())
+        )
+        todayTitle to subtitle
+    }
+    TodoFilter.COMPLETED -> completedTitle to completedSubtitle
 }
 
 private fun completionProgress(uiState: TodoListUiState): Float {
@@ -206,7 +237,7 @@ private fun formatDueDateLabel(raw: String?): String? {
     if (raw.isNullOrBlank()) return null
     return runCatching {
         val parsed = java.time.LocalDate.parse(raw, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE)
-        parsed.format(java.time.format.DateTimeFormatter.ofPattern("MMM d", java.util.Locale.ENGLISH))
+        parsed.format(java.time.format.DateTimeFormatter.ofPattern("MMM d", java.util.Locale.getDefault()))
     }.getOrDefault(raw)
 }
 

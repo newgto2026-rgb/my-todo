@@ -1,9 +1,9 @@
 package com.example.myfirstapp.feature.todo.api
 
 import com.example.myfirstapp.core.ui.navigation.AppFeatureEntry
+import kotlinx.serialization.Serializable
 
-interface TodoFeatureEntry : AppFeatureEntry {
-    companion object {
-        const val ROUTE = "todo_route"
-    }
-}
+@Serializable
+data object TodoRoute
+
+interface TodoFeatureEntry : AppFeatureEntry
