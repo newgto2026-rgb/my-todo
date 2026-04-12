@@ -11,7 +11,7 @@ fun AppNavHost(entries: Set<@JvmSuppressWildcards AppFeatureEntry>) {
     val navController = rememberNavController()
     val sortedEntries = remember(entries) { entries.sortedBy(AppFeatureEntry::route) }
     val startDestination = sortedEntries
-        .firstOrNull { it.route == TODO_ROUTE }
+        .firstOrNull { it.isStartDestination }
         ?.route
         ?: sortedEntries.firstOrNull()?.route
         ?: return
@@ -25,5 +25,3 @@ fun AppNavHost(entries: Set<@JvmSuppressWildcards AppFeatureEntry>) {
         }
     }
 }
-
-private const val TODO_ROUTE = "todo_route"
