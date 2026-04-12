@@ -39,9 +39,13 @@ tasks.named<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReport") {
         csv.required.set(false)
     }
 
+    val fileFilter = listOf(
+        "**/*$*.*"
+    )
+
     classDirectories.setFrom(
-        fileTree("$buildDir/classes/kotlin/main"),
-        fileTree("$buildDir/classes/java/main")
+        fileTree("$buildDir/classes/kotlin/main") { exclude(fileFilter) },
+        fileTree("$buildDir/classes/java/main") { exclude(fileFilter) }
     )
     sourceDirectories.setFrom(files("src/main/kotlin", "src/main/java"))
     executionData.setFrom(fileTree(buildDir) { include("jacoco/test.exec") })
@@ -50,9 +54,13 @@ tasks.named<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReport") {
 tasks.register<org.gradle.testing.jacoco.tasks.JacocoCoverageVerification>("jacocoCoverageVerification") {
     dependsOn(tasks.test)
 
+    val fileFilter = listOf(
+        "**/*$*.*"
+    )
+
     classDirectories.setFrom(
-        fileTree("$buildDir/classes/kotlin/main"),
-        fileTree("$buildDir/classes/java/main")
+        fileTree("$buildDir/classes/kotlin/main") { exclude(fileFilter) },
+        fileTree("$buildDir/classes/java/main") { exclude(fileFilter) }
     )
     sourceDirectories.setFrom(files("src/main/kotlin", "src/main/java"))
     executionData.setFrom(fileTree(buildDir) { include("jacoco/test.exec") })

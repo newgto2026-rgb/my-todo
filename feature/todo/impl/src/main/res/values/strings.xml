@@ -9,6 +9,8 @@
     <string name="todo_header_all_subtitle">Sorted by due date</string>
     <string name="todo_header_completed_title">Completed</string>
     <string name="todo_header_completed_subtitle">Finished tasks</string>
+    <string name="todo_header_profile_icon">👤</string>
+    <string name="todo_header_completed_symbol">✓</string>
 
     <string name="todo_category_all">All Categories</string>
     <string name="todo_category_uncategorized">Uncategorized</string>

@@ -94,7 +94,8 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReport")
         "**/*_MembersInjector*.*",
         "**/*Hilt*.*",
         "**/*Module*.*",
-        "**/hilt_aggregated_deps/**"
+        "**/hilt_aggregated_deps/**",
+        "**/*$*.*"
     )
     val includeFilter = listOf(
         "**/*ViewModel*.*",
@@ -137,7 +138,8 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoCoverageVerification>("jaco
         "**/*_MembersInjector*.*",
         "**/*Hilt*.*",
         "**/*Module*.*",
-        "**/hilt_aggregated_deps/**"
+        "**/hilt_aggregated_deps/**",
+        "**/*$*.*"
     )
     val includeFilter = listOf(
         "**/*ViewModel*.*",

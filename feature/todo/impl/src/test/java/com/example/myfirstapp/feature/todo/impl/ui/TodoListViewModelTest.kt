@@ -148,6 +148,101 @@ class TodoListViewModelTest {
         }
     }
 
+    @Test
+    fun saveActionWithBlankTitleSetsValidationError() = runTest {
+        val viewModel = createViewModel(ConfigurableTodoRepository())
+
+        viewModel.onAction(TodoListAction.OnAddClick)
+        viewModel.onAction(TodoListAction.OnTitleChange("   "))
+        viewModel.onAction(TodoListAction.OnSaveClick)
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.errorMessageRes).isEqualTo(R.string.todo_error_title_required)
+    }
+
+    @Test
+    fun toggleDoneFailureEmitsSnackbar() = runTest {
+        val repository = ConfigurableTodoRepository().apply {
+            failToggleDone = true
+            seed(TodoItem(1L, "A", false, null, 1L, 1L, null))
+        }
+        val viewModel = createViewModel(repository)
+
+        viewModel.sideEffect.test {
+            viewModel.onAction(TodoListAction.OnToggleDone(1L))
+            advanceUntilIdle()
+
+            assertThat(awaitItem()).isEqualTo(
+                TodoListSideEffect.ShowSnackbar(R.string.todo_error_toggle_done_failed)
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun deleteFailureEmitsSnackbar() = runTest {
+        val repository = ConfigurableTodoRepository().apply {
+            failDeleteTodo = true
+            seed(TodoItem(1L, "A", false, null, 1L, 1L, null))
+        }
+        val viewModel = createViewModel(repository)
+
+        viewModel.sideEffect.test {
+            viewModel.onAction(TodoListAction.OnDeleteClick(1L))
+            advanceUntilIdle()
+
+            assertThat(awaitItem()).isEqualTo(
+                TodoListSideEffect.ShowSnackbar(R.string.todo_error_delete_failed)
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun filterUpdateFailuresEmitSnackbar() = runTest {
+        val repository = ConfigurableTodoRepository().apply {
+            failSetSelectedFilter = true
+            failSetSelectedCategoryFilter = true
+        }
+        val viewModel = createViewModel(repository)
+
+        viewModel.sideEffect.test {
+            viewModel.onAction(TodoListAction.OnFilterChange(TodoFilter.TODAY))
+            advanceUntilIdle()
+            assertThat(awaitItem()).isEqualTo(
+                TodoListSideEffect.ShowSnackbar(R.string.todo_error_filter_change_failed)
+            )
+
+            viewModel.onAction(TodoListAction.OnCategoryFilterChange(99L))
+            advanceUntilIdle()
+            assertThat(awaitItem()).isEqualTo(
+                TodoListSideEffect.ShowSnackbar(R.string.todo_error_category_filter_change_failed)
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun editAndDismissDialog_updatesEditorState() = runTest {
+        val repository = ConfigurableTodoRepository().apply {
+            seed(TodoItem(5L, "Original", false, LocalDate.of(2026, 4, 12), 1L, 1L, null))
+        }
+        val viewModel = createViewModel(repository)
+        advanceUntilIdle()
+
+        viewModel.onAction(TodoListAction.OnEditClick(5L))
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.isEditDialogVisible).isTrue()
+        assertThat(viewModel.uiState.value.editingItem?.id).isEqualTo(5L)
+        assertThat(viewModel.uiState.value.draftTitle).isEqualTo("Original")
+
+        viewModel.onAction(TodoListAction.OnDismissDialog)
+        advanceUntilIdle()
+        assertThat(viewModel.uiState.value.isEditDialogVisible).isFalse()
+        assertThat(viewModel.uiState.value.editingItem).isNull()
+        assertThat(viewModel.uiState.value.draftTitle).isEmpty()
+    }
+
     private fun createViewModel(repository: ConfigurableTodoRepository): TodoListViewModel =
         TodoListViewModel(
             observeTodosUseCase = ObserveTodosUseCase(repository),
@@ -181,6 +276,10 @@ class TodoListViewModelTest {
 
         var selectedCategoryIdForTest: Long? = null
         var failAddCategory = false
+        var failToggleDone = false
+        var failDeleteTodo = false
+        var failSetSelectedFilter = false
+        var failSetSelectedCategoryFilter = false
 
         fun seed(vararg items: TodoItem) {
             todos.value = items.toList()
@@ -250,11 +349,13 @@ class TodoListViewModelTest {
         }
 
         override suspend fun deleteTodo(id: Long): Result<Unit> {
+            if (failDeleteTodo) return Result.failure(IllegalStateException("delete failed"))
             todos.value = todos.value.filterNot { it.id == id }
             return Result.success(Unit)
         }
 
         override suspend fun toggleTodoDone(id: Long): Result<Unit> {
+            if (failToggleDone) return Result.failure(IllegalStateException("toggle failed"))
             todos.value = todos.value.map {
                 if (it.id == id) it.copy(isDone = !it.isDone, updatedAt = System.currentTimeMillis()) else it
             }
@@ -271,6 +372,7 @@ class TodoListViewModelTest {
         override fun observeSelectedFilter(): Flow<TodoFilter> = selectedFilter.asStateFlow()
 
         override suspend fun setSelectedFilter(filter: TodoFilter): Result<Unit> {
+            if (failSetSelectedFilter) return Result.failure(IllegalStateException("filter failed"))
             selectedFilter.value = filter
             return Result.success(Unit)
         }
@@ -308,6 +410,7 @@ class TodoListViewModelTest {
         override fun observeSelectedCategoryFilter(): Flow<Long?> = selectedCategoryFilter.asStateFlow()
 
         override suspend fun setSelectedCategoryFilter(categoryId: Long?): Result<Unit> {
+            if (failSetSelectedCategoryFilter) return Result.failure(IllegalStateException("category filter failed"))
             selectedCategoryFilter.value = categoryId
             return Result.success(Unit)
         }
