@@ -31,7 +31,15 @@ object TodoReminderNotificationHelper {
     }
 
     fun showReminder(context: Context, todo: TodoItem) {
-        if (!hasPermission(context)) return
+        if (
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
 
         val requestCode = todo.id.toInt()
         val openIntent = Intent(context, MainActivity::class.java)
@@ -52,13 +60,5 @@ object TodoReminderNotificationHelper {
             .build()
 
         NotificationManagerCompat.from(context).notify(requestCode, notification)
-    }
-
-    private fun hasPermission(context: Context): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS
-        ) == PackageManager.PERMISSION_GRANTED
     }
 }

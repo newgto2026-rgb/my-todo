@@ -19,6 +19,7 @@ espressoCore = "3.7.0"
 turbine = "1.2.1"
 truth = "1.4.4"
 material = "1.13.0"
+desugarJdkLibs = "2.1.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +59,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 javax-inject = { group = "javax.inject", name = "javax.inject", version = "1" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit4" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
