@@ -53,15 +53,15 @@
     <string name="todo_category_manager_edit">Edit category</string>
     <string name="todo_category_manager_delete">Delete category</string>
 
-    <string name="todo_error_title_required">제목을 입력해주세요.</string>
-    <string name="todo_error_due_date_format">날짜 형식은 yyyy-MM-dd 입니다.</string>
-    <string name="todo_error_reminder_format">리마인더 형식은 yyyy-MM-dd HH:mm 입니다.</string>
-    <string name="todo_error_save_failed">저장에 실패했습니다.</string>
-    <string name="todo_error_category_name_required">카테고리 이름을 입력해주세요.</string>
-    <string name="todo_error_category_save_failed">카테고리 저장에 실패했습니다.</string>
-    <string name="todo_error_toggle_done_failed">완료 상태 변경에 실패했습니다.</string>
-    <string name="todo_error_delete_failed">삭제에 실패했습니다.</string>
-    <string name="todo_error_category_delete_failed">카테고리 삭제에 실패했습니다.</string>
-    <string name="todo_error_filter_change_failed">필터 변경에 실패했습니다.</string>
-    <string name="todo_error_category_filter_change_failed">카테고리 필터 변경에 실패했습니다.</string>
+    <string name="todo_error_title_required">Please enter a title.</string>
+    <string name="todo_error_due_date_format">Date format must be yyyy-MM-dd.</string>
+    <string name="todo_error_reminder_format">Reminder format must be yyyy-MM-dd HH:mm.</string>
+    <string name="todo_error_save_failed">Failed to save.</string>
+    <string name="todo_error_category_name_required">Please enter a category name.</string>
+    <string name="todo_error_category_save_failed">Failed to save category.</string>
+    <string name="todo_error_toggle_done_failed">Failed to change completion status.</string>
+    <string name="todo_error_delete_failed">Failed to delete.</string>
+    <string name="todo_error_category_delete_failed">Failed to delete category.</string>
+    <string name="todo_error_filter_change_failed">Failed to change filter.</string>
+    <string name="todo_error_category_filter_change_failed">Failed to change category filter.</string>
 </resources>

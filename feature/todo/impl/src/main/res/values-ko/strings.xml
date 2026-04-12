@@ -1,0 +1,67 @@
+<resources>
+    <string name="todo_app_header_title">TODO</string>
+
+    <string name="todo_filter_all">전체</string>
+    <string name="todo_filter_today">오늘</string>
+    <string name="todo_filter_completed">완료</string>
+
+    <string name="todo_header_all_title">모든 할 일</string>
+    <string name="todo_header_all_subtitle">마감일 순 정렬</string>
+    <string name="todo_header_completed_title">완료</string>
+    <string name="todo_header_completed_subtitle">완료한 할 일</string>
+
+    <string name="todo_category_all">모든 카테고리</string>
+    <string name="todo_category_uncategorized">미분류</string>
+    <string name="todo_toggle_more">더보기</string>
+    <string name="todo_toggle_less">접기</string>
+
+    <string name="todo_editor_title_new_task">새 할 일</string>
+    <string name="todo_editor_task_description">할 일 설명</string>
+    <string name="todo_editor_task_placeholder">무엇을 해야 하나요?</string>
+    <string name="todo_editor_select_due_date">마감일 선택</string>
+    <string name="todo_editor_category_label">카테고리</string>
+    <string name="todo_editor_manage">관리</string>
+    <string name="todo_editor_reminder_label">리마인더</string>
+    <string name="todo_editor_enable_reminder">리마인더 사용</string>
+    <string name="todo_editor_select_reminder_datetime">리마인더 날짜/시간 선택</string>
+    <string name="todo_editor_repeat_label">반복</string>
+    <string name="todo_editor_repeat_none">없음</string>
+    <string name="todo_editor_repeat_daily">매일</string>
+    <string name="todo_editor_repeat_weekly">매주</string>
+    <string name="todo_editor_delete">삭제</string>
+    <string name="todo_editor_save">저장</string>
+    <string name="todo_editor_ok">확인</string>
+    <string name="todo_editor_cancel">취소</string>
+
+    <string name="todo_empty_all">할 일이 없습니다.\n+ 버튼으로 첫 할 일을 추가하세요.</string>
+    <string name="todo_empty_today">오늘 마감인 할 일이 없습니다.</string>
+    <string name="todo_empty_completed">완료한 할 일이 없습니다.</string>
+
+    <string name="todo_row_subtitle_completed">완료</string>
+    <string name="todo_row_subtitle_today">오늘</string>
+    <string name="todo_row_subtitle_reminder">리마인더 %1$s</string>
+
+    <string name="todo_category_manager_title">카테고리 관리</string>
+    <string name="todo_category_manager_name">이름</string>
+    <string name="todo_category_manager_color">색상</string>
+    <string name="todo_category_manager_icon_optional">아이콘 키(선택)</string>
+    <string name="todo_category_manager_add">카테고리 추가</string>
+    <string name="todo_category_manager_update">카테고리 수정</string>
+    <string name="todo_category_manager_current">현재 카테고리</string>
+    <string name="todo_category_manager_close">닫기</string>
+    <string name="todo_category_manager_no_color">없음</string>
+    <string name="todo_category_manager_edit">카테고리 수정</string>
+    <string name="todo_category_manager_delete">카테고리 삭제</string>
+
+    <string name="todo_error_title_required">제목을 입력해주세요.</string>
+    <string name="todo_error_due_date_format">날짜 형식은 yyyy-MM-dd 입니다.</string>
+    <string name="todo_error_reminder_format">리마인더 형식은 yyyy-MM-dd HH:mm 입니다.</string>
+    <string name="todo_error_save_failed">저장에 실패했습니다.</string>
+    <string name="todo_error_category_name_required">카테고리 이름을 입력해주세요.</string>
+    <string name="todo_error_category_save_failed">카테고리 저장에 실패했습니다.</string>
+    <string name="todo_error_toggle_done_failed">완료 상태 변경에 실패했습니다.</string>
+    <string name="todo_error_delete_failed">삭제에 실패했습니다.</string>
+    <string name="todo_error_category_delete_failed">카테고리 삭제에 실패했습니다.</string>
+    <string name="todo_error_filter_change_failed">필터 변경에 실패했습니다.</string>
+    <string name="todo_error_category_filter_change_failed">카테고리 필터 변경에 실패했습니다.</string>
+</resources>
