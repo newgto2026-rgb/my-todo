@@ -91,6 +91,28 @@
 - Lint:
   - `./gradlew :feature:todo:api:lintDebug :feature:todo:impl:lintDebug :app:lintDebug` (PASS)
 
-## Next Recommended Steps (Not in this change)
-1. Split `TodoRepository` into smaller repository contracts by responsibility.
-2. Consolidate reminder domain model direction (standalone vs embedded in todo).
+## Executed Changes (P5~P6)
+- P5. Repository contract split by responsibility
+  - Replaced monolithic `TodoRepository` with focused domain contracts:
+    - `TodoItemRepository`
+    - `TodoCategoryRepository`
+    - `TodoFilterRepository`
+    - `TodoReminderRepository`
+  - Updated all todo/category/filter use cases to inject the new focused contracts.
+  - Updated data binding module to bind one implementation (`TodoRepositoryImpl`) to all focused contracts.
+  - Updated test fakes and feature tests to implement/use the split contracts.
+
+- P6. Todo reminder domain direction consolidation
+  - Clarified todo-embedded reminder access through dedicated contract/use case path:
+    - `TodoReminderRepository`
+    - `GetActiveTodoRemindersUseCase` (renamed from `GetTodosWithActiveReminderUseCase`)
+  - Updated app scheduler wiring to use `GetActiveTodoRemindersUseCase`.
+  - Result: standalone reminder domain (`ReminderRepository`) remains for generic reminders, while todo reminder scheduling reads from explicit todo reminder contract.
+
+## Verification (P5~P6)
+- Unit tests:
+  - `./gradlew :core:domain:test` (PASS)
+  - `./gradlew :core:data:testDebugUnitTest` (PASS)
+  - `./gradlew :feature:todo:impl:testDebugUnitTest` (PASS)
+- Build:
+  - `./gradlew :app:assembleDebug` (PASS)

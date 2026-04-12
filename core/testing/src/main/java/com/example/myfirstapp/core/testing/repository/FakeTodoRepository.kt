@@ -1,6 +1,9 @@
 package com.example.myfirstapp.core.testing.repository
 
-import com.example.myfirstapp.core.domain.repository.TodoRepository
+import com.example.myfirstapp.core.domain.repository.TodoCategoryRepository
+import com.example.myfirstapp.core.domain.repository.TodoFilterRepository
+import com.example.myfirstapp.core.domain.repository.TodoItemRepository
+import com.example.myfirstapp.core.domain.repository.TodoReminderRepository
 import com.example.myfirstapp.core.model.Category
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoFilter
@@ -11,7 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDate
 import java.util.Locale
 
-class FakeTodoRepository : TodoRepository {
+class FakeTodoRepository :
+    TodoItemRepository,
+    TodoCategoryRepository,
+    TodoFilterRepository,
+    TodoReminderRepository {
     private val todos = MutableStateFlow<List<TodoItem>>(emptyList())
     private val categories = MutableStateFlow<List<Category>>(emptyList())
     private val selectedFilter = MutableStateFlow(TodoFilter.ALL)

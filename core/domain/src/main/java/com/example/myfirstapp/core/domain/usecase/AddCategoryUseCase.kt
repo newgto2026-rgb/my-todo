@@ -1,11 +1,11 @@
 package com.example.myfirstapp.core.domain.usecase
 
-import com.example.myfirstapp.core.domain.repository.TodoRepository
+import com.example.myfirstapp.core.domain.repository.TodoCategoryRepository
 import java.util.Locale
 import javax.inject.Inject
 
 class AddCategoryUseCase @Inject constructor(
-    private val repository: TodoRepository
+    private val repository: TodoCategoryRepository
 ) {
     suspend operator fun invoke(name: String, colorHex: String?, icon: String?): Result<Long> {
         val normalizedName = name.trim()
