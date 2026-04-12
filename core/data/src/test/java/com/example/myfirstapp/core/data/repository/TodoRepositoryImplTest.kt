@@ -172,6 +172,13 @@ class TodoRepositoryImplTest {
         }
 
         override suspend fun getTodoById(id: Long): TodoEntity? = itemsFlow.value.firstOrNull { it.id == id }
+
+        override suspend fun getTodosWithActiveReminder(): List<TodoEntity> =
+            itemsFlow.value
+                .asSequence()
+                .filter { it.isReminderEnabled && it.reminderAtEpochMillis != null }
+                .sortedBy { it.reminderAtEpochMillis }
+                .toList()
     }
 
     private class FakeCategoryDao : CategoryDao {

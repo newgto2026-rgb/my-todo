@@ -2,6 +2,7 @@ package com.example.myfirstapp.core.testing.repository
 
 import com.example.myfirstapp.core.domain.repository.TodoRepository
 import com.example.myfirstapp.core.model.Category
+import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.model.TodoItem
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +23,15 @@ class FakeTodoRepository : TodoRepository {
 
     override suspend fun getTodo(id: Long): TodoItem? = todos.value.firstOrNull { it.id == id }
 
-    override suspend fun addTodo(title: String, dueDate: LocalDate?, categoryId: Long?): Result<Long> = runCatching {
+    override suspend fun addTodo(
+        title: String,
+        dueDate: LocalDate?,
+        categoryId: Long?,
+        reminderAtEpochMillis: Long?,
+        isReminderEnabled: Boolean,
+        reminderRepeatType: ReminderRepeatType,
+        reminderRepeatDaysMask: Int
+    ): Result<Long> = runCatching {
         validateCategoryId(categoryId)
         val now = System.currentTimeMillis()
         val id = idSeed++
@@ -33,13 +42,26 @@ class FakeTodoRepository : TodoRepository {
             dueDate = dueDate,
             createdAt = now,
             updatedAt = now,
-            categoryId = categoryId
+            categoryId = categoryId,
+            reminderAtEpochMillis = reminderAtEpochMillis,
+            isReminderEnabled = isReminderEnabled,
+            reminderRepeatType = reminderRepeatType,
+            reminderRepeatDaysMask = reminderRepeatDaysMask
         )
         todos.value = listOf(item) + todos.value
         id
     }
 
-    override suspend fun updateTodo(id: Long, title: String, dueDate: LocalDate?, categoryId: Long?): Result<Unit> = runCatching {
+    override suspend fun updateTodo(
+        id: Long,
+        title: String,
+        dueDate: LocalDate?,
+        categoryId: Long?,
+        reminderAtEpochMillis: Long?,
+        isReminderEnabled: Boolean,
+        reminderRepeatType: ReminderRepeatType,
+        reminderRepeatDaysMask: Int
+    ): Result<Unit> = runCatching {
         validateCategoryId(categoryId)
         val existing = getTodo(id) ?: error("Todo not found")
         todos.value = todos.value.map { current ->
@@ -48,7 +70,11 @@ class FakeTodoRepository : TodoRepository {
                     title = title,
                     dueDate = dueDate,
                     updatedAt = System.currentTimeMillis(),
-                    categoryId = categoryId
+                    categoryId = categoryId,
+                    reminderAtEpochMillis = reminderAtEpochMillis,
+                    isReminderEnabled = isReminderEnabled,
+                    reminderRepeatType = reminderRepeatType,
+                    reminderRepeatDaysMask = reminderRepeatDaysMask
                 )
             } else {
                 current
@@ -72,6 +98,13 @@ class FakeTodoRepository : TodoRepository {
             }
         }
     }
+
+    override suspend fun getTodosWithActiveReminder(): List<TodoItem> =
+        todos.value
+            .asSequence()
+            .filter { it.isReminderEnabled && it.reminderAtEpochMillis != null }
+            .sortedBy { it.reminderAtEpochMillis }
+            .toList()
 
     override fun observeSelectedFilter(): Flow<TodoFilter> = selectedFilter.asStateFlow()
 

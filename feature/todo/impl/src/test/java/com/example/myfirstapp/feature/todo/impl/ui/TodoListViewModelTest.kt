@@ -2,10 +2,12 @@ package com.example.myfirstapp.feature.todo.impl.ui
 
 import app.cash.turbine.test
 import com.example.myfirstapp.core.domain.repository.TodoRepository
+import com.example.myfirstapp.core.domain.scheduler.TodoReminderScheduler
 import com.example.myfirstapp.core.domain.usecase.AddCategoryUseCase
 import com.example.myfirstapp.core.domain.usecase.AddTodoUseCase
 import com.example.myfirstapp.core.domain.usecase.DeleteCategoryUseCase
 import com.example.myfirstapp.core.domain.usecase.DeleteTodoUseCase
+import com.example.myfirstapp.core.domain.usecase.GetTodoUseCase
 import com.example.myfirstapp.core.domain.usecase.ObserveCategoriesUseCase
 import com.example.myfirstapp.core.domain.usecase.ObserveSelectedCategoryFilterUseCase
 import com.example.myfirstapp.core.domain.usecase.ObserveSelectedTodoFilterUseCase
@@ -16,6 +18,7 @@ import com.example.myfirstapp.core.domain.usecase.UpdateSelectedCategoryFilterUs
 import com.example.myfirstapp.core.domain.usecase.UpdateSelectedTodoFilterUseCase
 import com.example.myfirstapp.core.domain.usecase.UpdateTodoUseCase
 import com.example.myfirstapp.core.model.Category
+import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoCategoryFilter
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.model.TodoItem
@@ -153,7 +156,9 @@ class TodoListViewModelTest {
             updateSelectedCategoryFilterUseCase = UpdateSelectedCategoryFilterUseCase(repository),
             addCategoryUseCase = AddCategoryUseCase(repository),
             updateCategoryUseCase = UpdateCategoryUseCase(repository),
-            deleteCategoryUseCase = DeleteCategoryUseCase(repository)
+            deleteCategoryUseCase = DeleteCategoryUseCase(repository),
+            getTodoUseCase = GetTodoUseCase(repository),
+            todoReminderScheduler = NoOpTodoReminderScheduler
         )
 
     private class ConfigurableTodoRepository : TodoRepository {
@@ -176,19 +181,57 @@ class TodoListViewModelTest {
 
         override suspend fun getTodo(id: Long): TodoItem? = todos.value.firstOrNull { it.id == id }
 
-        override suspend fun addTodo(title: String, dueDate: LocalDate?, categoryId: Long?): Result<Long> {
+        override suspend fun addTodo(
+            title: String,
+            dueDate: LocalDate?,
+            categoryId: Long?,
+            reminderAtEpochMillis: Long?,
+            isReminderEnabled: Boolean,
+            reminderRepeatType: ReminderRepeatType,
+            reminderRepeatDaysMask: Int
+        ): Result<Long> {
             val now = System.currentTimeMillis()
             val id = idSeed++
-            val item = TodoItem(id, title, false, dueDate, now, now, categoryId)
+            val item = TodoItem(
+                id = id,
+                title = title,
+                isDone = false,
+                dueDate = dueDate,
+                createdAt = now,
+                updatedAt = now,
+                categoryId = categoryId,
+                reminderAtEpochMillis = reminderAtEpochMillis,
+                isReminderEnabled = isReminderEnabled,
+                reminderRepeatType = reminderRepeatType,
+                reminderRepeatDaysMask = reminderRepeatDaysMask
+            )
             todos.value = listOf(item) + todos.value
             return Result.success(id)
         }
 
-        override suspend fun updateTodo(id: Long, title: String, dueDate: LocalDate?, categoryId: Long?): Result<Unit> {
+        override suspend fun updateTodo(
+            id: Long,
+            title: String,
+            dueDate: LocalDate?,
+            categoryId: Long?,
+            reminderAtEpochMillis: Long?,
+            isReminderEnabled: Boolean,
+            reminderRepeatType: ReminderRepeatType,
+            reminderRepeatDaysMask: Int
+        ): Result<Unit> {
             val existing = getTodo(id) ?: return Result.failure(IllegalStateException("not found"))
             todos.value = todos.value.map {
                 if (it.id == id) {
-                    existing.copy(title = title, dueDate = dueDate, updatedAt = System.currentTimeMillis(), categoryId = categoryId)
+                    existing.copy(
+                        title = title,
+                        dueDate = dueDate,
+                        updatedAt = System.currentTimeMillis(),
+                        categoryId = categoryId,
+                        reminderAtEpochMillis = reminderAtEpochMillis,
+                        isReminderEnabled = isReminderEnabled,
+                        reminderRepeatType = reminderRepeatType,
+                        reminderRepeatDaysMask = reminderRepeatDaysMask
+                    )
                 } else {
                     it
                 }
@@ -207,6 +250,13 @@ class TodoListViewModelTest {
             }
             return Result.success(Unit)
         }
+
+        override suspend fun getTodosWithActiveReminder(): List<TodoItem> =
+            todos.value
+                .asSequence()
+                .filter { it.isReminderEnabled && it.reminderAtEpochMillis != null }
+                .sortedBy { it.reminderAtEpochMillis }
+                .toList()
 
         override fun observeSelectedFilter(): Flow<TodoFilter> = selectedFilter.asStateFlow()
 
@@ -251,5 +301,11 @@ class TodoListViewModelTest {
             selectedCategoryFilter.value = categoryId
             return Result.success(Unit)
         }
+    }
+
+    private object NoOpTodoReminderScheduler : TodoReminderScheduler {
+        override suspend fun schedule(todo: TodoItem) = Unit
+        override suspend fun cancel(todoId: Long) = Unit
+        override suspend fun rescheduleAll() = Unit
     }
 }
