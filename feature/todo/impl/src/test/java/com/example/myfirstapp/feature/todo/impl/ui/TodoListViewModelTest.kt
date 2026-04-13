@@ -37,6 +37,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodoListViewModelTest {
@@ -158,6 +161,72 @@ class TodoListViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.uiState.value.errorMessageRes).isEqualTo(R.string.todo_error_title_required)
+    }
+
+    @Test
+    fun saveActionWithReminderEnabledWithoutDueTime_setsValidationError() = runTest {
+        val viewModel = createViewModel(ConfigurableTodoRepository())
+
+        viewModel.onAction(TodoListAction.OnAddClick)
+        viewModel.onAction(TodoListAction.OnTitleChange("Task"))
+        viewModel.onAction(TodoListAction.OnDueDateInputChange("2026-04-10"))
+        viewModel.onAction(TodoListAction.OnReminderEnabledChange(true))
+        viewModel.onAction(TodoListAction.OnSaveClick)
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.errorMessageRes)
+            .isEqualTo(R.string.todo_error_reminder_due_time_required)
+    }
+
+    @Test
+    fun saveActionWithDueTimeAndReminderLead_computesReminderFromDueDateTime() = runTest {
+        val repository = ConfigurableTodoRepository()
+        val viewModel = createViewModel(repository)
+        val dueDate = LocalDate.now().plusDays(1)
+        val dueDateText = dueDate.toString()
+
+        viewModel.onAction(TodoListAction.OnAddClick)
+        viewModel.onAction(TodoListAction.OnTitleChange("Task"))
+        viewModel.onAction(TodoListAction.OnDueDateInputChange(dueDateText))
+        viewModel.onAction(TodoListAction.OnDueTimeInputChange("10:00"))
+        viewModel.onAction(TodoListAction.OnReminderEnabledChange(true))
+        viewModel.onAction(TodoListAction.OnReminderLeadMinutesChange(10))
+        viewModel.onAction(TodoListAction.OnSaveClick)
+        advanceUntilIdle()
+
+        val saved = repository.getTodo(1L)
+        val expected = LocalDateTime.of(dueDate.year, dueDate.monthValue, dueDate.dayOfMonth, 10, 0)
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli() - 10 * 60_000L
+
+        assertThat(saved).isNotNull()
+        assertThat(saved?.dueTimeMinutes).isEqualTo(600)
+        assertThat(saved?.reminderLeadMinutes).isEqualTo(10)
+        assertThat(saved?.isReminderEnabled).isTrue()
+        assertThat(saved?.reminderAtEpochMillis).isEqualTo(expected)
+    }
+
+    @Test
+    fun saveActionWithPastReminderTime_setsValidationError() = runTest {
+        val viewModel = createViewModel(ConfigurableTodoRepository())
+        val pastDateTime = LocalDateTime.now().minusHours(1)
+
+        viewModel.onAction(TodoListAction.OnAddClick)
+        viewModel.onAction(TodoListAction.OnTitleChange("Task"))
+        viewModel.onAction(TodoListAction.OnDueDateInputChange(pastDateTime.toLocalDate().toString()))
+        viewModel.onAction(
+            TodoListAction.OnDueTimeInputChange(
+                String.format(Locale.US, "%02d:%02d", pastDateTime.hour, pastDateTime.minute)
+            )
+        )
+        viewModel.onAction(TodoListAction.OnReminderEnabledChange(true))
+        viewModel.onAction(TodoListAction.OnReminderLeadMinutesChange(0))
+        viewModel.onAction(TodoListAction.OnSaveClick)
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.errorMessageRes)
+            .isEqualTo(R.string.todo_error_reminder_time_in_past)
     }
 
     @Test
@@ -294,10 +363,12 @@ class TodoListViewModelTest {
             title: String,
             dueDate: LocalDate?,
             categoryId: Long?,
+            dueTimeMinutes: Int?,
             reminderAtEpochMillis: Long?,
             isReminderEnabled: Boolean,
             reminderRepeatType: ReminderRepeatType,
-            reminderRepeatDaysMask: Int
+            reminderRepeatDaysMask: Int,
+            reminderLeadMinutes: Int?
         ): Result<Long> {
             val now = System.currentTimeMillis()
             val id = idSeed++
@@ -312,7 +383,9 @@ class TodoListViewModelTest {
                 reminderAtEpochMillis = reminderAtEpochMillis,
                 isReminderEnabled = isReminderEnabled,
                 reminderRepeatType = reminderRepeatType,
-                reminderRepeatDaysMask = reminderRepeatDaysMask
+                reminderRepeatDaysMask = reminderRepeatDaysMask,
+                dueTimeMinutes = dueTimeMinutes,
+                reminderLeadMinutes = reminderLeadMinutes
             )
             todos.value = listOf(item) + todos.value
             return Result.success(id)
@@ -323,10 +396,12 @@ class TodoListViewModelTest {
             title: String,
             dueDate: LocalDate?,
             categoryId: Long?,
+            dueTimeMinutes: Int?,
             reminderAtEpochMillis: Long?,
             isReminderEnabled: Boolean,
             reminderRepeatType: ReminderRepeatType,
-            reminderRepeatDaysMask: Int
+            reminderRepeatDaysMask: Int,
+            reminderLeadMinutes: Int?
         ): Result<Unit> {
             val existing = getTodo(id) ?: return Result.failure(IllegalStateException("not found"))
             todos.value = todos.value.map {
@@ -339,7 +414,9 @@ class TodoListViewModelTest {
                         reminderAtEpochMillis = reminderAtEpochMillis,
                         isReminderEnabled = isReminderEnabled,
                         reminderRepeatType = reminderRepeatType,
-                        reminderRepeatDaysMask = reminderRepeatDaysMask
+                        reminderRepeatDaysMask = reminderRepeatDaysMask,
+                        dueTimeMinutes = dueTimeMinutes,
+                        reminderLeadMinutes = reminderLeadMinutes
                     )
                 } else {
                     it

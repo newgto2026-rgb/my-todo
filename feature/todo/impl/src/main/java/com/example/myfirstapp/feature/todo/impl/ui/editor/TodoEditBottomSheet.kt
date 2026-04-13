@@ -3,17 +3,23 @@ package com.example.myfirstapp.feature.todo.impl.ui
 import android.app.TimePickerDialog
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -37,7 +43,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,31 +53,28 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.myfirstapp.core.model.ReminderRepeatType
-import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
 import com.example.myfirstapp.feature.todo.impl.R
+import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneId.systemDefault
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditTodoBottomSheet(
     title: String,
     dueDateInput: String,
+    dueTimeInput: String,
     reminderEnabled: Boolean,
-    reminderDateTimeInput: String,
-    reminderRepeatType: ReminderRepeatType,
+    reminderLeadMinutes: Int,
     categories: List<CategoryUiModel>,
     selectedCategoryId: Long?,
     errorMessageRes: Int?,
     onTitleChange: (String) -> Unit,
     onDateInputChange: (String) -> Unit,
+    onDueTimeInputChange: (String) -> Unit,
     onReminderEnabledChange: (Boolean) -> Unit,
-    onReminderDateTimeInputChange: (String) -> Unit,
-    onReminderRepeatTypeChange: (ReminderRepeatType) -> Unit,
+    onReminderLeadMinutesChange: (Int) -> Unit,
     onCategorySelected: (Long?) -> Unit,
     onManageCategoriesClick: () -> Unit,
     onDismiss: () -> Unit,
@@ -82,39 +84,28 @@ internal fun EditTodoBottomSheet(
 ) {
     var hasFocusedInput by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
-    var showReminderDatePicker by remember { mutableStateOf(false) }
+
     BackHandler(enabled = true) {
         when {
             showDatePicker -> showDatePicker = false
-            showReminderDatePicker -> showReminderDatePicker = false
             else -> onDismiss()
         }
     }
+
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
         confirmValueChange = { newValue -> newValue != SheetValue.Hidden }
     )
     val context = LocalContext.current
-    val now = remember { LocalDateTime.now() }
-    val parsedReminder = remember(reminderDateTimeInput) { parseReminderInput(reminderDateTimeInput) }
-    var pendingReminderDate by remember { mutableStateOf(parsedReminder?.toLocalDate()) }
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = isoDateToUtcMillis(dueDateInput)
-    )
-    val reminderDatePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = (parsedReminder ?: now)
-            .atZone(systemDefault())
-            .toInstant()
-            .toEpochMilli()
     )
 
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismiss,
-        properties = ModalBottomSheetProperties(
-            shouldDismissOnBackPress = true
-        ),
+        properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true),
         containerColor = Color(0xFFF6F7FB),
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         dragHandle = {
@@ -129,6 +120,9 @@ internal fun EditTodoBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
+                .imePadding()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -210,6 +204,52 @@ internal fun EditTodoBottomSheet(
                 }
             }
 
+            Spacer(Modifier.height(10.dp))
+            Surface(
+                onClick = {
+                    val minutes = dueTimeTextToMinutes(dueTimeInput)
+                    val initialHour = minutes?.div(60) ?: 9
+                    val initialMinute = minutes?.rem(60) ?: 0
+                    TimePickerDialog(
+                        context,
+                        { _, hour, minute ->
+                            onDueTimeInputChange(minutesToDueTimeText(hour * 60 + minute))
+                        },
+                        initialHour,
+                        initialMinute,
+                        true
+                    ).show()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("due_time_selector"),
+                shape = RoundedCornerShape(14.dp),
+                color = Color(0xFFEBEDF4)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = null,
+                        tint = Color(0xFF5C6170)
+                    )
+                    Spacer(Modifier.size(10.dp))
+                    Text(
+                        text = if (dueTimeInput.isBlank()) {
+                            stringResource(R.string.todo_editor_select_due_time)
+                        } else {
+                            dueTimeInput
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = if (dueTimeInput.isBlank()) Color(0xFF8E94A3) else Color(0xFF2F3441)
+                    )
+                }
+            }
+
             Spacer(Modifier.height(14.dp))
             TodoEditorCategorySection(
                 categories = categories,
@@ -221,11 +261,9 @@ internal fun EditTodoBottomSheet(
             Spacer(Modifier.height(14.dp))
             TodoEditorReminderSection(
                 reminderEnabled = reminderEnabled,
-                reminderDateTimeInput = reminderDateTimeInput,
-                reminderRepeatType = reminderRepeatType,
+                reminderLeadMinutes = reminderLeadMinutes,
                 onReminderEnabledChange = onReminderEnabledChange,
-                onReminderDatePickerClick = { showReminderDatePicker = true },
-                onReminderRepeatTypeChange = onReminderRepeatTypeChange
+                onReminderLeadMinutesChange = onReminderLeadMinutesChange
             )
 
             if (errorMessageRes != null) {
@@ -238,7 +276,7 @@ internal fun EditTodoBottomSheet(
             }
 
             Spacer(Modifier.height(18.dp))
-            Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(10.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 if (showDelete) {
                     TextButton(onClick = onDelete) { Text(stringResource(R.string.todo_editor_delete)) }
                 }
@@ -281,43 +319,6 @@ internal fun EditTodoBottomSheet(
             }
         ) {
             DatePicker(state = datePickerState)
-        }
-    }
-
-    if (showReminderDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showReminderDatePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val pickedMillis = reminderDatePickerState.selectedDateMillis
-                        pendingReminderDate = pickedMillis?.let {
-                            Instant.ofEpochMilli(it).atZone(systemDefault()).toLocalDate()
-                        }
-                        showReminderDatePicker = false
-
-                        val baseTime = parsedReminder ?: now
-                        TimePickerDialog(
-                            context,
-                            { _, hour, minute ->
-                                val date = pendingReminderDate ?: LocalDate.now()
-                                val selected = LocalDateTime.of(date.year, date.month, date.dayOfMonth, hour, minute)
-                                onReminderDateTimeInputChange(selected.format(REMINDER_FORMATTER))
-                            },
-                            baseTime.hour,
-                            baseTime.minute,
-                            true
-                        ).show()
-                    }
-                ) { Text(stringResource(R.string.todo_editor_ok)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { showReminderDatePicker = false }) {
-                    Text(stringResource(R.string.todo_editor_cancel))
-                }
-            }
-        ) {
-            DatePicker(state = reminderDatePickerState)
         }
     }
 }

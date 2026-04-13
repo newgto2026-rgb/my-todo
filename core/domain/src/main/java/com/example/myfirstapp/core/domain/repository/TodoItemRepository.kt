@@ -13,10 +13,12 @@ interface TodoItemRepository {
         title: String,
         dueDate: LocalDate?,
         categoryId: Long?,
+        dueTimeMinutes: Int? = null,
         reminderAtEpochMillis: Long? = null,
         isReminderEnabled: Boolean = false,
         reminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
-        reminderRepeatDaysMask: Int = 0
+        reminderRepeatDaysMask: Int = 0,
+        reminderLeadMinutes: Int? = null
     ): Result<Long>
 
     suspend fun updateTodo(
@@ -24,10 +26,12 @@ interface TodoItemRepository {
         title: String,
         dueDate: LocalDate?,
         categoryId: Long?,
+        dueTimeMinutes: Int? = null,
         reminderAtEpochMillis: Long? = null,
         isReminderEnabled: Boolean = false,
         reminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
-        reminderRepeatDaysMask: Int = 0
+        reminderRepeatDaysMask: Int = 0,
+        reminderLeadMinutes: Int? = null
     ): Result<Unit>
 
     suspend fun deleteTodo(id: Long): Result<Unit>

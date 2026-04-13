@@ -42,11 +42,13 @@ class TodoReminderWorker(
             id = todo.id,
             title = todo.title,
             dueDate = todo.dueDate,
+            dueTimeMinutes = todo.dueTimeMinutes,
             categoryId = todo.categoryId,
             reminderAtEpochMillis = nextReminderAt,
             isReminderEnabled = nextReminderAt != null,
             reminderRepeatType = if (nextReminderAt != null) todo.reminderRepeatType else ReminderRepeatType.NONE,
-            reminderRepeatDaysMask = if (nextReminderAt != null) todo.reminderRepeatDaysMask else 0
+            reminderRepeatDaysMask = if (nextReminderAt != null) todo.reminderRepeatDaysMask else 0,
+            reminderLeadMinutes = if (nextReminderAt != null) todo.reminderLeadMinutes else null
         )
 
         if (updateResult.isFailure) return Result.retry()

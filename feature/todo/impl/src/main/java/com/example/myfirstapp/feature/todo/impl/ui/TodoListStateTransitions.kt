@@ -10,8 +10,9 @@ internal fun TodoListUiState.openNewTodoEditor(): TodoListUiState = copy(
     editingItem = null,
     draftTitle = "",
     draftDueDateInput = "",
+    draftDueTimeInput = "",
     draftReminderEnabled = false,
-    draftReminderDateTimeInput = "",
+    draftReminderLeadMinutes = DEFAULT_REMINDER_LEAD_MINUTES,
     draftReminderRepeatType = ReminderRepeatType.NONE,
     draftCategoryId = null,
     errorMessageRes = null
@@ -22,8 +23,9 @@ internal fun TodoListUiState.dismissTodoEditor(): TodoListUiState = copy(
     editingItem = null,
     draftTitle = "",
     draftDueDateInput = "",
+    draftDueTimeInput = "",
     draftReminderEnabled = false,
-    draftReminderDateTimeInput = "",
+    draftReminderLeadMinutes = DEFAULT_REMINDER_LEAD_MINUTES,
     draftReminderRepeatType = ReminderRepeatType.NONE,
     draftCategoryId = null,
     errorMessageRes = null
@@ -65,11 +67,15 @@ internal fun TodoItemUiModel.toTodoEditModel(): TodoEditModel =
         id = id,
         title = title,
         dueDate = parseIsoDateInput(dueDateText.orEmpty()),
+        dueTimeMinutes = dueTimeTextToMinutes(dueTimeText),
         categoryId = categoryId,
-        reminderAtEpochMillis = reminderDateTimeToEpochMillis(reminderDateTimeText.orEmpty()),
+        reminderAtEpochMillis = reminderAtEpochMillis,
         isReminderEnabled = isReminderEnabled,
-        reminderRepeatType = reminderRepeatType.normalizeRepeatType()
+        reminderRepeatType = reminderRepeatType.normalizeRepeatType(),
+        reminderLeadMinutes = reminderLeadMinutes
     )
 
 internal fun ReminderRepeatType.normalizeRepeatType(): ReminderRepeatType =
     if (this == ReminderRepeatType.CUSTOM_DAYS) ReminderRepeatType.NONE else this
+
+internal const val DEFAULT_REMINDER_LEAD_MINUTES = 10

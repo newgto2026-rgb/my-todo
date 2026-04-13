@@ -99,7 +99,6 @@ private fun TodoListScreen(
     val completionProgress = completionProgress(uiState)
     val rowCompletedText = stringResource(R.string.todo_row_subtitle_completed)
     val rowTodayText = stringResource(R.string.todo_row_subtitle_today)
-    val rowReminderFormat = stringResource(R.string.todo_row_subtitle_reminder)
     val uncategorizedText = stringResource(R.string.todo_category_uncategorized)
 
     Scaffold(
@@ -149,20 +148,37 @@ private fun TodoListScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(items = uiState.items, key = { item -> item.id }) { item ->
-                        val rowSubtitle = when {
-                            item.isDone -> rowCompletedText
-                            item.isReminderEnabled && !item.reminderDateTimeText.isNullOrBlank() -> {
-                                rowReminderFormat.format(item.reminderDateTimeText)
-                            }
+                        val dueDateLabel = when {
                             isToday(item.dueDateText) -> rowTodayText
                             !item.dueDateText.isNullOrBlank() -> formatDueDateLabel(item.dueDateText)
                             else -> null
                         }
+                        val dueLabel = buildDueLabel(dueDateLabel, item.dueTimeText)
+                        val leadLabel = when (item.reminderLeadMinutes) {
+                            0 -> stringResource(R.string.todo_reminder_lead_at_time)
+                            5 -> stringResource(R.string.todo_reminder_lead_5m)
+                            10 -> stringResource(R.string.todo_reminder_lead_10m)
+                            30 -> stringResource(R.string.todo_reminder_lead_30m)
+                            60 -> stringResource(R.string.todo_reminder_lead_60m)
+                            else -> null
+                        }
+                        val reminderLabel = if (item.isReminderEnabled && !leadLabel.isNullOrBlank() && !item.isDone) {
+                            leadLabel
+                        } else {
+                            null
+                        }
+                        val rowDueLabel = when {
+                            item.isDone -> rowCompletedText
+                            !dueLabel.isNullOrBlank() -> dueLabel
+                            else -> null
+                        }
                         TodoItemRow(
                             title = item.title,
-                            dueDateText = rowSubtitle,
+                            dueDateText = rowDueLabel,
+                            reminderText = reminderLabel,
                             isDone = item.isDone,
-                            isEmphasized = !item.isDone && rowSubtitle == rowTodayText,
+                            isEmphasized = !item.isDone && dueDateLabel == rowTodayText,
+                            isReminderEnabled = item.isReminderEnabled,
                             onToggleDone = { onAction(TodoListAction.OnToggleDone(item.id)) },
                             onClick = { onAction(TodoListAction.OnEditClick(item.id)) },
                             categoryName = item.categoryName ?: uncategorizedText,
@@ -185,17 +201,17 @@ private fun TodoListScreen(
         EditTodoBottomSheet(
             title = uiState.draftTitle,
             dueDateInput = uiState.draftDueDateInput,
+            dueTimeInput = uiState.draftDueTimeInput,
             reminderEnabled = uiState.draftReminderEnabled,
-            reminderDateTimeInput = uiState.draftReminderDateTimeInput,
-            reminderRepeatType = uiState.draftReminderRepeatType,
+            reminderLeadMinutes = uiState.draftReminderLeadMinutes ?: DEFAULT_REMINDER_LEAD_MINUTES,
             categories = uiState.categories,
             selectedCategoryId = uiState.draftCategoryId,
             errorMessageRes = uiState.errorMessageRes,
             onTitleChange = { onAction(TodoListAction.OnTitleChange(it)) },
             onDateInputChange = { onAction(TodoListAction.OnDueDateInputChange(it)) },
+            onDueTimeInputChange = { onAction(TodoListAction.OnDueTimeInputChange(it)) },
             onReminderEnabledChange = { onAction(TodoListAction.OnReminderEnabledChange(it)) },
-            onReminderDateTimeInputChange = { onAction(TodoListAction.OnReminderDateTimeInputChange(it)) },
-            onReminderRepeatTypeChange = { onAction(TodoListAction.OnReminderRepeatTypeChange(it)) },
+            onReminderLeadMinutesChange = { onAction(TodoListAction.OnReminderLeadMinutesChange(it)) },
             onCategorySelected = { onAction(TodoListAction.OnCategorySelectedInEditor(it)) },
             onManageCategoriesClick = { onAction(TodoListAction.OnManageCategoriesClick) },
             onDismiss = { onAction(TodoListAction.OnDismissDialog) },
@@ -255,6 +271,11 @@ private fun formatDueDateLabel(raw: String?): String? {
         val parsed = java.time.LocalDate.parse(raw, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE)
         parsed.format(java.time.format.DateTimeFormatter.ofPattern("MMM d", java.util.Locale.getDefault()))
     }.getOrDefault(raw)
+}
+
+private fun buildDueLabel(dueDate: String?, dueTime: String?): String? {
+    if (dueDate.isNullOrBlank()) return null
+    return if (dueTime.isNullOrBlank()) dueDate else "$dueDate $dueTime"
 }
 
 private fun isToday(raw: String?): Boolean {
