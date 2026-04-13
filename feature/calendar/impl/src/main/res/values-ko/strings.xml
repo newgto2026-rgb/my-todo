@@ -3,6 +3,11 @@
     <string name="calendar_month_navigation_next">다음 달</string>
     <string name="calendar_a11y_selected">선택된 날짜</string>
     <string name="calendar_a11y_today">오늘</string>
+    <string name="calendar_bottom_sheet_title">%1$s 할 일</string>
+    <string name="calendar_bottom_sheet_empty">이 날짜에는 할 일이 없습니다.</string>
+    <string name="calendar_bottom_sheet_all_day">종일</string>
+    <string name="calendar_bottom_sheet_done">완료</string>
+    <string name="calendar_bottom_sheet_pending">진행 중</string>
 
     <plurals name="calendar_a11y_todo_count">
         <item quantity="other">할 일 %d개</item>

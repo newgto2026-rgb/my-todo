@@ -6,4 +6,6 @@ sealed interface CalendarAction {
     data object OnPreviousMonthClick : CalendarAction
     data object OnNextMonthClick : CalendarAction
     data class OnDateClick(val date: LocalDate) : CalendarAction
+    data object OnBottomSheetDismiss : CalendarAction
+    data class OnTodoClick(val todoId: Long) : CalendarAction
 }

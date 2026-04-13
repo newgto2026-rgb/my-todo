@@ -31,6 +31,7 @@ android {
 
 dependencies {
     implementation(project(":feature:calendar:api"))
+    implementation(project(":feature:todo:api"))
     implementation(project(":core:model"))
     implementation(project(":core:domain"))
 

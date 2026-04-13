@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import com.example.myfirstapp.feature.calendar.api.CalendarFeatureEntry
 import com.example.myfirstapp.feature.calendar.api.CalendarRoute
 import com.example.myfirstapp.feature.calendar.impl.ui.screen.CalendarRouteScreen
+import com.example.myfirstapp.feature.todo.api.TodoEditRoute
 import javax.inject.Inject
 
 class CalendarFeatureEntryImpl @Inject constructor() : CalendarFeatureEntry {
@@ -13,7 +14,11 @@ class CalendarFeatureEntryImpl @Inject constructor() : CalendarFeatureEntry {
 
     override fun register(navGraphBuilder: NavGraphBuilder, navController: NavHostController) {
         navGraphBuilder.composable<CalendarRoute> {
-            CalendarRouteScreen()
+            CalendarRouteScreen(
+                onNavigateToTodoEdit = { todoId ->
+                    navController.navigate(TodoEditRoute(todoId))
+                }
+            )
         }
     }
 }
