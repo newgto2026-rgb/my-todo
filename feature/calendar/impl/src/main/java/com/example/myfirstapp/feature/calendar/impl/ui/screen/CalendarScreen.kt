@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -106,6 +107,7 @@ private fun CalendarScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
+                    modifier = Modifier.testTag("calendar_prev_month"),
                     onClick = { onAction(CalendarAction.OnPreviousMonthClick) }
                 ) {
                     Icon(
@@ -115,9 +117,11 @@ private fun CalendarScreen(
                 }
                 Text(
                     text = uiState.currentMonth.format(monthFormatter),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.testTag("calendar_month_label")
                 )
                 IconButton(
+                    modifier = Modifier.testTag("calendar_next_month"),
                     onClick = { onAction(CalendarAction.OnNextMonthClick) }
                 ) {
                     Icon(
@@ -226,6 +230,7 @@ private fun RowScope.CalendarDayCell(
         modifier = Modifier
             .weight(1f)
             .aspectRatio(1f)
+            .testTag("calendar_day_${day.date}")
             .clip(RoundedCornerShape(12.dp))
             .background(bgColor)
             .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(12.dp))
@@ -292,6 +297,7 @@ private fun DayTodoBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag("calendar_day_todo_sheet")
                 .padding(horizontal = 20.dp, vertical = 8.dp)
         ) {
             Text(
@@ -305,7 +311,9 @@ private fun DayTodoBottomSheet(
                     text = stringResource(R.string.calendar_bottom_sheet_empty),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 20.dp)
+                    modifier = Modifier
+                        .testTag("calendar_day_todo_sheet_empty")
+                        .padding(bottom = 20.dp)
                 )
                 return@Column
             }
@@ -336,6 +344,7 @@ private fun DayTodoItem(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
+            .testTag("calendar_day_todo_item_${todo.id}")
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         color = colors.surfaceVariant.copy(alpha = 0.45f)
