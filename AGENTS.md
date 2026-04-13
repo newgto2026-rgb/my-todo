@@ -29,7 +29,36 @@
 - Hilt DI
 - Navigation Compose
 - Room + DataStore
+- Retrofit + OkHttp
 - WorkManager
+
+## Engineering Defaults
+- Architecture: Keep UI strictly state-driven and immutable (`UiState` 중심), one-off events via `SideEffect`.
+- Data/Network: Prefer explicit mapper/contract boundaries; use `kotlinx.serialization` for serialization.
+- Testing: Prioritize unit tests for ViewModel/use case first, use fakes in local tests, and avoid implementation-coupled brittle tests.
+- Quality: Keep public contracts stable and list touched modules in work summaries.
+- Performance/Compose: Minimize unnecessary recomposition and apply stability annotations (`@Stable`, `@Immutable`) where valid.
+
+## Architecture Conventions
+- Keep side effects in ViewModel/use case layers, not inside composables.
+- Prefer immutable models and explicit mapper functions between layer boundaries.
+- Use `Result` or standardized error model for failure paths across data/domain.
+
+## Data And API Conventions
+- For paginated lists, use Paging 3 by default.
+- Keep transport/DTO models separate from domain models.
+- Keep repository contracts focused by concern and avoid feature leakage into core layers.
+- Keep preference/database keys and schema evolution migration-safe.
+
+## Testing And Quality Gates
+- Prioritize unit tests for use cases and ViewModels; add UI tests for key user flows.
+- Use Turbine for Flow testing and shared fakes/rules from `core:testing`.
+- Keep tests meaningful and behavior-oriented rather than implementation-coupled.
+
+## Build And Operations
+- Prefer Gradle convention-plugin style build organization (`build-logic`) when build complexity grows.
+- Keep lint and test tasks runnable per module and at repo root.
+- Use structured logging and crash-reporting-ready error context for operational visibility.
 
 ## Module Index
 | Gradle Module | Guide Path | Responsibility |
@@ -58,5 +87,7 @@
 ## Common Commands
 - Build app: `./gradlew assembleDebug`
 - Unit tests: `./gradlew testDebugUnitTest`
+- Single test: `./gradlew testDebugUnitTest --tests "com.example.MyTest"`
+- Instrumentation tests: `./gradlew connectedDebugAndroidTest`
 - Module unit tests: `./gradlew :<module>:testDebugUnitTest`
 - Module lint: `./gradlew :<module>:lintDebug`
