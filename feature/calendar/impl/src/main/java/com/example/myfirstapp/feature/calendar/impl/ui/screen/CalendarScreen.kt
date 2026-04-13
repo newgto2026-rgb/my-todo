@@ -30,8 +30,6 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -93,6 +91,7 @@ private fun CalendarScreen(
 ) {
     val locale = Locale.getDefault()
     val monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", locale)
+    val selectedDateLabel = uiState.selectedDate.format(DateTimeFormatter.ofPattern("yyyy MMM d", locale))
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -137,30 +136,55 @@ private fun CalendarScreen(
             WeekdayHeaderRow()
             Spacer(modifier = Modifier.height(8.dp))
 
-            uiState.days.chunked(7).forEach { week ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
+                uiState.days.chunked(7).forEach { week ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
                     week.forEach { day ->
                         CalendarDayCell(
                             day = day,
                             onClick = { date -> onAction(CalendarAction.OnDateClick(date)) }
                         )
                     }
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
                 }
-                Spacer(modifier = Modifier.height(6.dp))
+
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                text = stringResource(R.string.calendar_bottom_sheet_title, selectedDateLabel),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.testTag("calendar_day_todo_list_title")
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            if (uiState.selectedDateTodos.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.calendar_bottom_sheet_empty),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .testTag("calendar_day_todo_list_empty")
+                        .padding(bottom = 20.dp)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f, fill = false),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(items = uiState.selectedDateTodos, key = { it.id }) { todo ->
+                        DayTodoItem(
+                            todo = todo,
+                            onClick = { onAction(CalendarAction.OnTodoClick(todo.id)) }
+                        )
+                    }
+                    item { Spacer(modifier = Modifier.height(20.dp)) }
+                }
             }
         }
-    }
-
-    if (uiState.isDayTodoSheetVisible) {
-        DayTodoBottomSheet(
-            selectedDate = uiState.selectedDate,
-            todos = uiState.selectedDateTodos,
-            onTodoClick = { onAction(CalendarAction.OnTodoClick(it)) },
-            onDismiss = { onAction(CalendarAction.OnBottomSheetDismiss) }
-        )
     }
 }
 
@@ -280,58 +304,6 @@ private fun RowScope.CalendarDayCell(
 
         if (totalCount == 0) {
             Spacer(modifier = Modifier.height(8.dp).alpha(0f))
-        }
-    }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun DayTodoBottomSheet(
-    selectedDate: java.time.LocalDate,
-    todos: List<CalendarSelectedTodoUiModel>,
-    onTodoClick: (Long) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val locale = Locale.getDefault()
-    val dateLabel = selectedDate.format(DateTimeFormatter.ofPattern("yyyy MMM d", locale))
-
-    ModalBottomSheet(onDismissRequest = onDismiss) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("calendar_day_todo_sheet")
-                .padding(horizontal = 20.dp, vertical = 8.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.calendar_bottom_sheet_title, dateLabel),
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-
-            if (todos.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.calendar_bottom_sheet_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .testTag("calendar_day_todo_sheet_empty")
-                        .padding(bottom = 20.dp)
-                )
-                return@Column
-            }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(items = todos, key = { it.id }) { todo ->
-                    DayTodoItem(
-                        todo = todo,
-                        onClick = { onTodoClick(todo.id) }
-                    )
-                }
-                item { Spacer(modifier = Modifier.height(20.dp)) }
-            }
         }
     }
 }

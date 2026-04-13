@@ -31,7 +31,6 @@ class CalendarViewModelTest {
 
         assertThat(state.currentMonth).isEqualTo(java.time.YearMonth.from(today))
         assertThat(state.selectedDate).isEqualTo(today)
-        assertThat(state.isDayTodoSheetVisible).isFalse()
     }
 
     @Test
@@ -51,7 +50,7 @@ class CalendarViewModelTest {
     }
 
     @Test
-    fun dateClickAction_updatesSelectedDate_andOpensSheet() = runTest {
+    fun dateClickAction_updatesSelectedDate() = runTest {
         val viewModel = createViewModel(FakeTodoRepository())
         val targetDate = viewModel.uiState.value.currentMonth.atDay(15)
 
@@ -59,24 +58,10 @@ class CalendarViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.uiState.value.selectedDate).isEqualTo(targetDate)
-        assertThat(viewModel.uiState.value.isDayTodoSheetVisible).isTrue()
     }
 
     @Test
-    fun bottomSheetDismissAction_hidesSheet() = runTest {
-        val viewModel = createViewModel(FakeTodoRepository())
-        val targetDate = viewModel.uiState.value.currentMonth.atDay(15)
-
-        viewModel.onAction(CalendarAction.OnDateClick(targetDate))
-        advanceUntilIdle()
-        viewModel.onAction(CalendarAction.OnBottomSheetDismiss)
-        advanceUntilIdle()
-
-        assertThat(viewModel.uiState.value.isDayTodoSheetVisible).isFalse()
-    }
-
-    @Test
-    fun todoClickAction_emitsNavigateSideEffect_andClosesSheet() = runTest {
+    fun todoClickAction_emitsNavigateSideEffect() = runTest {
         val repository = FakeTodoRepository()
         val viewModel = createViewModel(repository)
         val targetDate = viewModel.uiState.value.currentMonth.atDay(10)
@@ -100,7 +85,6 @@ class CalendarViewModelTest {
         advanceUntilIdle()
 
         assertThat(emitted.await()).isEqualTo(CalendarSideEffect.NavigateToTodoEdit(todoId))
-        assertThat(viewModel.uiState.value.isDayTodoSheetVisible).isFalse()
     }
 
     @Test

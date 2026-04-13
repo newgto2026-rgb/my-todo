@@ -11,8 +11,7 @@ data class CalendarUiState(
     val selectedDate: LocalDate,
     val days: List<CalendarDayUiModel>,
     val summariesByDate: Map<LocalDate, DateTodoSummary>,
-    val selectedDateTodos: List<CalendarSelectedTodoUiModel>,
-    val isDayTodoSheetVisible: Boolean
+    val selectedDateTodos: List<CalendarSelectedTodoUiModel>
 )
 
 @Immutable

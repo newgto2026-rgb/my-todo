@@ -37,7 +37,6 @@ class CalendarViewModel @Inject constructor(
 
     private val monthState = MutableStateFlow(YearMonth.now())
     private val selectedDateState = MutableStateFlow(LocalDate.now())
-    private val isDayTodoSheetVisibleState = MutableStateFlow(false)
     private val sideEffectMutable = MutableSharedFlow<CalendarSideEffect>()
 
     val sideEffect = sideEffectMutable.asSharedFlow()
@@ -78,9 +77,8 @@ class CalendarViewModel @Inject constructor(
         monthState,
         selectedDateState,
         summariesByDate,
-        selectedDateTodos,
-        isDayTodoSheetVisibleState
-    ) { currentMonth, selectedDate, summaries, dateTodos, isSheetVisible ->
+        selectedDateTodos
+    ) { currentMonth, selectedDate, summaries, dateTodos ->
         val adjustedSelectedDate = selectedDate.normalizeToMonth(currentMonth)
         if (adjustedSelectedDate != selectedDateState.value) {
             selectedDateState.value = adjustedSelectedDate
@@ -95,8 +93,7 @@ class CalendarViewModel @Inject constructor(
                 summariesByDate = summaries
             ),
             summariesByDate = summaries,
-            selectedDateTodos = dateTodos,
-            isDayTodoSheetVisible = isSheetVisible
+            selectedDateTodos = dateTodos
         )
     }.stateIn(
         scope = viewModelScope,
@@ -106,8 +103,7 @@ class CalendarViewModel @Inject constructor(
             selectedDate = selectedDateState.value.normalizeToMonth(monthState.value),
             days = emptyList(),
             summariesByDate = emptyMap(),
-            selectedDateTodos = emptyList(),
-            isDayTodoSheetVisible = false
+            selectedDateTodos = emptyList()
         )
     )
 
@@ -117,18 +113,12 @@ class CalendarViewModel @Inject constructor(
             CalendarAction.OnPreviousMonthClick -> moveMonthBy(-1)
             is CalendarAction.OnDateClick -> {
                 selectedDateState.value = action.date
-                isDayTodoSheetVisibleState.value = true
-            }
-
-            CalendarAction.OnBottomSheetDismiss -> {
-                isDayTodoSheetVisibleState.value = false
             }
 
             is CalendarAction.OnTodoClick -> {
                 viewModelScope.launch {
                     sideEffectMutable.emit(CalendarSideEffect.NavigateToTodoEdit(action.todoId))
                 }
-                isDayTodoSheetVisibleState.value = false
             }
         }
     }
