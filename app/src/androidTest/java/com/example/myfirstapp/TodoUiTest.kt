@@ -43,6 +43,7 @@ class TodoUiTest {
         tabNode("all").assertIsSelected()
         tabNode("today").assertIsNotSelected()
         tabNode("completed").assertIsNotSelected()
+        tabNode("calendar").assertIsNotSelected()
     }
 
     @Test

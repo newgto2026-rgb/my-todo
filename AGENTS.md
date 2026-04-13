@@ -81,6 +81,9 @@
 | `:feature:todo:api` | `feature/todo/api/AGENTS.md` | Todo public contracts/routes |
 | `:feature:todo:impl` | `feature/todo/impl/AGENTS.md` | Todo UI + ViewModel + feature logic |
 | `:feature:todo:entry` | `feature/todo/entry/AGENTS.md` | App wiring/bindings for todo entry |
+| `:feature:calendar:api` | `feature/calendar/api/AGENTS.md` | Calendar public contracts/routes |
+| `:feature:calendar:impl` | `feature/calendar/impl/AGENTS.md` | Calendar UI + feature logic |
+| `:feature:calendar:entry` | `feature/calendar/entry/AGENTS.md` | App wiring/bindings for calendar entry |
 
 ## Current Dependency Shape
 - `app -> feature:*:api, feature:*:entry, core:*`

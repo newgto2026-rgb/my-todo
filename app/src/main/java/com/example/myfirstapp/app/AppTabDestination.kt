@@ -2,6 +2,7 @@ package com.example.myfirstapp.app
 
 import androidx.annotation.StringRes
 import com.example.myfirstapp.R
+import com.example.myfirstapp.feature.calendar.api.CalendarRoute
 import com.example.myfirstapp.feature.todo.api.TodoAllRoute
 import com.example.myfirstapp.feature.todo.api.TodoCompletedRoute
 import com.example.myfirstapp.feature.todo.api.TodoTodayRoute
@@ -21,6 +22,10 @@ enum class AppTabDestination(
     COMPLETED(
         route = requireNotNull(TodoCompletedRoute::class.qualifiedName),
         labelRes = R.string.tab_completed
+    ),
+    CALENDAR(
+        route = requireNotNull(CalendarRoute::class.qualifiedName),
+        labelRes = R.string.tab_calendar
     );
 
     companion object {

@@ -4,9 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -118,8 +119,9 @@ private fun AppBottomBar(
         AppTabDestination.tabs.forEach { tab ->
             val icon = when (tab) {
                 AppTabDestination.ALL -> Icons.Default.GridView
-                AppTabDestination.TODAY -> Icons.Default.CalendarMonth
+                AppTabDestination.TODAY -> Icons.Default.Today
                 AppTabDestination.COMPLETED -> Icons.Default.CheckCircle
+                AppTabDestination.CALENDAR -> Icons.Default.DateRange
             }
             NavigationBarItem(
                 selected = selectedTab == tab,

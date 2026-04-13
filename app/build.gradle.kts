@@ -51,6 +51,8 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
+    implementation(project(":feature:calendar:api"))
+    implementation(project(":feature:calendar:entry"))
     implementation(project(":feature:todo:api"))
     implementation(project(":feature:todo:entry"))
 
@@ -74,6 +76,7 @@ dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     testImplementation(libs.junit)
+    testImplementation(libs.truth)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
