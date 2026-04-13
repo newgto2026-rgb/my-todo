@@ -44,7 +44,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -81,18 +80,16 @@ internal fun EditTodoBottomSheet(
     onDelete: () -> Unit,
     showDelete: Boolean
 ) {
-    val focusManager = LocalFocusManager.current
     var hasFocusedInput by remember { mutableStateOf(false) }
-    BackHandler(enabled = true) {
-        if (hasFocusedInput) {
-            focusManager.clearFocus(force = true)
-        } else {
-            onDismiss()
-        }
-    }
-
     var showDatePicker by remember { mutableStateOf(false) }
     var showReminderDatePicker by remember { mutableStateOf(false) }
+    BackHandler(enabled = true) {
+        when {
+            showDatePicker -> showDatePicker = false
+            showReminderDatePicker -> showReminderDatePicker = false
+            else -> onDismiss()
+        }
+    }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
         confirmValueChange = { newValue -> newValue != SheetValue.Hidden }
@@ -114,9 +111,9 @@ internal fun EditTodoBottomSheet(
 
     ModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = {},
+        onDismissRequest = onDismiss,
         properties = ModalBottomSheetProperties(
-            shouldDismissOnBackPress = false
+            shouldDismissOnBackPress = true
         ),
         containerColor = Color(0xFFF6F7FB),
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),

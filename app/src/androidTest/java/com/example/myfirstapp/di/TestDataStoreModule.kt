@@ -25,10 +25,16 @@ object TestDataStoreModule {
 
 private class InMemoryUserPreferencesDataSource : UserPreferencesDataSource {
     private val selectedFilter = MutableStateFlow(TodoFilter.ALL)
+    private val selectedCategoryFilter = MutableStateFlow<Long?>(null)
 
     override val selectedTodoFilter: Flow<TodoFilter> = selectedFilter
+    override val selectedTodoCategoryFilter: Flow<Long?> = selectedCategoryFilter
 
     override suspend fun setSelectedTodoFilter(filter: TodoFilter) {
         selectedFilter.value = filter
+    }
+
+    override suspend fun setSelectedTodoCategoryFilter(categoryId: Long?) {
+        selectedCategoryFilter.value = categoryId
     }
 }

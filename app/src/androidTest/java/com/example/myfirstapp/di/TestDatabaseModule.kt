@@ -3,6 +3,8 @@ package com.example.myfirstapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.myfirstapp.core.database.AppDatabase
+import com.example.myfirstapp.core.database.dao.CategoryDao
+import com.example.myfirstapp.core.database.dao.ReminderDao
 import com.example.myfirstapp.core.database.dao.TodoDao
 import com.example.myfirstapp.core.database.di.DatabaseModule
 import dagger.Module
@@ -28,4 +30,10 @@ object TestDatabaseModule {
 
     @Provides
     fun provideTodoDao(database: AppDatabase): TodoDao = database.todoDao()
+
+    @Provides
+    fun provideCategoryDao(database: AppDatabase): CategoryDao = database.categoryDao()
+
+    @Provides
+    fun provideReminderDao(database: AppDatabase): ReminderDao = database.reminderDao()
 }

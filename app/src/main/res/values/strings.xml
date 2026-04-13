@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">MyFirstApp</string>
     <string name="todo_reminder_notification_title">Todo reminder</string>
+    <string name="tab_all">All</string>
+    <string name="tab_today">Today</string>
+    <string name="tab_completed">Completed</string>
 </resources>

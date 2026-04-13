@@ -22,6 +22,8 @@
 - Put user-visible strings in resources (`values`, `values-ko`).
 - Use type-safe navigation contracts in `feature:*:api` when possible.
 - Do not add `core:* -> feature:*` dependencies.
+- Top-level tabs must map to implemented feature routes only; do not add placeholder tabs/screens in `:app`.
+- Tab icons must use explicit icon assets (e.g., Material icons), not text glyph substitutes.
 
 ## Tech Baseline
 - Kotlin + Coroutines

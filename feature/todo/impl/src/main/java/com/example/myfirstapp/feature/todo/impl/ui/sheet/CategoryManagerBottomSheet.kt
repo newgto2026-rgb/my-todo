@@ -42,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
@@ -65,15 +64,8 @@ internal fun CategoryManagerBottomSheet(
     onSaveCategoryClick: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
     var focusedInputCount by remember { mutableIntStateOf(0) }
-    BackHandler(enabled = true) {
-        if (focusedInputCount > 0) {
-            focusManager.clearFocus(force = true)
-        } else {
-            onDismiss()
-        }
-    }
+    BackHandler(enabled = true) { onDismiss() }
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -81,9 +73,9 @@ internal fun CategoryManagerBottomSheet(
     )
     ModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = {},
+        onDismissRequest = onDismiss,
         properties = ModalBottomSheetProperties(
-            shouldDismissOnBackPress = false
+            shouldDismissOnBackPress = true
         ),
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
