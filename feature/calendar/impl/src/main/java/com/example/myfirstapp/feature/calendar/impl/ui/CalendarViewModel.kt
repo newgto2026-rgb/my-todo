@@ -186,7 +186,7 @@ internal fun LocalDate.normalizeToMonth(targetMonth: YearMonth): LocalDate {
 internal fun DayOfWeek.distanceFrom(other: DayOfWeek): Int =
     (value - other.value + 7) % 7
 
-private fun TodoItem.toSelectedTodoUiModel(): CalendarSelectedTodoUiModel =
+internal fun TodoItem.toSelectedTodoUiModel(): CalendarSelectedTodoUiModel =
     CalendarSelectedTodoUiModel(
         id = id,
         title = title,
