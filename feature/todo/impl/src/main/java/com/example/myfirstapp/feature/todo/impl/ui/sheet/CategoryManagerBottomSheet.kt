@@ -1,6 +1,5 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
-import android.graphics.Color.parseColor
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
 import com.example.myfirstapp.feature.todo.impl.R
 
@@ -234,7 +234,7 @@ private fun ColorSwatch(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val color = runCatching { Color(parseColor(hex)) }.getOrElse { Color(0xFFB0B7C5) }
+    val color = runCatching { Color(hex.toColorInt()) }.getOrElse { Color(0xFFB0B7C5) }
     Box(
         modifier = Modifier
             .size(30.dp)

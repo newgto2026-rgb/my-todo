@@ -16,8 +16,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalWindowInfo
 import com.example.myfirstapp.core.model.TodoCategoryFilter
 import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
 import androidx.compose.ui.res.stringResource
@@ -31,8 +32,10 @@ internal fun CategoryFilterBar(
     onCategorySelected: (Long?) -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp
-    val chipsPerRow = max(2, screenWidthDp / 110)
+    val containerWidthDp = with(LocalDensity.current) {
+        LocalWindowInfo.current.containerSize.width.toDp().value
+    }
+    val chipsPerRow = max(2, (containerWidthDp / 110f).toInt())
     val chips = buildList {
         add(
             CategoryChipData(
