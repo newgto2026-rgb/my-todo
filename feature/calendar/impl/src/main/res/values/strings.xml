@@ -1,4 +1,11 @@
 <resources>
-    <string name="calendar_screen_title">Calendar</string>
-    <string name="calendar_screen_subtitle">Epic 1 skeleton is connected.</string>
+    <string name="calendar_month_navigation_previous">Previous month</string>
+    <string name="calendar_month_navigation_next">Next month</string>
+    <string name="calendar_a11y_selected">Selected date</string>
+    <string name="calendar_a11y_today">Today</string>
+
+    <plurals name="calendar_a11y_todo_count">
+        <item quantity="one">%d todo</item>
+        <item quantity="other">%d todos</item>
+    </plurals>
 </resources>
