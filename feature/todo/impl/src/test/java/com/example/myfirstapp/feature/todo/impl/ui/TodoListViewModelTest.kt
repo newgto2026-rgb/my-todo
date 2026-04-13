@@ -32,6 +32,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -287,6 +288,15 @@ class TodoListViewModelTest {
         }
 
         override fun observeTodos(): Flow<List<TodoItem>> = todos.asStateFlow()
+
+        override fun observeTodosByDueDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<TodoItem>> =
+            todos.asStateFlow()
+                .map { items ->
+                    items.filter { todo ->
+                        val dueDate = todo.dueDate ?: return@filter false
+                        !dueDate.isBefore(startDate) && !dueDate.isAfter(endDate)
+                    }
+                }
 
         override suspend fun getTodo(id: Long): TodoItem? = todos.value.firstOrNull { it.id == id }
 
