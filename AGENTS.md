@@ -62,6 +62,9 @@
 - Keep lint and test tasks runnable per module and at repo root.
 - Use structured logging and crash-reporting-ready error context for operational visibility.
 
+## PR Description Standard
+- Every PR description must follow `.github/pull_request_template.md`.
+
 ## Module Index
 | Gradle Module | Guide Path | Responsibility |
 |---|---|---|
