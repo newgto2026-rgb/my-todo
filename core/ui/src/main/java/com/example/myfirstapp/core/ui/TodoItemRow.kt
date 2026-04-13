@@ -1,7 +1,6 @@
 package com.example.myfirstapp.core.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -47,41 +45,45 @@ fun TodoItemRow(
     categoryColorHex: String? = null
 ) {
     val containerColor = when {
-        isDone -> Color(0xFFF1F2F8)
-        isEmphasized -> Color(0xFFE8EBF4)
-        else -> Color.White
+        isDone -> Color(0xFFD5DBE1)
+        isEmphasized -> Color(0xFFF1F4F8)
+        else -> Color(0xFFFFFFFF)
     }
     val subtitleColor = when {
-        isDone -> Color(0xFFB2B7C4)
-        isEmphasized -> Color(0xFF4A6697)
-        else -> Color(0xFF7F8491)
+        isDone -> Color(0xFF5A6065).copy(alpha = 0.45f)
+        else -> Color(0xFF5A6065)
     }
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(20.dp))
             .background(containerColor)
             .clickable(onClick = onClick)
-            .padding(horizontal = 18.dp, vertical = 18.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Row(
+        Box(
             modifier = Modifier
-                .size(28.dp)
-                .clip(CircleShape)
-                .background(if (isDone) Color(0xFF7388B3) else Color.Transparent)
-                .border(width = 2.dp, color = Color(0xFFB8C3D9), shape = CircleShape)
+                .size(24.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(if (isDone) Color(0xFF6C63FF) else Color.Transparent)
                 .clickable(onClick = onToggleDone),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            contentAlignment = Alignment.Center
         ) {
             if (isDone) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(15.dp)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFFD8E2FF))
                 )
             }
         }
@@ -96,7 +98,7 @@ fun TodoItemRow(
                     text = title,
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = if (isDone) Color(0xFF9AA0AF) else Color(0xFF2F3441),
+                    color = if (isDone) Color(0xFF2D3338).copy(alpha = 0.5f) else Color(0xFF2D3338),
                     textDecoration = if (isDone) TextDecoration.LineThrough else null,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -111,20 +113,22 @@ fun TodoItemRow(
             }
             if (dueDateText != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (!isDone && !isEmphasized) {
-                        CalendarDot()
-                    }
+                    Text(
+                        text = "·",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = subtitleColor
+                    )
+                    Spacer(Modifier.size(2.dp))
                     Text(
                         text = dueDateText,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = subtitleColor,
-                        modifier = Modifier.padding(start = if (!isDone && !isEmphasized) 4.dp else 0.dp)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = subtitleColor
                     )
                     if (isReminderEnabled && !reminderText.isNullOrBlank()) {
                         Spacer(Modifier.size(6.dp))
                         Text(
                             text = "·",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodySmall,
                             color = subtitleColor
                         )
                         Spacer(Modifier.size(6.dp))
@@ -137,8 +141,8 @@ fun TodoItemRow(
                         Spacer(Modifier.size(4.dp))
                         Text(
                             text = reminderText,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = subtitleColor,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = subtitleColor
                         )
                     }
                 }
@@ -153,7 +157,7 @@ fun TodoItemRow(
                     Spacer(Modifier.size(4.dp))
                     Text(
                         text = reminderText,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodySmall,
                         color = subtitleColor
                     )
                 }
@@ -184,21 +188,4 @@ private fun CategoryBadge(
 private fun parseHexOrNull(value: String?): Color? {
     if (value.isNullOrBlank()) return null
     return runCatching { Color(value.toColorInt()) }.getOrNull()
-}
-
-@Composable
-private fun CalendarDot() {
-    Box(
-        modifier = Modifier
-            .size(12.dp)
-            .border(width = 1.dp, color = Color(0xFFB5BBC8), shape = RoundedCornerShape(3.dp))
-            .padding(1.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(3.dp)
-                .background(Color(0xFFB5BBC8), shape = RoundedCornerShape(2.dp))
-        )
-    }
 }
