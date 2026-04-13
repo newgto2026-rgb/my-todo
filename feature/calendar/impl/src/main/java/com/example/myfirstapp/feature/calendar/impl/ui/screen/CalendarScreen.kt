@@ -16,17 +16,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,9 +45,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import com.example.myfirstapp.feature.calendar.impl.R
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarAction
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarDayUiModel
+import com.example.myfirstapp.feature.calendar.impl.ui.CalendarSelectedTodoUiModel
+import com.example.myfirstapp.feature.calendar.impl.ui.CalendarSideEffect
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarUiState
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarViewModel
 import java.time.DayOfWeek
@@ -48,12 +59,24 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.Locale
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
 
 @Composable
-fun CalendarRouteScreen(viewModel: CalendarViewModel = hiltViewModel()) {
+fun CalendarRouteScreen(
+    onNavigateToTodoEdit: (Long) -> Unit,
+    viewModel: CalendarViewModel = hiltViewModel()
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                is CalendarSideEffect.NavigateToTodoEdit -> {
+                    onNavigateToTodoEdit(sideEffect.todoId)
+                }
+            }
+        }
+    }
+
     CalendarScreen(
         uiState = uiState,
         onAction = viewModel::onAction
@@ -123,6 +146,15 @@ private fun CalendarScreen(
                 Spacer(modifier = Modifier.height(6.dp))
             }
         }
+    }
+
+    if (uiState.isDayTodoSheetVisible) {
+        DayTodoBottomSheet(
+            selectedDate = uiState.selectedDate,
+            todos = uiState.selectedDateTodos,
+            onTodoClick = { onAction(CalendarAction.OnTodoClick(it)) },
+            onDismiss = { onAction(CalendarAction.OnBottomSheetDismiss) }
+        )
     }
 }
 
@@ -241,6 +273,106 @@ private fun RowScope.CalendarDayCell(
 
         if (totalCount == 0) {
             Spacer(modifier = Modifier.height(8.dp).alpha(0f))
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun DayTodoBottomSheet(
+    selectedDate: java.time.LocalDate,
+    todos: List<CalendarSelectedTodoUiModel>,
+    onTodoClick: (Long) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val locale = Locale.getDefault()
+    val dateLabel = selectedDate.format(DateTimeFormatter.ofPattern("yyyy MMM d", locale))
+
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.calendar_bottom_sheet_title, dateLabel),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (todos.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.calendar_bottom_sheet_empty),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 20.dp)
+                )
+                return@Column
+            }
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(items = todos, key = { it.id }) { todo ->
+                    DayTodoItem(
+                        todo = todo,
+                        onClick = { onTodoClick(todo.id) }
+                    )
+                }
+                item { Spacer(modifier = Modifier.height(20.dp)) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DayTodoItem(
+    todo: CalendarSelectedTodoUiModel,
+    onClick: () -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        color = colors.surfaceVariant.copy(alpha = 0.45f)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = if (todo.isDone) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                contentDescription = null,
+                tint = if (todo.isDone) colors.primary else colors.onSurfaceVariant
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = todo.title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = colors.onSurface
+                )
+                Text(
+                    text = todo.reminderTimeLabel ?: stringResource(R.string.calendar_bottom_sheet_all_day),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.onSurfaceVariant
+                )
+            }
+            Text(
+                text = if (todo.isDone) {
+                    stringResource(R.string.calendar_bottom_sheet_done)
+                } else {
+                    stringResource(R.string.calendar_bottom_sheet_pending)
+                },
+                style = MaterialTheme.typography.labelMedium,
+                color = if (todo.isDone) colors.primary else colors.onSurfaceVariant
+            )
         }
     }
 }

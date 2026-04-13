@@ -41,6 +41,7 @@ import com.example.myfirstapp.feature.todo.impl.R
 @Composable
 fun TodoListRoute(
     presetFilter: TodoFilter,
+    initialEditTodoId: Long? = null,
     viewModel: TodoListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -62,6 +63,12 @@ fun TodoListRoute(
     LaunchedEffect(presetFilter, uiState.selectedFilter) {
         if (uiState.selectedFilter != presetFilter) {
             viewModel.onAction(TodoListAction.OnFilterChange(presetFilter))
+        }
+    }
+
+    LaunchedEffect(initialEditTodoId) {
+        if (initialEditTodoId != null) {
+            viewModel.onAction(TodoListAction.OnEditClick(initialEditTodoId))
         }
     }
 

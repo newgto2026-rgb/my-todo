@@ -10,7 +10,9 @@ data class CalendarUiState(
     val currentMonth: YearMonth,
     val selectedDate: LocalDate,
     val days: List<CalendarDayUiModel>,
-    val summariesByDate: Map<LocalDate, DateTodoSummary>
+    val summariesByDate: Map<LocalDate, DateTodoSummary>,
+    val selectedDateTodos: List<CalendarSelectedTodoUiModel>,
+    val isDayTodoSheetVisible: Boolean
 )
 
 @Immutable
@@ -21,4 +23,12 @@ data class CalendarDayUiModel(
     val isSelected: Boolean,
     val indicatorCount: Int,
     val overflowCount: Int
+)
+
+@Immutable
+data class CalendarSelectedTodoUiModel(
+    val id: Long,
+    val title: String,
+    val isDone: Boolean,
+    val reminderTimeLabel: String?
 )
