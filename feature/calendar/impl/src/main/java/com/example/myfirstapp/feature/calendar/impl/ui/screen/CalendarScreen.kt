@@ -24,7 +24,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -340,6 +342,15 @@ private fun DayTodoItem(
     onClick: () -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
+    val dueText = todo.dueTimeLabel ?: stringResource(R.string.calendar_bottom_sheet_all_day)
+    val reminderText = when (todo.reminderLeadMinutes) {
+        0 -> stringResource(R.string.calendar_reminder_lead_at_time)
+        5 -> stringResource(R.string.calendar_reminder_lead_5m)
+        10 -> stringResource(R.string.calendar_reminder_lead_10m)
+        30 -> stringResource(R.string.calendar_reminder_lead_30m)
+        60 -> stringResource(R.string.calendar_reminder_lead_60m)
+        else -> null
+    }
 
     Surface(
         modifier = Modifier
@@ -367,11 +378,40 @@ private fun DayTodoItem(
                     style = MaterialTheme.typography.bodyLarge,
                     color = colors.onSurface
                 )
-                Text(
-                    text = todo.reminderTimeLabel ?: stringResource(R.string.calendar_bottom_sheet_all_day),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = colors.onSurfaceVariant
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Schedule,
+                        contentDescription = null,
+                        tint = colors.onSurfaceVariant,
+                        modifier = Modifier.size(13.dp)
+                    )
+                    Text(
+                        text = dueText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.onSurfaceVariant
+                    )
+                    if (todo.isReminderEnabled && !reminderText.isNullOrBlank()) {
+                        Text(
+                            text = "·",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.onSurfaceVariant
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            tint = colors.onSurfaceVariant,
+                            modifier = Modifier.size(13.dp)
+                        )
+                        Text(
+                            text = reminderText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.onSurfaceVariant
+                        )
+                    }
+                }
             }
             Text(
                 text = if (todo.isDone) {

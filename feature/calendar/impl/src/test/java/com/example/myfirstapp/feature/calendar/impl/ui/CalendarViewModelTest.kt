@@ -173,6 +173,34 @@ class CalendarViewModelTest {
         assertThat(state.summariesByDate[inMonthDate]?.indicatorCount).isEqualTo(1)
     }
 
+    @Test
+    fun selectedDateTodos_mapReminderFields() = runTest {
+        val repository = FakeTodoRepository()
+        val viewModel = createViewModel(repository)
+        val selectedDate = viewModel.uiState.value.currentMonth.atDay(8)
+
+        repository.addTodo(
+            title = "Reminder mapped",
+            dueDate = selectedDate,
+            categoryId = null,
+            dueTimeMinutes = 9 * 60 + 30,
+            reminderAtEpochMillis = 0L,
+            isReminderEnabled = true,
+            reminderRepeatType = ReminderRepeatType.NONE,
+            reminderRepeatDaysMask = 0,
+            reminderLeadMinutes = 10
+        )
+        advanceUntilIdle()
+
+        viewModel.onAction(CalendarAction.OnDateClick(selectedDate))
+        advanceUntilIdle()
+
+        val todo = viewModel.uiState.value.selectedDateTodos.single()
+        assertThat(todo.isReminderEnabled).isTrue()
+        assertThat(todo.reminderLeadMinutes).isEqualTo(10)
+        assertThat(todo.dueTimeLabel).isNotNull()
+    }
+
     private fun createViewModel(repository: FakeTodoRepository): CalendarViewModel =
         CalendarViewModel(
             observeMonthlyTodoSummariesUseCase = ObserveMonthlyTodoSummariesUseCase(

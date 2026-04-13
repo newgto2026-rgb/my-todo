@@ -191,9 +191,20 @@ internal fun TodoItem.toSelectedTodoUiModel(): CalendarSelectedTodoUiModel =
         id = id,
         title = title,
         isDone = isDone,
-        reminderTimeLabel = reminderAtEpochMillis
-            ?.let(Instant::ofEpochMilli)
-            ?.atZone(java.time.ZoneId.systemDefault())
-            ?.toLocalTime()
-            ?.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+        isReminderEnabled = isReminderEnabled,
+        dueTimeLabel = dueTimeMinutes?.let(::formatLocalTimeFromMinutes)
+            ?: reminderAtEpochMillis?.let(::formatLocalTimeFromEpochMillis),
+        reminderLeadMinutes = reminderLeadMinutes
     )
+
+private fun formatLocalTimeFromMinutes(minutes: Int): String {
+    val normalized = ((minutes % (24 * 60)) + (24 * 60)) % (24 * 60)
+    return java.time.LocalTime.of(normalized / 60, normalized % 60)
+        .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+}
+
+private fun formatLocalTimeFromEpochMillis(epochMillis: Long): String =
+    Instant.ofEpochMilli(epochMillis)
+        .atZone(java.time.ZoneId.systemDefault())
+        .toLocalTime()
+        .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))

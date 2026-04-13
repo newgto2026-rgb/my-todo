@@ -30,5 +30,7 @@ data class CalendarSelectedTodoUiModel(
     val id: Long,
     val title: String,
     val isDone: Boolean,
-    val reminderTimeLabel: String?
+    val isReminderEnabled: Boolean,
+    val dueTimeLabel: String?,
+    val reminderLeadMinutes: Int?
 )

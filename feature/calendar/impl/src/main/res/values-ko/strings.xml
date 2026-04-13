@@ -8,6 +8,11 @@
     <string name="calendar_bottom_sheet_all_day">종일</string>
     <string name="calendar_bottom_sheet_done">완료</string>
     <string name="calendar_bottom_sheet_pending">진행 중</string>
+    <string name="calendar_reminder_lead_at_time">정시</string>
+    <string name="calendar_reminder_lead_5m">5분 전</string>
+    <string name="calendar_reminder_lead_10m">10분 전</string>
+    <string name="calendar_reminder_lead_30m">30분 전</string>
+    <string name="calendar_reminder_lead_60m">1시간 전</string>
 
     <plurals name="calendar_a11y_todo_count">
         <item quantity="other">할 일 %d개</item>
