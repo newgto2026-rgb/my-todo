@@ -22,6 +22,8 @@
 - Put user-visible strings in resources (`values`, `values-ko`).
 - Use type-safe navigation contracts in `feature:*:api` when possible.
 - Do not add `core:* -> feature:*` dependencies.
+- Top-level tabs must map to implemented feature routes only; do not add placeholder tabs/screens in `:app`.
+- Tab icons must use explicit icon assets (e.g., Material icons), not text glyph substitutes.
 
 ## Tech Baseline
 - Kotlin + Coroutines
@@ -59,6 +61,9 @@
 - Prefer Gradle convention-plugin style build organization (`build-logic`) when build complexity grows.
 - Keep lint and test tasks runnable per module and at repo root.
 - Use structured logging and crash-reporting-ready error context for operational visibility.
+
+## PR Description Standard
+- Every PR description must follow `.github/pull_request_template.md`.
 
 ## Module Index
 | Gradle Module | Guide Path | Responsibility |

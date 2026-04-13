@@ -4,6 +4,12 @@ import com.example.myfirstapp.core.ui.navigation.AppFeatureEntry
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object TodoRoute
+data object TodoAllRoute
+
+@Serializable
+data object TodoTodayRoute
+
+@Serializable
+data object TodoCompletedRoute
 
 interface TodoFeatureEntry : AppFeatureEntry

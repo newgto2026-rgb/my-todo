@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,17 +32,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.navigation.NavBackStackEntry
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.ui.TodoItemRow
 import com.example.myfirstapp.feature.todo.impl.R
 
 @Composable
 fun TodoListRoute(
+    presetFilter: TodoFilter,
     viewModel: TodoListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val navBackStackEntry = LocalViewModelStoreOwner.current as? NavBackStackEntry
+    val isModalVisible = uiState.isEditDialogVisible || uiState.isCategoryManagerVisible
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
@@ -50,6 +56,22 @@ fun TodoListRoute(
                     snackbarHostState.showSnackbar(context.getString(sideEffect.messageRes))
                 }
             }
+        }
+    }
+
+    LaunchedEffect(presetFilter, uiState.selectedFilter) {
+        if (uiState.selectedFilter != presetFilter) {
+            viewModel.onAction(TodoListAction.OnFilterChange(presetFilter))
+        }
+    }
+
+    LaunchedEffect(navBackStackEntry, isModalVisible) {
+        navBackStackEntry?.savedStateHandle?.set("app_back_blocked", isModalVisible)
+    }
+
+    DisposableEffect(navBackStackEntry) {
+        onDispose {
+            navBackStackEntry?.savedStateHandle?.set("app_back_blocked", false)
         }
     }
 
@@ -95,12 +117,6 @@ private fun TodoListScreen(
             }
         },
         floatingActionButtonPosition = FabPosition.End,
-        bottomBar = {
-            BottomFilterBar(
-                selectedFilter = uiState.selectedFilter,
-                onFilterSelected = { onAction(TodoListAction.OnFilterChange(it)) }
-            )
-        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(
