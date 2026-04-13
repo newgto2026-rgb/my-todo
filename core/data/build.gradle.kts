@@ -79,7 +79,8 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReport")
         "**/*_MembersInjector*.*",
         "**/*Hilt*.*",
         "**/*Module*.*",
-        "**/hilt_aggregated_deps/**"
+        "**/hilt_aggregated_deps/**",
+        "**/*$*.*"
     )
 
     classDirectories.setFrom(
@@ -110,7 +111,8 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoCoverageVerification>("jaco
         "**/*_MembersInjector*.*",
         "**/*Hilt*.*",
         "**/*Module*.*",
-        "**/hilt_aggregated_deps/**"
+        "**/hilt_aggregated_deps/**",
+        "**/*$*.*"
     )
 
     classDirectories.setFrom(

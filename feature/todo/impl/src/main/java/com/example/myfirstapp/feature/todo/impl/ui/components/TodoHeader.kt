@@ -52,7 +52,7 @@ internal fun AppHeader() {
                 .background(Color(0xFF1F3A56)),
             contentAlignment = Alignment.Center
         ) {
-            Text("👤", color = Color.White)
+            Text(stringResource(R.string.todo_header_profile_icon), color = Color.White)
         }
     }
 }
@@ -98,7 +98,7 @@ internal fun HeaderSummary(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "✓",
+                        text = stringResource(R.string.todo_header_completed_symbol),
                         color = Color(0xFF5F78A6),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )

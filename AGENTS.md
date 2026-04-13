@@ -12,6 +12,11 @@
 
 ## Global Rules
 - Keep changes minimal, testable, and feature-focused.
+- Every implementation change must include automated tests (unit/integration) in the same PR.
+- After implementation, verify test coverage is at least 80% for non-view layers (exclude Compose/View UI code).
+- When pushing changes, always use a separate branch (never push feature work directly to `main`).
+- Always open a PR when pushing code.
+- Always use organized, descriptive commit messages for PR commits.
 - Respect module boundaries and dependency direction.
 - Prefer UDF on UI screens: `UiState + ViewModel + Action/SideEffect`.
 - Put user-visible strings in resources (`values`, `values-ko`).
