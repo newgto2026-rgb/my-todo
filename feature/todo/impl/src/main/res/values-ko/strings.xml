@@ -7,7 +7,7 @@
 
     <string name="todo_header_all_title">모든 할 일</string>
     <string name="todo_header_all_subtitle">마감일 순 정렬</string>
-    <string name="todo_header_completed_title">완료</string>
+    <string name="todo_header_completed_title">완료 목록</string>
     <string name="todo_header_completed_subtitle">완료한 할 일</string>
     <string name="todo_header_profile_icon">👤</string>
     <string name="todo_header_completed_symbol">✓</string>
@@ -39,8 +39,8 @@
     <string name="todo_empty_today">오늘 마감인 할 일이 없습니다.</string>
     <string name="todo_empty_completed">완료한 할 일이 없습니다.</string>
 
-    <string name="todo_row_subtitle_completed">완료</string>
-    <string name="todo_row_subtitle_today">오늘</string>
+    <string name="todo_row_subtitle_completed">@string/todo_filter_completed</string>
+    <string name="todo_row_subtitle_today">@string/todo_filter_today</string>
     <string name="todo_row_subtitle_reminder">리마인더 %1$s</string>
 
     <string name="todo_category_manager_title">카테고리 관리</string>
@@ -51,8 +51,8 @@
     <string name="todo_category_manager_update">카테고리 수정</string>
     <string name="todo_category_manager_current">현재 카테고리</string>
     <string name="todo_category_manager_close">닫기</string>
-    <string name="todo_category_manager_no_color">없음</string>
-    <string name="todo_category_manager_edit">카테고리 수정</string>
+    <string name="todo_category_manager_no_color">@string/todo_editor_repeat_none</string>
+    <string name="todo_category_manager_edit">카테고리 편집</string>
     <string name="todo_category_manager_delete">카테고리 삭제</string>
 
     <string name="todo_error_title_required">제목을 입력해주세요.</string>

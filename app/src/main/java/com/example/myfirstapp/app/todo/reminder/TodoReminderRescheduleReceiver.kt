@@ -11,6 +11,9 @@ import kotlinx.coroutines.launch
 
 class TodoReminderRescheduleReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        val action = intent.action ?: return
+        if (action !in RESCHEDULE_ACTIONS) return
+
         val pendingResult = goAsync()
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             runCatching {
@@ -22,5 +25,13 @@ class TodoReminderRescheduleReceiver : BroadcastReceiver() {
             }
             pendingResult.finish()
         }
+    }
+
+    private companion object {
+        val RESCHEDULE_ACTIONS = setOf(
+            Intent.ACTION_BOOT_COMPLETED,
+            Intent.ACTION_TIMEZONE_CHANGED,
+            Intent.ACTION_MY_PACKAGE_REPLACED
+        )
     }
 }

@@ -41,8 +41,8 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation("androidx.room:room-testing:2.8.0")
-    testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation("androidx.room:room-testing:2.8.4")
+    testImplementation("org.robolectric:robolectric:4.16")
 }
 
 kapt {

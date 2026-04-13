@@ -7,7 +7,7 @@
 
     <string name="todo_header_all_title">All Tasks</string>
     <string name="todo_header_all_subtitle">Sorted by due date</string>
-    <string name="todo_header_completed_title">Completed</string>
+    <string name="todo_header_completed_title">Done Tasks</string>
     <string name="todo_header_completed_subtitle">Finished tasks</string>
     <string name="todo_header_profile_icon">👤</string>
     <string name="todo_header_completed_symbol">✓</string>
@@ -39,8 +39,8 @@
     <string name="todo_empty_today">No tasks due today.</string>
     <string name="todo_empty_completed">No completed tasks yet.</string>
 
-    <string name="todo_row_subtitle_completed">Completed</string>
-    <string name="todo_row_subtitle_today">Today</string>
+    <string name="todo_row_subtitle_completed">@string/todo_filter_completed</string>
+    <string name="todo_row_subtitle_today">@string/todo_filter_today</string>
     <string name="todo_row_subtitle_reminder">Reminder %1$s</string>
 
     <string name="todo_category_manager_title">Manage categories</string>
@@ -51,7 +51,7 @@
     <string name="todo_category_manager_update">Update category</string>
     <string name="todo_category_manager_current">Current categories</string>
     <string name="todo_category_manager_close">Close</string>
-    <string name="todo_category_manager_no_color">None</string>
+    <string name="todo_category_manager_no_color">@string/todo_editor_repeat_none</string>
     <string name="todo_category_manager_edit">Edit category</string>
     <string name="todo_category_manager_delete">Delete category</string>
 

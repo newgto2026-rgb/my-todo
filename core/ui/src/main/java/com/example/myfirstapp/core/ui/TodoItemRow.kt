@@ -1,6 +1,5 @@
 package com.example.myfirstapp.core.ui
 
-import android.graphics.Color.parseColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColorInt
 
 @Composable
 fun TodoItemRow(
@@ -39,9 +39,9 @@ fun TodoItemRow(
     isEmphasized: Boolean,
     onToggleDone: () -> Unit,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     categoryName: String? = null,
-    categoryColorHex: String? = null,
-    modifier: Modifier = Modifier
+    categoryColorHex: String? = null
 ) {
     val containerColor = when {
         isDone -> Color(0xFFF1F2F8)
@@ -144,7 +144,7 @@ private fun CategoryBadge(
 
 private fun parseHexOrNull(value: String?): Color? {
     if (value.isNullOrBlank()) return null
-    return runCatching { Color(parseColor(value)) }.getOrNull()
+    return runCatching { Color(value.toColorInt()) }.getOrNull()
 }
 
 @Composable

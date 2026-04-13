@@ -49,8 +49,8 @@ jobs:
       - name: Build debug APK
         run: ./gradlew --stacktrace assembleDebug
 
-      - name: Run lint
-        run: ./gradlew --stacktrace lintDebug
+      - name: Run strict lint (all variants)
+        run: ./gradlew --stacktrace lint
 
       - name: Verify non-view coverage
         run: ./gradlew --stacktrace coverageVerifyAll
@@ -73,6 +73,7 @@ jobs:
           path: |
             **/build/reports/lint-results*.html
             **/build/reports/lint-results*.xml
+            **/build/reports/lint-results*.sarif
           if-no-files-found: warn
 
       - name: Upload general build reports

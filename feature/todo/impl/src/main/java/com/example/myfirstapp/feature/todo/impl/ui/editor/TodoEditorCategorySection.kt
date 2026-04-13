@@ -22,7 +22,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -59,8 +60,10 @@ internal fun TodoEditorCategorySection(
     }
 
     var expandedCategoryChips by rememberSaveable { mutableStateOf(false) }
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp
-    val chipsPerRow = max(2, screenWidthDp / 120)
+    val containerWidthDp = with(LocalDensity.current) {
+        LocalWindowInfo.current.containerSize.width.toDp().value
+    }
+    val chipsPerRow = max(2, (containerWidthDp / 120f).toInt())
     val chips = buildList {
         add(
             EditorCategoryChipData(
