@@ -11,6 +11,7 @@ import com.example.myfirstapp.core.model.TodoItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.util.Locale
 
@@ -27,6 +28,15 @@ class FakeTodoRepository :
     private var categoryIdSeed = 1L
 
     override fun observeTodos(): Flow<List<TodoItem>> = todos.asStateFlow()
+
+    override fun observeTodosByDueDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<TodoItem>> =
+        todos.asStateFlow()
+            .map { items ->
+                items.filter { todo ->
+                    val dueDate = todo.dueDate ?: return@filter false
+                    !dueDate.isBefore(startDate) && !dueDate.isAfter(endDate)
+                }
+            }
 
     override suspend fun getTodo(id: Long): TodoItem? = todos.value.firstOrNull { it.id == id }
 

@@ -32,6 +32,12 @@ class TodoRepositoryImpl @Inject constructor(
     override fun observeTodos(): Flow<List<TodoItem>> =
         todoDao.observeTodos().map { entities -> entities.map { it.toDomain() } }
 
+    override fun observeTodosByDueDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<TodoItem>> =
+        todoDao.observeTodosByDueDateRange(
+            startEpochDay = startDate.toEpochDay(),
+            endEpochDay = endDate.toEpochDay()
+        ).map { entities -> entities.map { it.toDomain() } }
+
     override suspend fun getTodo(id: Long): TodoItem? = todoDao.getTodoById(id)?.toDomain()
 
     override suspend fun getTodosWithActiveReminder(): List<TodoItem> =
