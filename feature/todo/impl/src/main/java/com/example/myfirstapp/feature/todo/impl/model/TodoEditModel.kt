@@ -7,8 +7,10 @@ data class TodoEditModel(
     val id: Long?,
     val title: String,
     val dueDate: LocalDate?,
+    val dueTimeMinutes: Int?,
     val categoryId: Long?,
     val reminderAtEpochMillis: Long?,
     val isReminderEnabled: Boolean,
-    val reminderRepeatType: ReminderRepeatType
+    val reminderRepeatType: ReminderRepeatType,
+    val reminderLeadMinutes: Int?
 )

@@ -12,10 +12,12 @@ class AddTodoUseCase @Inject constructor(
         title: String,
         dueDate: LocalDate?,
         categoryId: Long?,
+        dueTimeMinutes: Int? = null,
         reminderAtEpochMillis: Long? = null,
         isReminderEnabled: Boolean = false,
         reminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
-        reminderRepeatDaysMask: Int = 0
+        reminderRepeatDaysMask: Int = 0,
+        reminderLeadMinutes: Int? = null
     ): Result<Long> {
         val normalizedTitle = title.trim()
         if (normalizedTitle.isBlank()) {
@@ -25,10 +27,12 @@ class AddTodoUseCase @Inject constructor(
             title = normalizedTitle,
             dueDate = dueDate,
             categoryId = categoryId,
+            dueTimeMinutes = dueTimeMinutes,
             reminderAtEpochMillis = reminderAtEpochMillis,
             isReminderEnabled = isReminderEnabled,
             reminderRepeatType = reminderRepeatType,
-            reminderRepeatDaysMask = reminderRepeatDaysMask
+            reminderRepeatDaysMask = reminderRepeatDaysMask,
+            reminderLeadMinutes = reminderLeadMinutes
         )
     }
 }

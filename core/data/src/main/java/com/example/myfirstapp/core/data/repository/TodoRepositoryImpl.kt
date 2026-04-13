@@ -47,10 +47,12 @@ class TodoRepositoryImpl @Inject constructor(
         title: String,
         dueDate: LocalDate?,
         categoryId: Long?,
+        dueTimeMinutes: Int?,
         reminderAtEpochMillis: Long?,
         isReminderEnabled: Boolean,
         reminderRepeatType: ReminderRepeatType,
-        reminderRepeatDaysMask: Int
+        reminderRepeatDaysMask: Int,
+        reminderLeadMinutes: Int?
     ): Result<Long> = runCatching {
         validateCategoryId(categoryId)
         val now = System.currentTimeMillis()
@@ -59,10 +61,12 @@ class TodoRepositoryImpl @Inject constructor(
                 title = title,
                 isDone = false,
                 dueDateEpochDay = dueDate?.toEpochDay(),
+                dueTimeMinutes = dueTimeMinutes,
                 reminderAtEpochMillis = reminderAtEpochMillis,
                 isReminderEnabled = isReminderEnabled && reminderAtEpochMillis != null,
                 reminderRepeatType = reminderRepeatType.name,
                 reminderRepeatDaysMask = reminderRepeatDaysMask,
+                reminderLeadMinutes = reminderLeadMinutes,
                 createdAt = now,
                 updatedAt = now,
                 categoryId = categoryId
@@ -77,10 +81,12 @@ class TodoRepositoryImpl @Inject constructor(
         title: String,
         dueDate: LocalDate?,
         categoryId: Long?,
+        dueTimeMinutes: Int?,
         reminderAtEpochMillis: Long?,
         isReminderEnabled: Boolean,
         reminderRepeatType: ReminderRepeatType,
-        reminderRepeatDaysMask: Int
+        reminderRepeatDaysMask: Int,
+        reminderLeadMinutes: Int?
     ): Result<Unit> = runCatching {
         validateCategoryId(categoryId)
         val existing = todoDao.getTodoById(id) ?: throw IllegalStateException("Todo not found")
@@ -88,10 +94,12 @@ class TodoRepositoryImpl @Inject constructor(
             existing.copy(
                 title = title,
                 dueDateEpochDay = dueDate?.toEpochDay(),
+                dueTimeMinutes = dueTimeMinutes,
                 reminderAtEpochMillis = reminderAtEpochMillis,
                 isReminderEnabled = isReminderEnabled && reminderAtEpochMillis != null,
                 reminderRepeatType = reminderRepeatType.name,
                 reminderRepeatDaysMask = reminderRepeatDaysMask,
+                reminderLeadMinutes = reminderLeadMinutes,
                 updatedAt = System.currentTimeMillis(),
                 categoryId = categoryId
             )

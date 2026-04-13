@@ -87,12 +87,16 @@ class TodoListViewModel @Inject constructor(
                 updateLocalState { copy(draftDueDateInput = action.value) }
             }
 
+            is TodoListAction.OnDueTimeInputChange -> {
+                updateLocalState { copy(draftDueTimeInput = action.value) }
+            }
+
             is TodoListAction.OnReminderEnabledChange -> {
                 updateLocalState { copy(draftReminderEnabled = action.value) }
             }
 
-            is TodoListAction.OnReminderDateTimeInputChange -> {
-                updateLocalState { copy(draftReminderDateTimeInput = action.value) }
+            is TodoListAction.OnReminderLeadMinutesChange -> {
+                updateLocalState { copy(draftReminderLeadMinutes = action.value) }
             }
 
             is TodoListAction.OnReminderRepeatTypeChange -> {
@@ -151,20 +155,24 @@ class TodoListViewModel @Inject constructor(
                     title = checkNotNull(validation.normalizedTitle),
                     dueDate = validation.parsedDueDate,
                     categoryId = current.draftCategoryId,
+                    dueTimeMinutes = validation.parsedDueTimeMinutes,
                     reminderAtEpochMillis = if (current.draftReminderEnabled) validation.reminderAtEpochMillis else null,
                     isReminderEnabled = current.draftReminderEnabled,
-                    reminderRepeatType = if (current.draftReminderEnabled) current.draftReminderRepeatType else ReminderRepeatType.NONE,
-                    reminderRepeatDaysMask = 0
+                    reminderRepeatType = ReminderRepeatType.NONE,
+                    reminderRepeatDaysMask = 0,
+                    reminderLeadMinutes = if (current.draftReminderEnabled) current.draftReminderLeadMinutes else null
                 ).map { current.editingItem.id }
             } else {
                 addTodoUseCase(
                     title = checkNotNull(validation.normalizedTitle),
                     dueDate = validation.parsedDueDate,
                     categoryId = current.draftCategoryId,
+                    dueTimeMinutes = validation.parsedDueTimeMinutes,
                     reminderAtEpochMillis = if (current.draftReminderEnabled) validation.reminderAtEpochMillis else null,
                     isReminderEnabled = current.draftReminderEnabled,
-                    reminderRepeatType = if (current.draftReminderEnabled) current.draftReminderRepeatType else ReminderRepeatType.NONE,
-                    reminderRepeatDaysMask = 0
+                    reminderRepeatType = ReminderRepeatType.NONE,
+                    reminderRepeatDaysMask = 0,
+                    reminderLeadMinutes = if (current.draftReminderEnabled) current.draftReminderLeadMinutes else null
                 )
             }
 
@@ -227,9 +235,10 @@ class TodoListViewModel @Inject constructor(
             editingItem = target.toTodoEditModel(),
             draftTitle = target.title,
             draftDueDateInput = target.dueDateText.orEmpty(),
+            draftDueTimeInput = target.dueTimeText.orEmpty(),
             draftReminderEnabled = target.isReminderEnabled,
-            draftReminderDateTimeInput = target.reminderDateTimeText.orEmpty(),
-            draftReminderRepeatType = target.reminderRepeatType.normalizeRepeatType(),
+            draftReminderLeadMinutes = target.reminderLeadMinutes ?: DEFAULT_REMINDER_LEAD_MINUTES,
+            draftReminderRepeatType = ReminderRepeatType.NONE,
             draftCategoryId = target.categoryId,
             errorMessageRes = null
         )

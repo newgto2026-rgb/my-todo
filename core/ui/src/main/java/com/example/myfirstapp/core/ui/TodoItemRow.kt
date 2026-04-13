@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,8 +36,10 @@ import androidx.core.graphics.toColorInt
 fun TodoItemRow(
     title: String,
     dueDateText: String?,
+    reminderText: String?,
     isDone: Boolean,
     isEmphasized: Boolean,
+    isReminderEnabled: Boolean,
     onToggleDone: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -116,6 +119,42 @@ fun TodoItemRow(
                         style = MaterialTheme.typography.bodyMedium,
                         color = subtitleColor,
                         modifier = Modifier.padding(start = if (!isDone && !isEmphasized) 4.dp else 0.dp)
+                    )
+                    if (isReminderEnabled && !reminderText.isNullOrBlank()) {
+                        Spacer(Modifier.size(6.dp))
+                        Text(
+                            text = "·",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = subtitleColor
+                        )
+                        Spacer(Modifier.size(6.dp))
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            tint = subtitleColor,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(Modifier.size(4.dp))
+                        Text(
+                            text = reminderText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = subtitleColor,
+                        )
+                    }
+                }
+            } else if (isReminderEnabled && !reminderText.isNullOrBlank()) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = null,
+                        tint = subtitleColor,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(Modifier.size(4.dp))
+                    Text(
+                        text = reminderText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = subtitleColor
                     )
                 }
             }
