@@ -5,7 +5,6 @@
     <string name="calendar_a11y_today">오늘</string>
 
     <plurals name="calendar_a11y_todo_count">
-        <item quantity="one">할 일 %d개</item>
         <item quantity="other">할 일 %d개</item>
     </plurals>
 </resources>

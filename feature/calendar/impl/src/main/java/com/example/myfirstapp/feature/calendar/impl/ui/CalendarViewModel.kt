@@ -85,7 +85,7 @@ class CalendarViewModel @Inject constructor(
     }
 }
 
-private fun buildMonthCells(
+internal fun buildMonthCells(
     yearMonth: YearMonth,
     selectedDate: LocalDate,
     today: LocalDate,
@@ -123,10 +123,10 @@ private fun buildMonthCells(
     }
 }
 
-private fun LocalDate.normalizeToMonth(targetMonth: YearMonth): LocalDate {
+internal fun LocalDate.normalizeToMonth(targetMonth: YearMonth): LocalDate {
     val normalizedDay = min(dayOfMonth, targetMonth.lengthOfMonth())
     return targetMonth.atDay(normalizedDay)
 }
 
-private fun DayOfWeek.distanceFrom(other: DayOfWeek): Int =
+internal fun DayOfWeek.distanceFrom(other: DayOfWeek): Int =
     (value - other.value + 7) % 7
