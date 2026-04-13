@@ -10,7 +10,6 @@
     <string name="calendar_bottom_sheet_pending">진행 중</string>
 
     <plurals name="calendar_a11y_todo_count">
-        <item quantity="one">할 일 %d개</item>
         <item quantity="other">할 일 %d개</item>
     </plurals>
 </resources>
