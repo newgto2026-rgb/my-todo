@@ -7,6 +7,7 @@ import java.time.LocalDate
 
 interface TodoItemRepository {
     fun observeTodos(): Flow<List<TodoItem>>
+    fun observeTodosByDueDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<TodoItem>>
     suspend fun getTodo(id: Long): TodoItem?
 
     suspend fun addTodo(

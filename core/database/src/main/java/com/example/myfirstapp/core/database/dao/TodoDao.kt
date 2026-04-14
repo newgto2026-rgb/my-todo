@@ -13,6 +13,16 @@ interface TodoDao {
     @Query("SELECT * FROM todo ORDER BY createdAt DESC")
     fun observeTodos(): Flow<List<TodoEntity>>
 
+    @Query(
+        """
+        SELECT * FROM todo
+        WHERE dueDateEpochDay IS NOT NULL
+          AND dueDateEpochDay BETWEEN :startEpochDay AND :endEpochDay
+        ORDER BY dueDateEpochDay ASC, createdAt DESC
+        """
+    )
+    fun observeTodosByDueDateRange(startEpochDay: Long, endEpochDay: Long): Flow<List<TodoEntity>>
+
     @Insert
     suspend fun insert(todo: TodoEntity): Long
 

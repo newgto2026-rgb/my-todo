@@ -93,6 +93,64 @@ class TodoDaoTest {
     }
 
     @Test
+    fun observeTodosByDueDateRange_includesMonthBoundariesOnly() = runTest {
+        dao.insert(
+            TodoEntity(
+                title = "before",
+                isDone = false,
+                dueDateEpochDay = 20543L,
+                createdAt = 10L,
+                updatedAt = 10L,
+                categoryId = null
+            )
+        )
+        dao.insert(
+            TodoEntity(
+                title = "start",
+                isDone = false,
+                dueDateEpochDay = 20544L,
+                createdAt = 20L,
+                updatedAt = 20L,
+                categoryId = null
+            )
+        )
+        dao.insert(
+            TodoEntity(
+                title = "end",
+                isDone = false,
+                dueDateEpochDay = 20573L,
+                createdAt = 30L,
+                updatedAt = 30L,
+                categoryId = null
+            )
+        )
+        dao.insert(
+            TodoEntity(
+                title = "after",
+                isDone = false,
+                dueDateEpochDay = 20574L,
+                createdAt = 40L,
+                updatedAt = 40L,
+                categoryId = null
+            )
+        )
+        dao.insert(
+            TodoEntity(
+                title = "no-date",
+                isDone = false,
+                dueDateEpochDay = null,
+                createdAt = 50L,
+                updatedAt = 50L,
+                categoryId = null
+            )
+        )
+
+        val list = dao.observeTodosByDueDateRange(20544L, 20573L).first()
+
+        assertThat(list.map { it.title }).containsExactly("start", "end").inOrder()
+    }
+
+    @Test
     fun update_persistsChanges() = runTest {
         val id = dao.insert(
             TodoEntity(

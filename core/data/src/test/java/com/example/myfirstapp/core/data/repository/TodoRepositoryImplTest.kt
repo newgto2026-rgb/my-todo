@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.time.LocalDate
@@ -35,6 +36,31 @@ class TodoRepositoryImplTest {
             TodoItem(1L, "a", false, LocalDate.of(2026, 4, 1), 1L, 1L, 10L),
             TodoItem(2L, "b", true, null, 2L, 2L, null)
         )
+    }
+
+    @Test
+    fun `observeTodosByDueDateRange filters and maps entities`() = runTest {
+        val todoDao = FakeTodoDao().apply {
+            seed(
+                TodoEntity(1L, "in-range-start", false, LocalDate.of(2026, 4, 1).toEpochDay(), 100L, 100L, null),
+                TodoEntity(2L, "out-before", false, LocalDate.of(2026, 3, 31).toEpochDay(), 200L, 200L, null),
+                TodoEntity(3L, "in-range-end", true, LocalDate.of(2026, 4, 30).toEpochDay(), 300L, 300L, null),
+                TodoEntity(4L, "no-date", false, null, 400L, 400L, null),
+                TodoEntity(5L, "out-after", false, LocalDate.of(2026, 5, 1).toEpochDay(), 500L, 500L, null)
+            )
+        }
+        val repository = TodoRepositoryImpl(todoDao, FakeCategoryDao(), FakePreferencesDataSource())
+
+        val items = repository.observeTodosByDueDateRange(
+            startDate = LocalDate.of(2026, 4, 1),
+            endDate = LocalDate.of(2026, 4, 30)
+        ).first()
+
+        assertThat(items.map { it.title }).containsExactly("in-range-start", "in-range-end").inOrder()
+        assertThat(items.map { it.dueDate }).containsExactly(
+            LocalDate.of(2026, 4, 1),
+            LocalDate.of(2026, 4, 30)
+        ).inOrder()
     }
 
     @Test
@@ -186,6 +212,18 @@ class TodoRepositoryImplTest {
         }
 
         override fun observeTodos(): Flow<List<TodoEntity>> = itemsFlow.asStateFlow()
+
+        override fun observeTodosByDueDateRange(startEpochDay: Long, endEpochDay: Long): Flow<List<TodoEntity>> =
+            itemsFlow
+                .asStateFlow()
+                .map { items ->
+                    items.filter { entity ->
+                        val dueDateEpochDay = entity.dueDateEpochDay ?: return@filter false
+                        dueDateEpochDay in startEpochDay..endEpochDay
+                    }.sortedWith(
+                        compareBy<TodoEntity> { it.dueDateEpochDay }.thenByDescending { it.createdAt }
+                    )
+                }
 
         override suspend fun insert(todo: TodoEntity): Long {
             val id = if (todo.id == 0L) nextId++ else todo.id

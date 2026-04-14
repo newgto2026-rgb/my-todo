@@ -1,4 +1,21 @@
 <resources>
-    <string name="calendar_screen_title">Calendar</string>
-    <string name="calendar_screen_subtitle">Epic 1 skeleton is connected.</string>
+    <string name="calendar_month_navigation_previous">Previous month</string>
+    <string name="calendar_month_navigation_next">Next month</string>
+    <string name="calendar_a11y_selected">Selected date</string>
+    <string name="calendar_a11y_today">Today</string>
+    <string name="calendar_bottom_sheet_title">Todos on %1$s</string>
+    <string name="calendar_bottom_sheet_empty">No todos for this date.</string>
+    <string name="calendar_bottom_sheet_all_day">All day</string>
+    <string name="calendar_bottom_sheet_done">Done</string>
+    <string name="calendar_bottom_sheet_pending">Pending</string>
+    <string name="calendar_reminder_lead_at_time">At time</string>
+    <string name="calendar_reminder_lead_5m">5 min before</string>
+    <string name="calendar_reminder_lead_10m">10 min before</string>
+    <string name="calendar_reminder_lead_30m">30 min before</string>
+    <string name="calendar_reminder_lead_60m">1 hour before</string>
+
+    <plurals name="calendar_a11y_todo_count">
+        <item quantity="one">%d todo</item>
+        <item quantity="other">%d todos</item>
+    </plurals>
 </resources>
