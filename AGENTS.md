@@ -12,6 +12,7 @@
 
 ## Global Rules
 - Keep changes minimal, testable, and feature-focused.
+- Before any implementation work, create and use a separate Git worktree on a dedicated branch (never work directly in the primary checkout).
 - Every implementation change must include automated tests (unit/integration) in the same PR.
 - After implementation, verify test coverage is at least 80% for non-view layers (exclude Compose/View UI code).
 - When pushing changes, always use a separate branch (never push feature work directly to `main`).

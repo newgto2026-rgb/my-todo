@@ -141,30 +141,28 @@ internal fun buildMonthCells(
     val leadingBlanks = firstDate.dayOfWeek.distanceFrom(firstDayOfWeek)
     val daysInMonth = yearMonth.lengthOfMonth()
     val totalCells = ((leadingBlanks + daysInMonth + 6) / 7) * 7
+    val previousMonth = yearMonth.minusMonths(1)
+    val nextMonth = yearMonth.plusMonths(1)
+    val previousMonthDays = previousMonth.lengthOfMonth()
 
     return List(totalCells) { index ->
         val dayOfMonth = index - leadingBlanks + 1
-        if (dayOfMonth in 1..daysInMonth) {
-            val date = yearMonth.atDay(dayOfMonth)
-            val summary = summariesByDate[date]
-            CalendarDayUiModel(
-                date = date,
-                isCurrentMonth = true,
-                isToday = date == today,
-                isSelected = date == selectedDate,
-                indicatorCount = summary?.indicatorCount ?: 0,
-                overflowCount = summary?.overflowCount ?: 0
-            )
-        } else {
-            CalendarDayUiModel(
-                date = null,
-                isCurrentMonth = false,
-                isToday = false,
-                isSelected = false,
-                indicatorCount = 0,
-                overflowCount = 0
-            )
+        val isCurrentMonth = dayOfMonth in 1..daysInMonth
+        val date = when {
+            dayOfMonth < 1 -> previousMonth.atDay(previousMonthDays + dayOfMonth)
+            dayOfMonth > daysInMonth -> nextMonth.atDay(dayOfMonth - daysInMonth)
+            else -> yearMonth.atDay(dayOfMonth)
         }
+        val summary = summariesByDate[date]
+
+        CalendarDayUiModel(
+            date = date,
+            isCurrentMonth = isCurrentMonth,
+            isToday = date == today,
+            isSelected = isCurrentMonth && date == selectedDate,
+            indicatorCount = if (isCurrentMonth) summary?.indicatorCount ?: 0 else 0,
+            overflowCount = if (isCurrentMonth) summary?.overflowCount ?: 0 else 0
+        )
     }
 }
 

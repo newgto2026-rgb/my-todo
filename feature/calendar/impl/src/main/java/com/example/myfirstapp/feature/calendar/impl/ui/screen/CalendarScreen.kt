@@ -1,6 +1,7 @@
 package com.example.myfirstapp.feature.calendar.impl.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,18 +15,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,15 +40,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
 import com.example.myfirstapp.feature.calendar.impl.R
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarAction
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarDayUiModel
@@ -58,10 +57,13 @@ import com.example.myfirstapp.feature.calendar.impl.ui.CalendarSideEffect
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarUiState
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarViewModel
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
 import java.util.Locale
+
+private val HeaderGradient = listOf(Color(0xFF5044E3), Color(0xFF6C63FF))
 
 @Composable
 fun CalendarRouteScreen(
@@ -73,9 +75,7 @@ fun CalendarRouteScreen(
     LaunchedEffect(viewModel) {
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
-                is CalendarSideEffect.NavigateToTodoEdit -> {
-                    onNavigateToTodoEdit(sideEffect.todoId)
-                }
+                is CalendarSideEffect.NavigateToTodoEdit -> onNavigateToTodoEdit(sideEffect.todoId)
             }
         }
     }
@@ -96,6 +96,7 @@ private fun CalendarScreen(
     val yearFormatter = DateTimeFormatter.ofPattern("yyyy", locale)
     val selectedDateLabel = uiState.selectedDate.format(DateTimeFormatter.ofPattern("yyyy MMM d", locale))
     val selectedDateCount = uiState.selectedDateTodos.size
+    val todayCount = uiState.todayTaskCount(today = LocalDate.now())
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -104,61 +105,82 @@ private fun CalendarScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 24.dp, end = 30.dp, top = 16.dp, bottom = 12.dp)
+                .padding(start = 24.dp, end = 30.dp, top = 14.dp, bottom = 12.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
-                IconButton(
-                    modifier = Modifier.testTag("calendar_prev_month"),
-                    onClick = { onAction(CalendarAction.OnPreviousMonthClick) }
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = stringResource(R.string.calendar_month_navigation_previous)
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    modifier = Modifier.testTag("calendar_month_label")
-                ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.testTag("calendar_month_label")
+                    ) {
+                        Text(
+                            text = uiState.currentMonth.format(monthFormatter),
+                            style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Black),
+                            color = Color(0xFF5044E3)
+                        )
+                        Text(
+                            text = uiState.currentMonth.format(yearFormatter),
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Light),
+                            color = Color(0xFF5A6065)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = uiState.currentMonth.format(monthFormatter),
-                        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Black),
-                        color = Color(0xFF5044E3)
-                    )
-                    Text(
-                        text = uiState.currentMonth.format(yearFormatter),
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Light),
+                        text = pluralStringResource(
+                            id = R.plurals.calendar_header_today_task_count,
+                            count = todayCount,
+                            todayCount
+                        ),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                         color = Color(0xFF5A6065)
                     )
                 }
-                IconButton(
-                    modifier = Modifier.testTag("calendar_next_month"),
-                    onClick = { onAction(CalendarAction.OnNextMonthClick) }
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = stringResource(R.string.calendar_month_navigation_next)
-                    )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Surface(
+                        shape = CircleShape,
+                        color = Color.White.copy(alpha = 0.7f)
+                    ) {
+                        IconButton(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .testTag("calendar_prev_month"),
+                            onClick = { onAction(CalendarAction.OnPreviousMonthClick) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = stringResource(R.string.calendar_month_navigation_previous),
+                                tint = Color(0xFF5A6065)
+                            )
+                        }
+                    }
+                    Surface(
+                        shape = CircleShape,
+                        color = Color.White.copy(alpha = 0.7f)
+                    ) {
+                        IconButton(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .testTag("calendar_next_month"),
+                            onClick = { onAction(CalendarAction.OnNextMonthClick) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = stringResource(R.string.calendar_month_navigation_next),
+                                tint = Color(0xFF5A6065)
+                            )
+                        }
+                    }
                 }
             }
 
-            Text(
-                text = pluralStringResource(
-                    id = R.plurals.calendar_a11y_todo_count,
-                    count = selectedDateCount,
-                    selectedDateCount
-                ),
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                color = Color(0xFF5A6065),
-                modifier = Modifier.padding(start = 2.dp)
-            )
-
             Spacer(modifier = Modifier.height(16.dp))
+
             Surface(
                 shape = RoundedCornerShape(26.dp),
                 color = Color.White.copy(alpha = 0.82f),
@@ -185,14 +207,15 @@ private fun CalendarScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.calendar_bottom_sheet_title, selectedDateLabel),
+                    text = stringResource(R.string.calendar_agenda_title),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
                     modifier = Modifier.testTag("calendar_day_todo_list_title")
                 )
@@ -201,20 +224,30 @@ private fun CalendarScreen(
                     color = Color(0xFFD8E2FF)
                 ) {
                     Text(
-                        text = selectedDateCount.toString(),
+                        text = pluralStringResource(
+                            id = R.plurals.calendar_agenda_task_count_badge,
+                            count = selectedDateCount,
+                            selectedDateCount
+                        ),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                         color = Color(0xFF45526D)
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.calendar_agenda_date_label, selectedDateLabel),
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF5A6065)
+            )
             Spacer(modifier = Modifier.height(10.dp))
 
             if (uiState.selectedDateTodos.isEmpty()) {
                 Text(
                     text = stringResource(R.string.calendar_bottom_sheet_empty),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = Color(0xFF5A6065),
                     modifier = Modifier
                         .testTag("calendar_day_todo_list_empty")
                         .padding(bottom = 20.dp)
@@ -257,7 +290,7 @@ private fun WeekdayHeaderRow() {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = dayOfWeek.getDisplayName(TextStyle.SHORT, locale),
+                    text = dayOfWeek.getDisplayName(TextStyle.SHORT, locale).uppercase(locale),
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                     color = Color(0xFF757B81)
                 )
@@ -269,9 +302,9 @@ private fun WeekdayHeaderRow() {
 @Composable
 private fun RowScope.CalendarDayCell(
     day: CalendarDayUiModel,
-    onClick: (java.time.LocalDate) -> Unit
+    onClick: (LocalDate) -> Unit
 ) {
-    if (day.date == null) {
+    val date = day.date ?: run {
         Spacer(
             modifier = Modifier
                 .weight(1f)
@@ -282,18 +315,17 @@ private fun RowScope.CalendarDayCell(
 
     val totalCount = day.indicatorCount + day.overflowCount
     val isInactiveMonth = !day.isCurrentMonth
+    val hasItems = !isInactiveMonth && totalCount > 0
     val textColor = when {
         day.isSelected -> Color.White
-        isInactiveMonth -> Color(0xFF5A6065).copy(alpha = 0.24f)
-        else -> Color(0xFF2D3338)
+        isInactiveMonth -> Color(0xFF5A6065).copy(alpha = 0.2f)
+        hasItems -> Color(0xFF2D3338)
+        else -> Color(0xFF2D3338).copy(alpha = 0.62f)
     }
+    val dateFontWeight = if (hasItems || day.isSelected) FontWeight.SemiBold else FontWeight.Medium
 
     val a11yParts = buildList {
-        add(
-            day.date.format(
-                DateTimeFormatter.ofPattern("yyyy MMMM d EEEE", Locale.getDefault())
-            )
-        )
+        add(date.format(DateTimeFormatter.ofPattern("yyyy MMMM d EEEE", Locale.getDefault())))
         add(
             pluralStringResource(
                 id = R.plurals.calendar_a11y_todo_count,
@@ -309,16 +341,9 @@ private fun RowScope.CalendarDayCell(
         modifier = Modifier
             .weight(1f)
             .aspectRatio(1f)
-            .testTag("calendar_day_${day.date}")
+            .testTag("calendar_day_$date")
             .clip(RoundedCornerShape(14.dp))
-            .background(
-                when {
-                    day.isSelected -> Color.Transparent
-                    day.isToday && !isInactiveMonth -> Color(0xFFEFF2F8)
-                    else -> Color.Transparent
-                }
-            )
-            .clickable(enabled = !isInactiveMonth) { onClick(day.date) }
+            .clickable(enabled = day.isCurrentMonth) { onClick(date) }
             .semantics { contentDescription = a11yParts.joinToString(separator = ", ") }
             .padding(vertical = 8.dp, horizontal = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -333,55 +358,26 @@ private fun RowScope.CalendarDayCell(
                     modifier = Modifier
                         .size(34.dp)
                         .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(Color(0xFF5044E3), Color(0xFF6C63FF))
-                            ),
+                            brush = Brush.linearGradient(colors = HeaderGradient),
+                            shape = CircleShape
+                        )
+                )
+            }
+            if (!day.isSelected && hasItems) {
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .background(
+                            color = Color(0xFFDDE4FF),
                             shape = CircleShape
                         )
                 )
             }
             Text(
-                text = day.date.dayOfMonth.toString(),
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                text = date.dayOfMonth.toString(),
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = dateFontWeight),
                 color = textColor
             )
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        if (!isInactiveMonth && day.indicatorCount > 0) {
-            Box(
-                modifier = Modifier
-                    .size(4.dp)
-                    .background(
-                        color = if (day.isSelected) Color.White else Color(0xFF6D5586),
-                        shape = CircleShape
-                    )
-            )
-        } else {
-            Spacer(modifier = Modifier.height(4.dp).alpha(0f))
-        }
-
-        if (!isInactiveMonth && day.overflowCount > 0) {
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = "+${day.overflowCount}",
-                style = MaterialTheme.typography.labelSmall,
-                color = if (day.isSelected) Color.White else Color(0xFF5A6065),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .clip(AbsoluteRoundedCornerShape(8.dp))
-                    .padding(horizontal = 2.dp)
-            )
-        } else {
-            Spacer(modifier = Modifier.height(2.dp).alpha(0f))
-        }
-
-        if (day.isSelected && day.indicatorCount > 0) {
-            Spacer(modifier = Modifier.height(1.dp))
-        }
-        if (totalCount == 0) {
-            Spacer(modifier = Modifier.height(1.dp).alpha(0f))
         }
     }
 }
@@ -406,91 +402,100 @@ private fun DayTodoItem(
             .fillMaxWidth()
             .testTag("calendar_day_todo_item_${todo.id}")
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
-        color = if (todo.isDone) Color(0xFFD5DBE1) else Color.White
+        shape = RoundedCornerShape(14.dp),
+        color = if (todo.isDone) Color(0xFFF1F4F8) else Color.White
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(if (todo.isDone) Color(0xFF6C63FF) else Color.Transparent),
-                contentAlignment = Alignment.Center
-            ) {
-                if (todo.isDone) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.RadioButtonUnchecked,
-                        contentDescription = null,
-                        tint = Color(0xFF6C63FF),
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = todo.title,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = if (todo.isDone) Color(0xFF2D3338).copy(alpha = 0.5f) else Color(0xFF2D3338)
+            if (todo.isDone) {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 2.dp)
+                        .size(width = 2.dp, height = 64.dp)
+                        .background(Color(0xFF6C63FF).copy(alpha = 0.85f), RoundedCornerShape(999.dp))
                 )
-                Spacer(modifier = Modifier.height(2.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(22.dp)
+                        .clip(RoundedCornerShape(7.dp))
+                        .background(if (todo.isDone) Color(0xFF6C63FF) else Color.Transparent)
+                        .border(
+                            width = if (todo.isDone) 0.dp else 1.8.dp,
+                            color = Color(0xFF6C63FF),
+                            shape = RoundedCornerShape(7.dp)
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "·",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF5A6065)
-                    )
-                    Text(
-                        text = dueText,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF5A6065)
-                    )
-                    if (todo.isReminderEnabled && !reminderText.isNullOrBlank()) {
-                        Text(
-                            text = "·",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF5A6065)
-                        )
+                    if (todo.isDone) {
                         Icon(
-                            imageVector = Icons.Default.Notifications,
+                            imageVector = Icons.Default.Check,
                             contentDescription = null,
-                            tint = Color(0xFF5A6065),
+                            tint = Color.White,
                             modifier = Modifier.size(14.dp)
-                        )
-                        Text(
-                            text = reminderText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF5A6065)
                         )
                     }
                 }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = todo.title,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                        color = if (todo.isDone) {
+                            Color(0xFF2D3338).copy(alpha = 0.42f)
+                        } else {
+                            Color(0xFF2D3338)
+                        },
+                        textDecoration = if (todo.isDone) TextDecoration.LineThrough else TextDecoration.None
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Schedule,
+                            contentDescription = null,
+                            tint = Color(0xFF5A6065),
+                            modifier = Modifier.size(13.dp)
+                        )
+                        Text(
+                            text = dueText,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF5A6065).copy(alpha = if (todo.isDone) 0.6f else 1f)
+                        )
+                        if (todo.isReminderEnabled && !reminderText.isNullOrBlank()) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = null,
+                                tint = Color(0xFF5A6065).copy(alpha = if (todo.isDone) 0.6f else 1f),
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Text(
+                                text = reminderText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color(0xFF5A6065).copy(alpha = if (todo.isDone) 0.6f else 1f)
+                            )
+                        }
+                    }
+                }
             }
-            Text(
-                text = if (todo.isDone) {
-                    stringResource(R.string.calendar_bottom_sheet_done)
-                } else {
-                    stringResource(R.string.calendar_bottom_sheet_pending)
-                },
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = if (todo.isDone) Color(0xFF6C63FF) else Color(0xFF5A6065)
-            )
         }
     }
+}
+
+internal fun CalendarUiState.todayTaskCount(today: LocalDate): Int {
+    val summary = summariesByDate[today] ?: return 0
+    return summary.indicatorCount + summary.overflowCount
 }
 
 private fun DayOfWeek.plus(days: Long): DayOfWeek {

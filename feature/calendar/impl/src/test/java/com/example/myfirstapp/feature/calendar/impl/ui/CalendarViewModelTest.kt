@@ -2,7 +2,9 @@ package com.example.myfirstapp.feature.calendar.impl.ui
 
 import com.example.myfirstapp.core.domain.usecase.ObserveMonthlyTodoSummariesUseCase
 import com.example.myfirstapp.core.domain.usecase.ObserveMonthlyTodosUseCase
+import com.example.myfirstapp.core.model.DateTodoSummary
 import com.example.myfirstapp.core.model.ReminderRepeatType
+import com.example.myfirstapp.feature.calendar.impl.ui.screen.todayTaskCount
 import com.example.myfirstapp.core.testing.repository.FakeTodoRepository
 import com.example.myfirstapp.core.testing.rule.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
@@ -14,6 +16,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
+import java.time.YearMonth
+import java.time.temporal.WeekFields
+import java.util.Locale
 import kotlin.math.min
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -183,6 +188,51 @@ class CalendarViewModelTest {
         assertThat(todo.isReminderEnabled).isTrue()
         assertThat(todo.reminderLeadMinutes).isEqualTo(10)
         assertThat(todo.dueTimeLabel).isNotNull()
+    }
+
+    @Test
+    fun buildMonthCells_includesAdjacentMonthDatesWithoutNullCells() {
+        val yearMonth = YearMonth.of(2026, 4)
+        val selectedDate = yearMonth.atDay(9)
+        val today = selectedDate
+
+        val cells = buildMonthCells(
+            yearMonth = yearMonth,
+            selectedDate = selectedDate,
+            today = today,
+            summariesByDate = emptyMap()
+        )
+
+        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        val leadingBlanks = yearMonth.atDay(1).dayOfWeek.distanceFrom(firstDayOfWeek)
+        val expectedFirstDate = yearMonth.atDay(1).minusDays(leadingBlanks.toLong())
+
+        assertThat(cells).isNotEmpty()
+        assertThat(cells.all { it.date != null }).isTrue()
+        assertThat(cells.first().date).isEqualTo(expectedFirstDate)
+        assertThat(cells.any { !it.isCurrentMonth }).isTrue()
+    }
+
+    @Test
+    fun todayTaskCount_returnsIndicatorAndOverflowSum() {
+        val today = LocalDate.of(2026, 4, 9)
+        val uiState = CalendarUiState(
+            currentMonth = YearMonth.of(2026, 4),
+            selectedDate = today,
+            days = emptyList(),
+            summariesByDate = mapOf(
+                today to DateTodoSummary(
+                    date = today,
+                    todos = emptyList(),
+                    indicatorCount = 3,
+                    overflowCount = 2
+                )
+            ),
+            selectedDateTodos = emptyList()
+        )
+
+        assertThat(uiState.todayTaskCount(today)).isEqualTo(5)
+        assertThat(uiState.todayTaskCount(today.plusDays(1))).isEqualTo(0)
     }
 
     private fun createViewModel(repository: FakeTodoRepository): CalendarViewModel =
