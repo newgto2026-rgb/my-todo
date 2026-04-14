@@ -9,7 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myfirstapp.core.designsystem.theme.MyFirstAppTheme
-import com.example.myfirstapp.core.ui.navigation.AppFeatureEntry
+import com.example.myfirstapp.core.navigation.AppFeatureEntry
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

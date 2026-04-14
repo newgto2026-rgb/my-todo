@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:ui"))
+    implementation(project(":core:navigation"))
     implementation(project(":feature:calendar:api"))
     implementation(project(":feature:calendar:impl"))
 

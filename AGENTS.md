@@ -1,29 +1,33 @@
 # Project Agent Guide (Indexed)
 
 ## Purpose
-- Keep agent context small and accurate by reading only relevant guides.
-- Use this file as the entry index, then open only target module guides.
+- Keep context small: read this file first, then only touched module guides.
+- Module guides are delta-only; this root defines common defaults.
 
-## How To Use This Index
-1. Read this root guide first.
-2. Identify target Gradle module(s).
-3. Open only `AGENTS.md` for those module(s).
-4. For cross-module changes, read all touched modules only.
+## Read Order
+1. Read root `AGENTS.md`.
+2. Identify touched Gradle module(s).
+3. Open only those module `AGENTS.md` files.
+4. For cross-module work, read touched modules only.
 
-## Global Rules
+## Global Defaults
 - Keep changes minimal, testable, and feature-focused.
-- Every implementation change must include automated tests (unit/integration) in the same PR.
-- After implementation, verify test coverage is at least 80% for non-view layers (exclude Compose/View UI code).
-- When pushing changes, always use a separate branch (never push feature work directly to `main`).
-- Always open a PR when pushing code.
-- Always use organized, descriptive commit messages for PR commits.
+- Add automated tests for behavior changes in the same PR.
+- Maintain >=80% coverage for non-view layers (exclude Compose/View UI).
+- Start code-change work in a new Git worktree by default (branch-isolated workspace per task/PR).
+- Use a feature branch, never push feature work to `main`, always open a PR.
+- Use descriptive commit messages and follow `.github/pull_request_template.md`.
 - Respect module boundaries and dependency direction.
-- Prefer UDF on UI screens: `UiState + ViewModel + Action/SideEffect`.
-- Put user-visible strings in resources (`values`, `values-ko`).
+- Keep UI state-driven (`UiState + ViewModel + Action/SideEffect`), with side effects outside composables.
+- Keep user-visible text in resources (`values`, `values-ko`).
+- Keep DTO/transport, domain, and UI models separated with explicit mappers.
+- Use `Result` or a standardized domain error model for failures.
 - Use type-safe navigation contracts in `feature:*:api` when possible.
-- Do not add `core:* -> feature:*` dependencies.
-- Top-level tabs must map to implemented feature routes only; do not add placeholder tabs/screens in `:app`.
-- Tab icons must use explicit icon assets (e.g., Material icons), not text glyph substitutes.
+- Keep public API surfaces minimal; use `implementation` by default and `api` only for types intentionally exposed as module contracts.
+- Never add `core:* -> feature:*` dependencies.
+- Allow `feature:*:impl -> feature:*:api` only for cross-feature navigation contracts; avoid cross-feature reuse of implementation/business logic.
+- Top tabs must map to implemented feature routes only; no placeholders in `:app`.
+- Tab icons must be explicit icon assets (for example Material icons), not text glyphs.
 
 ## Tech Baseline
 - Kotlin + Coroutines
@@ -34,68 +38,82 @@
 - Retrofit + OkHttp
 - WorkManager
 
-## Engineering Defaults
-- Architecture: Keep UI strictly state-driven and immutable (`UiState` 중심), one-off events via `SideEffect`.
-- Data/Network: Prefer explicit mapper/contract boundaries; use `kotlinx.serialization` for serialization.
-- Testing: Prioritize unit tests for ViewModel/use case first, use fakes in local tests, and avoid implementation-coupled brittle tests.
-- Quality: Keep public contracts stable and list touched modules in work summaries.
-- Performance/Compose: Minimize unnecessary recomposition and apply stability annotations (`@Stable`, `@Immutable`) where valid.
+## Validation Defaults
+- Per touched module: `./gradlew :<module>:lintDebug`
+- For modules with unit tests: `./gradlew :<module>:testDebugUnitTest`
+- App-level wiring/startup changes: `./gradlew :app:assembleDebug`
+- Optional full checks: `./gradlew testDebugUnitTest`, `./gradlew connectedDebugAndroidTest`
+- PR gate (CI parity): before opening or updating a PR, run `./gradlew --stacktrace lint` and ensure it passes.
 
-## Architecture Conventions
-- Keep side effects in ViewModel/use case layers, not inside composables.
-- Prefer immutable models and explicit mapper functions between layer boundaries.
-- Use `Result` or standardized error model for failure paths across data/domain.
+## Worktree Rule
+- Intent: isolate each coding task from the current working tree to reduce accidental cross-task changes and review noise.
+- Trigger: any request that changes production/test code (not required for read-only analysis).
+- Default flow:
+1. Create a new branch and worktree for the task.
+2. Do all edits/tests inside that worktree only.
+3. Open PR from that branch/worktree.
+- Allowed exceptions:
+1. User explicitly requests in-place edits on the current worktree.
+2. Docs-only or metadata-only updates where branch/worktree isolation is unnecessary.
 
-## Data And API Conventions
-- For paginated lists, use Paging 3 by default.
-- Keep transport/DTO models separate from domain models.
-- Keep repository contracts focused by concern and avoid feature leakage into core layers.
-- Keep preference/database keys and schema evolution migration-safe.
-
-## Testing And Quality Gates
-- Prioritize unit tests for use cases and ViewModels; add UI tests for key user flows.
-- Use Turbine for Flow testing and shared fakes/rules from `core:testing`.
-- Keep tests meaningful and behavior-oriented rather than implementation-coupled.
-
-## Build And Operations
-- Prefer Gradle convention-plugin style build organization (`build-logic`) when build complexity grows.
-- Keep lint and test tasks runnable per module and at repo root.
-- Use structured logging and crash-reporting-ready error context for operational visibility.
-
-## PR Description Standard
-- Every PR description must follow `.github/pull_request_template.md`.
+### Command Template
+- Variables:
+  - `<task>`: short task slug (for example `todo-filter-bugfix`)
+  - `<base>`: base branch (usually `main`)
+- Create worktree + branch:
+```bash
+git fetch origin
+git worktree add ../wt-<task> -b feat/<task> origin/<base>
+```
+- Enter and verify:
+```bash
+cd ../wt-<task>
+git status
+```
+- After coding and test pass:
+```bash
+git add -A
+git commit -m "feat(<scope>): <summary>"
+git push -u origin feat/<task>
+```
+- Remove local worktree after merge/close:
+```bash
+cd /path/to/main/worktree
+git worktree remove ../wt-<task>
+git branch -d feat/<task>
+```
 
 ## Module Index
 | Gradle Module | Guide Path | Responsibility |
 |---|---|---|
-| `:app` | `app/AGENTS.md` | App shell, startup, top-level wiring |
-| `:core:model` | `core/model/AGENTS.md` | Pure domain/data models |
-| `:core:domain` | `core/domain/AGENTS.md` | Use cases + repository contracts |
-| `:core:data` | `core/data/AGENTS.md` | Repository implementations + mappers |
-| `:core:database` | `core/database/AGENTS.md` | Room DB/entities/dao/migrations |
-| `:core:datastore` | `core/datastore/AGENTS.md` | Preference data source layer |
-| `:core:network` | `core/network/AGENTS.md` | Remote API/networking contracts |
-| `:core:ui` | `core/ui/AGENTS.md` | Reusable UI primitives |
-| `:core:designsystem` | `core/designsystem/AGENTS.md` | Theme, typography, design tokens |
-| `:core:testing` | `core/testing/AGENTS.md` | Shared test fakes/rules/helpers |
+| `:app` | `app/AGENTS.md` | App shell and top-level wiring |
+| `:core:model` | `core/model/AGENTS.md` | Shared immutable models |
+| `:core:navigation` | `core/navigation/AGENTS.md` | Shared navigation contracts |
+| `:core:domain` | `core/domain/AGENTS.md` | Use cases and repository contracts |
+| `:core:data` | `core/data/AGENTS.md` | Repository implementations and mappers |
+| `:core:database` | `core/database/AGENTS.md` | Room schema/DAO/migration |
+| `:core:datastore` | `core/datastore/AGENTS.md` | Preference persistence |
+| `:core:network` | `core/network/AGENTS.md` | API/DTO/network contracts |
+| `:core:ui` | `core/ui/AGENTS.md` | Reusable UI components |
+| `:core:designsystem` | `core/designsystem/AGENTS.md` | Theme and design tokens |
+| `:core:testing` | `core/testing/AGENTS.md` | Shared testing helpers |
 | `:feature:todo:api` | `feature/todo/api/AGENTS.md` | Todo public contracts/routes |
-| `:feature:todo:impl` | `feature/todo/impl/AGENTS.md` | Todo UI + ViewModel + feature logic |
-| `:feature:todo:entry` | `feature/todo/entry/AGENTS.md` | App wiring/bindings for todo entry |
+| `:feature:todo:impl` | `feature/todo/impl/AGENTS.md` | Todo UI + ViewModel logic |
+| `:feature:todo:entry` | `feature/todo/entry/AGENTS.md` | Todo feature app wiring |
 | `:feature:calendar:api` | `feature/calendar/api/AGENTS.md` | Calendar public contracts/routes |
 | `:feature:calendar:impl` | `feature/calendar/impl/AGENTS.md` | Calendar UI + feature logic |
-| `:feature:calendar:entry` | `feature/calendar/entry/AGENTS.md` | App wiring/bindings for calendar entry |
+| `:feature:calendar:entry` | `feature/calendar/entry/AGENTS.md` | Calendar feature app wiring |
 
-## Current Dependency Shape
+## Dependency Shape
 - `app -> feature:*:api, feature:*:entry, core:*`
 - `feature:*:entry -> feature:*:api, feature:*:impl`
 - `feature:*:impl -> feature:*:api, core:*`
 - `core:data -> core:domain + storage modules`
 - `core:*` never depends on `feature:*`
 
-## Common Commands
-- Build app: `./gradlew assembleDebug`
-- Unit tests: `./gradlew testDebugUnitTest`
-- Single test: `./gradlew testDebugUnitTest --tests "com.example.MyTest"`
-- Instrumentation tests: `./gradlew connectedDebugAndroidTest`
-- Module unit tests: `./gradlew :<module>:testDebugUnitTest`
-- Module lint: `./gradlew :<module>:lintDebug`
+## Boundary Clarifications
+- `:app` is composition/root-runtime only (startup, root nav host, app-level workers/notifications/receivers).
+- `:feature:*:entry` owns DI multibinding only; no screen/business logic.
+- `:feature:*:impl` owns feature UI/ViewModel/use-case orchestration and navigation registration implementation.
+- `:feature:*:api` owns only stable public contracts (routes/entry interfaces/contract models).
+- `:core:navigation` owns app-wide navigation contracts shared across features.

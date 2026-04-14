@@ -1,12 +1,9 @@
-# :feature:calendar:impl Module Guide
+# :feature:calendar:impl Module Delta
 
-## Role
-- Calendar feature implementation: screen composition and feature entry wiring.
+## Scope
+- Calendar feature implementation: screen composition, ViewModel/state logic, and feature navigation registration implementation.
 
-## Rules
-- Keep screen state-driven and ready for `UiState + Action + SideEffect` extension.
+## Module Rules
+- Keep screen logic state-driven (`UiState + Action + SideEffect + ViewModel`).
 - Keep user-visible text in resources.
-
-## Validate
-- `./gradlew :feature:calendar:impl:testDebugUnitTest`
-- `./gradlew :feature:calendar:impl:lintDebug`
+- Cross-feature dependencies are allowed only to other feature `:api` modules for navigation contracts.

@@ -1,16 +1,9 @@
-# :core:database Module Guide
+# :core:database Module Delta
 
-## Role
-- Room database, entities, DAO, migrations.
+## Scope
+- Room database, entities, DAO, and migrations.
 
-## Rules
-- Migration safety first; never break existing schema without migration.
+## Module Rules
+- Never break existing schema without migration.
 - Keep DAO queries deterministic and test-covered.
-
-## Change Checklist
-- Update `schemas/` snapshots when schema changes.
-- Add/adjust migration tests for version bumps.
-
-## Validate
-- `./gradlew :core:database:testDebugUnitTest`
-- `./gradlew :core:database:lintDebug`
+- When schema changes, update `schemas/` snapshots and migration tests.

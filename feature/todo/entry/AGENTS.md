@@ -1,15 +1,10 @@
-# :feature:todo:entry Module Guide
+# :feature:todo:entry Module Delta
 
-## Role
-- Wiring module that binds todo feature entry implementation for app composition.
+## Scope
+- Wiring module for todo feature entry binding used by app composition.
 
-## Rules
+## Module Rules
 - Keep only DI/wiring concerns.
-- Avoid business logic or UI implementation here.
-
-## Change Checklist
-- If API/impl class names change, update Hilt binding.
-- Ensure app still resolves feature entry set correctly.
-
-## Validate
-- `./gradlew :feature:todo:entry:lintDebug`
+- Avoid business logic and UI implementation.
+- If API or impl class names change, update Hilt bindings accordingly.
+- Keep this module limited to binding `impl` into app-consumed contracts.

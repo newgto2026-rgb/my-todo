@@ -1,4 +1,4 @@
-package com.example.myfirstapp.core.ui.navigation
+package com.example.myfirstapp.core.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController

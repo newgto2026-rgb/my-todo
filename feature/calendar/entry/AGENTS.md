@@ -1,11 +1,9 @@
-# :feature:calendar:entry Module Guide
+# :feature:calendar:entry Module Delta
 
-## Role
-- Hilt multibinding entry point registration for calendar feature.
+## Scope
+- Hilt multibinding registration for calendar feature entry.
 
-## Rules
+## Module Rules
 - Bind only via `AppFeatureEntry` set multibinding.
-- Keep `app` module decoupled from `:feature:calendar:impl`.
-
-## Validate
-- `./gradlew :feature:calendar:entry:assembleDebug`
+- Keep `app` decoupled from `:feature:calendar:impl`.
+- Keep this module DI-only; do not add screen logic or feature business logic.

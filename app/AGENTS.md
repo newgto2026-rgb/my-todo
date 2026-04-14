@@ -1,24 +1,12 @@
-# :app Module Guide
+# :app Module Delta
 
-## Role
-- Application shell and startup composition.
-- Top-level navigation host and Android entry points.
+## Scope
+- App shell, startup, top-level navigation, and Android entry points.
 - Runtime integration (notifications, workers, receivers).
 
-## Owns
-- `MainActivity`, `AppNavHost`, `Application` wiring.
-- AndroidManifest app-level declarations.
-- App-level resources and notification text.
-
-## Boundaries
-- Depend on `feature:*:api`, `feature:*:entry`, and `core:*`.
-- Do not implement feature internals directly.
-
-## Change Checklist
-- If navigation/start destination changes, verify feature-entry contract wiring.
-- Keep app resources locale-safe (`values`, `values-ko`).
-- For reminders/worker changes, validate runtime permissions and channel behavior.
-
-## Validate
-- `./gradlew :app:assembleDebug`
-- `./gradlew :app:lintDebug`
+## Module Rules
+- Depend on `feature:*:api`, `feature:*:entry`, and `core:*` only.
+- Do not implement feature internals in `:app`.
+- Keep `:app` focused on composition and runtime integration; do not move reusable business logic here.
+- If start destination or top-level navigation changes, verify feature-entry wiring.
+- For reminders/workers, validate runtime permission and notification channel behavior.

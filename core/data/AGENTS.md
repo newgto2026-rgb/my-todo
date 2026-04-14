@@ -1,18 +1,10 @@
-# :core:data Module Guide
+# :core:data Module Delta
 
-## Role
-- Repository implementations bridging domain and data sources.
-- Mapping between entities/models.
+## Scope
+- Repository implementations between `core:domain` contracts and storage/network data sources.
+- Cross-layer mapping.
 
-## Rules
-- Implement only domain contracts from `core:domain`.
-- Keep mapping explicit and side-effect boundaries clear.
-- A single implementation may bind to multiple focused contracts, but keep method ownership clear by concern.
-
-## Change Checklist
-- If repository behavior changes, re-check related use cases.
-- Keep mapper tests updated for schema/model changes.
-
-## Validate
-- `./gradlew :core:data:testDebugUnitTest`
-- `./gradlew :core:data:lintDebug`
+## Module Rules
+- Implement only contracts declared in `core:domain`.
+- Keep mapper boundaries explicit and side effects localized.
+- If repository behavior changes, re-check affected use cases and mapper tests.
