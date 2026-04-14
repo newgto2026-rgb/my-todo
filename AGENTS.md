@@ -43,6 +43,7 @@
 - For modules with unit tests: `./gradlew :<module>:testDebugUnitTest`
 - App-level wiring/startup changes: `./gradlew :app:assembleDebug`
 - Optional full checks: `./gradlew testDebugUnitTest`, `./gradlew connectedDebugAndroidTest`
+- PR gate: before opening or updating a PR, run lint for all touched Android modules and ensure it passes.
 
 ## Worktree Rule
 - Intent: isolate each coding task from the current working tree to reduce accidental cross-task changes and review noise.
