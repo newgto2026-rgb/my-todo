@@ -7,8 +7,9 @@ sealed interface TodoListAction {
     data object OnAddClick : TodoListAction
     data class OnTitleChange(val value: String) : TodoListAction
     data class OnDueDateInputChange(val value: String) : TodoListAction
+    data class OnDueTimeInputChange(val value: String) : TodoListAction
     data class OnReminderEnabledChange(val value: Boolean) : TodoListAction
-    data class OnReminderDateTimeInputChange(val value: String) : TodoListAction
+    data class OnReminderLeadMinutesChange(val value: Int) : TodoListAction
     data class OnReminderRepeatTypeChange(val value: ReminderRepeatType) : TodoListAction
     data class OnCategorySelectedInEditor(val categoryId: Long?) : TodoListAction
     data object OnSaveClick : TodoListAction

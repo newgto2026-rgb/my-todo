@@ -25,8 +25,9 @@ data class TodoListUiState(
     val categoryIconInput: String = "",
     val draftTitle: String = "",
     val draftDueDateInput: String = "",
+    val draftDueTimeInput: String = "",
     val draftReminderEnabled: Boolean = false,
-    val draftReminderDateTimeInput: String = "",
+    val draftReminderLeadMinutes: Int? = null,
     val draftReminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
     @StringRes val errorMessageRes: Int? = null
 )

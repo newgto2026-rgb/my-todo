@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter
 internal data class TodoDraftValidationResult(
     val normalizedTitle: String? = null,
     val parsedDueDate: LocalDate? = null,
+    val parsedDueTimeMinutes: Int? = null,
     val reminderAtEpochMillis: Long? = null,
     @StringRes val errorMessageRes: Int? = null
 )
@@ -23,14 +24,40 @@ internal fun validateTodoDraft(state: TodoListUiState): TodoDraftValidationResul
         return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_due_date_format)
     }
 
-    val reminderAtEpochMillis = reminderDateTimeToEpochMillis(state.draftReminderDateTimeInput)
-    if (state.draftReminderEnabled && reminderAtEpochMillis == null) {
-        return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_reminder_format)
+    val parsedDueTimeMinutes = dueTimeTextToMinutes(state.draftDueTimeInput)
+    if (state.draftDueTimeInput.isNotBlank() && parsedDueTimeMinutes == null) {
+        return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_due_time_format)
+    }
+    if (state.draftDueTimeInput.isNotBlank() && parsedDueDate == null) {
+        return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_due_time_requires_due_date)
+    }
+
+    if (state.draftReminderEnabled) {
+        if (parsedDueDate == null) {
+            return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_reminder_due_date_required)
+        }
+        if (parsedDueTimeMinutes == null) {
+            return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_reminder_due_time_required)
+        }
+    }
+
+    val reminderAtEpochMillis = if (state.draftReminderEnabled) {
+        val leadMinutes = state.draftReminderLeadMinutes ?: DEFAULT_REMINDER_LEAD_MINUTES
+        dueDateTimeToEpochMillis(
+            dueDate = checkNotNull(parsedDueDate),
+            dueTimeMinutes = checkNotNull(parsedDueTimeMinutes)
+        ) - leadMinutes * 60_000L
+    } else {
+        null
+    }
+    if (state.draftReminderEnabled && reminderAtEpochMillis != null && reminderAtEpochMillis <= System.currentTimeMillis()) {
+        return TodoDraftValidationResult(errorMessageRes = R.string.todo_error_reminder_time_in_past)
     }
 
     return TodoDraftValidationResult(
         normalizedTitle = normalizedTitle,
         parsedDueDate = parsedDueDate,
+        parsedDueTimeMinutes = parsedDueTimeMinutes,
         reminderAtEpochMillis = reminderAtEpochMillis
     )
 }

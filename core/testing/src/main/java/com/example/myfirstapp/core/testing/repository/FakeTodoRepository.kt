@@ -34,10 +34,12 @@ class FakeTodoRepository :
         title: String,
         dueDate: LocalDate?,
         categoryId: Long?,
+        dueTimeMinutes: Int?,
         reminderAtEpochMillis: Long?,
         isReminderEnabled: Boolean,
         reminderRepeatType: ReminderRepeatType,
-        reminderRepeatDaysMask: Int
+        reminderRepeatDaysMask: Int,
+        reminderLeadMinutes: Int?
     ): Result<Long> = runCatching {
         validateCategoryId(categoryId)
         val now = System.currentTimeMillis()
@@ -53,7 +55,9 @@ class FakeTodoRepository :
             reminderAtEpochMillis = reminderAtEpochMillis,
             isReminderEnabled = isReminderEnabled,
             reminderRepeatType = reminderRepeatType,
-            reminderRepeatDaysMask = reminderRepeatDaysMask
+            reminderRepeatDaysMask = reminderRepeatDaysMask,
+            dueTimeMinutes = dueTimeMinutes,
+            reminderLeadMinutes = reminderLeadMinutes
         )
         todos.value = listOf(item) + todos.value
         id
@@ -64,10 +68,12 @@ class FakeTodoRepository :
         title: String,
         dueDate: LocalDate?,
         categoryId: Long?,
+        dueTimeMinutes: Int?,
         reminderAtEpochMillis: Long?,
         isReminderEnabled: Boolean,
         reminderRepeatType: ReminderRepeatType,
-        reminderRepeatDaysMask: Int
+        reminderRepeatDaysMask: Int,
+        reminderLeadMinutes: Int?
     ): Result<Unit> = runCatching {
         validateCategoryId(categoryId)
         val existing = getTodo(id) ?: error("Todo not found")
@@ -81,7 +87,9 @@ class FakeTodoRepository :
                     reminderAtEpochMillis = reminderAtEpochMillis,
                     isReminderEnabled = isReminderEnabled,
                     reminderRepeatType = reminderRepeatType,
-                    reminderRepeatDaysMask = reminderRepeatDaysMask
+                    reminderRepeatDaysMask = reminderRepeatDaysMask,
+                    dueTimeMinutes = dueTimeMinutes,
+                    reminderLeadMinutes = reminderLeadMinutes
                 )
             } else {
                 current

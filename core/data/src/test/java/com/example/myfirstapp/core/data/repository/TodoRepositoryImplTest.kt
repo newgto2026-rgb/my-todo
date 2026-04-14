@@ -45,7 +45,17 @@ class TodoRepositoryImplTest {
         }
         val repository = TodoRepositoryImpl(todoDao, categoryDao, FakePreferencesDataSource())
 
-        val result = repository.addTodo("new", LocalDate.of(2026, 4, 9), 5L)
+        val result = repository.addTodo(
+            title = "new",
+            dueDate = LocalDate.of(2026, 4, 9),
+            categoryId = 5L,
+            dueTimeMinutes = null,
+            reminderAtEpochMillis = null,
+            isReminderEnabled = false,
+            reminderRepeatType = com.example.myfirstapp.core.model.ReminderRepeatType.NONE,
+            reminderRepeatDaysMask = 0,
+            reminderLeadMinutes = null
+        )
 
         assertThat(result.isSuccess).isTrue()
         val insertedId = result.getOrNull()!!
@@ -61,7 +71,17 @@ class TodoRepositoryImplTest {
     fun `addTodo fails when category not found`() = runTest {
         val repository = TodoRepositoryImpl(FakeTodoDao(), FakeCategoryDao(), FakePreferencesDataSource())
 
-        val result = repository.addTodo("new", null, 999L)
+        val result = repository.addTodo(
+            title = "new",
+            dueDate = null,
+            categoryId = 999L,
+            dueTimeMinutes = null,
+            reminderAtEpochMillis = null,
+            isReminderEnabled = false,
+            reminderRepeatType = com.example.myfirstapp.core.model.ReminderRepeatType.NONE,
+            reminderRepeatDaysMask = 0,
+            reminderLeadMinutes = null
+        )
 
         assertThat(result.isFailure).isTrue()
     }
@@ -76,7 +96,18 @@ class TodoRepositoryImplTest {
         }
         val repository = TodoRepositoryImpl(todoDao, categoryDao, FakePreferencesDataSource())
 
-        val result = repository.updateTodo(5L, "after", LocalDate.of(2026, 4, 10), 9L)
+        val result = repository.updateTodo(
+            id = 5L,
+            title = "after",
+            dueDate = LocalDate.of(2026, 4, 10),
+            categoryId = 9L,
+            dueTimeMinutes = null,
+            reminderAtEpochMillis = null,
+            isReminderEnabled = false,
+            reminderRepeatType = com.example.myfirstapp.core.model.ReminderRepeatType.NONE,
+            reminderRepeatDaysMask = 0,
+            reminderLeadMinutes = null
+        )
 
         assertThat(result.isSuccess).isTrue()
         val updated = todoDao.getTodoById(5L)!!

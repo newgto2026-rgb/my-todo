@@ -21,15 +21,17 @@
     <string name="todo_editor_task_description">TASK DESCRIPTION</string>
     <string name="todo_editor_task_placeholder">What needs to be done?</string>
     <string name="todo_editor_select_due_date">Select due date</string>
+    <string name="todo_editor_select_due_time">Select due time</string>
     <string name="todo_editor_category_label">CATEGORY</string>
     <string name="todo_editor_manage">Manage</string>
     <string name="todo_editor_reminder_label">REMINDER</string>
     <string name="todo_editor_enable_reminder">Enable reminder</string>
-    <string name="todo_editor_select_reminder_datetime">Select reminder date/time</string>
-    <string name="todo_editor_repeat_label">REPEAT</string>
     <string name="todo_editor_repeat_none">None</string>
-    <string name="todo_editor_repeat_daily">Daily</string>
-    <string name="todo_editor_repeat_weekly">Weekly</string>
+    <string name="todo_reminder_lead_at_time">At time</string>
+    <string name="todo_reminder_lead_5m">5m before</string>
+    <string name="todo_reminder_lead_10m">10m before</string>
+    <string name="todo_reminder_lead_30m">30m before</string>
+    <string name="todo_reminder_lead_60m">1h before</string>
     <string name="todo_editor_delete">Delete</string>
     <string name="todo_editor_save">Save</string>
     <string name="todo_editor_ok">OK</string>
@@ -41,7 +43,6 @@
 
     <string name="todo_row_subtitle_completed">@string/todo_filter_completed</string>
     <string name="todo_row_subtitle_today">@string/todo_filter_today</string>
-    <string name="todo_row_subtitle_reminder">Reminder %1$s</string>
 
     <string name="todo_category_manager_title">Manage categories</string>
     <string name="todo_category_manager_name">Name</string>
@@ -57,7 +58,11 @@
 
     <string name="todo_error_title_required">Please enter a title.</string>
     <string name="todo_error_due_date_format">Date format must be yyyy-MM-dd.</string>
-    <string name="todo_error_reminder_format">Reminder format must be yyyy-MM-dd HH:mm.</string>
+    <string name="todo_error_due_time_format">Time format must be HH:mm.</string>
+    <string name="todo_error_due_time_requires_due_date">Set a due date before entering a due time.</string>
+    <string name="todo_error_reminder_due_date_required">Set a due date to enable reminder.</string>
+    <string name="todo_error_reminder_due_time_required">Set a due time to enable reminder.</string>
+    <string name="todo_error_reminder_time_in_past">Reminder time must be later than now.</string>
     <string name="todo_error_save_failed">Failed to save.</string>
     <string name="todo_error_category_name_required">Please enter a category name.</string>
     <string name="todo_error_category_save_failed">Failed to save category.</string>

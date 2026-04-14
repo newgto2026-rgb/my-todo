@@ -1,8 +1,6 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,24 +14,20 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.feature.todo.impl.R
 
 @Composable
 internal fun TodoEditorReminderSection(
     reminderEnabled: Boolean,
-    reminderDateTimeInput: String,
-    reminderRepeatType: ReminderRepeatType,
+    reminderLeadMinutes: Int,
     onReminderEnabledChange: (Boolean) -> Unit,
-    onReminderDatePickerClick: () -> Unit,
-    onReminderRepeatTypeChange: (ReminderRepeatType) -> Unit
+    onReminderLeadMinutesChange: (Int) -> Unit
 ) {
     Text(
         text = stringResource(R.string.todo_editor_reminder_label),
@@ -65,56 +59,48 @@ internal fun TodoEditorReminderSection(
                     onCheckedChange = onReminderEnabledChange
                 )
             }
-            Spacer(Modifier.height(10.dp))
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(
-                        enabled = reminderEnabled,
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { onReminderDatePickerClick() },
-                shape = RoundedCornerShape(14.dp),
-                color = Color(0xFFE7E9EE)
-            ) {
-                Text(
-                    text = if (reminderDateTimeInput.isBlank()) {
-                        stringResource(R.string.todo_editor_select_reminder_datetime)
-                    } else {
-                        reminderDateTimeInput
-                    },
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (reminderDateTimeInput.isBlank()) Color(0xFFB0B5C2) else Color(0xFF2F3441)
-                )
-            }
-            Spacer(Modifier.height(10.dp))
-            Text(
-                text = stringResource(R.string.todo_editor_repeat_label),
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                color = Color(0xFF7A7F8C)
-            )
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(8.dp))
+            val presets = TodoReminderLeadPreset.values().toList()
+            val firstRow = presets.take(3)
+            val secondRow = presets.drop(3)
+
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TodoReminderRepeatOption.values().forEach { option ->
+                firstRow.forEach { preset ->
                     SelectableCategoryChip(
-                        label = stringResource(option.labelRes),
-                        selected = reminderRepeatType == option.type,
+                        label = stringResource(preset.labelRes),
+                        selected = reminderLeadMinutes == preset.minutes,
                         colorHex = null,
                         enabled = reminderEnabled,
-                        onClick = { onReminderRepeatTypeChange(option.type) }
+                        onClick = { onReminderLeadMinutesChange(preset.minutes) }
                     )
+                }
+            }
+
+            if (secondRow.isNotEmpty()) {
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    secondRow.forEach { preset ->
+                        SelectableCategoryChip(
+                            label = stringResource(preset.labelRes),
+                            selected = reminderLeadMinutes == preset.minutes,
+                            colorHex = null,
+                            enabled = reminderEnabled,
+                            onClick = { onReminderLeadMinutesChange(preset.minutes) }
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-private enum class TodoReminderRepeatOption(
-    val type: ReminderRepeatType,
+private enum class TodoReminderLeadPreset(
+    val minutes: Int,
     @StringRes val labelRes: Int
 ) {
-    NONE(ReminderRepeatType.NONE, R.string.todo_editor_repeat_none),
-    DAILY(ReminderRepeatType.DAILY, R.string.todo_editor_repeat_daily),
-    WEEKLY(ReminderRepeatType.WEEKLY, R.string.todo_editor_repeat_weekly)
+    AT_TIME(0, R.string.todo_reminder_lead_at_time),
+    FIVE_MIN(5, R.string.todo_reminder_lead_5m),
+    TEN_MIN(10, R.string.todo_reminder_lead_10m),
+    THIRTY_MIN(30, R.string.todo_reminder_lead_30m),
+    SIXTY_MIN(60, R.string.todo_reminder_lead_60m)
 }
