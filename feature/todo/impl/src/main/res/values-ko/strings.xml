@@ -26,12 +26,7 @@
     <string name="todo_editor_manage">관리</string>
     <string name="todo_editor_reminder_label">리마인더</string>
     <string name="todo_editor_enable_reminder">리마인더 사용</string>
-    <string name="todo_editor_select_reminder_datetime">리마인더 날짜/시간 선택</string>
-    <string name="todo_editor_reminder_when_label">알림 시점</string>
-    <string name="todo_editor_repeat_label">반복</string>
     <string name="todo_editor_repeat_none">없음</string>
-    <string name="todo_editor_repeat_daily">매일</string>
-    <string name="todo_editor_repeat_weekly">매주</string>
     <string name="todo_reminder_lead_at_time">정시</string>
     <string name="todo_reminder_lead_5m">5분 전</string>
     <string name="todo_reminder_lead_10m">10분 전</string>
@@ -48,8 +43,6 @@
 
     <string name="todo_row_subtitle_completed">@string/todo_filter_completed</string>
     <string name="todo_row_subtitle_today">@string/todo_filter_today</string>
-    <string name="todo_row_subtitle_reminder">리마인더 %1$s</string>
-    <string name="todo_row_subtitle_due_reminder">%1$s · %2$s</string>
 
     <string name="todo_category_manager_title">카테고리 관리</string>
     <string name="todo_category_manager_name">이름</string>
@@ -67,7 +60,6 @@
     <string name="todo_error_due_date_format">날짜 형식은 yyyy-MM-dd 입니다.</string>
     <string name="todo_error_due_time_format">시간 형식은 HH:mm 입니다.</string>
     <string name="todo_error_due_time_requires_due_date">마감 시간을 입력하려면 먼저 마감일을 설정해주세요.</string>
-    <string name="todo_error_reminder_format">리마인더 형식은 yyyy-MM-dd HH:mm 입니다.</string>
     <string name="todo_error_reminder_due_date_required">리마인더를 사용하려면 마감일을 설정해주세요.</string>
     <string name="todo_error_reminder_due_time_required">리마인더를 사용하려면 마감 시간을 설정해주세요.</string>
     <string name="todo_error_reminder_time_in_past">리마인더 시간은 현재 시각 이후여야 합니다.</string>
