@@ -1,6 +1,6 @@
 package com.example.myfirstapp.feature.todo.entry.di
 
-import com.example.myfirstapp.core.ui.navigation.AppFeatureEntry
+import com.example.myfirstapp.core.navigation.AppFeatureEntry
 import com.example.myfirstapp.feature.todo.impl.navigation.TodoFeatureEntryImpl
 import dagger.Binds
 import dagger.Module

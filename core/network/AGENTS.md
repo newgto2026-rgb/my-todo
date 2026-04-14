@@ -1,15 +1,10 @@
-# :core:network Module Guide
+# :core:network Module Delta
 
-## Role
-- Networking foundation (API clients, DTO contracts, interceptors).
+## Scope
+- Networking foundation: API clients, DTO contracts, and interceptors.
 
-## Rules
+## Module Rules
 - Keep transport models separate from domain models.
-- Prefer explicit serialization contracts.
-
-## Change Checklist
-- If API DTO changes, update mappers in `core:data`.
+- Keep serialization contracts explicit.
+- If DTO changes, update `core:data` mappers in the same change.
 - Keep timeout/retry/auth behavior centralized.
-
-## Validate
-- `./gradlew :core:network:lintDebug`

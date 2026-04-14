@@ -1,11 +1,10 @@
-# :feature:calendar:api Module Guide
+# :feature:calendar:api Module Delta
 
-## Role
+## Scope
 - Public contracts/routes for calendar feature navigation.
 
-## Rules
+## Module Rules
 - Keep route contracts type-safe and stable.
-- Keep module free from implementation details.
-
-## Validate
-- `./gradlew :feature:calendar:api:assembleDebug`
+- Keep this module free from implementation details.
+- Expose only contract types required by consumers.
+- Use `implementation` for internal dependencies; use `api` only for intentionally re-exported contract dependencies.

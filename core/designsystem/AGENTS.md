@@ -1,15 +1,9 @@
-# :core:designsystem Module Guide
+# :core:designsystem Module Delta
 
-## Role
-- App theme, typography, color tokens, shared visual primitives.
+## Scope
+- App theme, typography, color tokens, and shared visual primitives.
 
-## Rules
-- Centralize visual constants and theming decisions.
+## Module Rules
+- Centralize theming constants here.
 - Avoid feature-specific naming in shared tokens.
-
-## Change Checklist
-- Verify dark/light behavior and text contrast.
-- Ensure changes do not silently regress downstream UI.
-
-## Validate
-- `./gradlew :core:designsystem:lintDebug`
+- Verify light/dark behavior and text contrast on theme changes.

@@ -1,16 +1,10 @@
-# :core:ui Module Guide
+# :core:ui Module Delta
 
-## Role
+## Scope
 - Reusable UI components shared by multiple features.
 
-## Rules
-- Keep components stateless where possible.
+## Module Rules
+- Keep components stateless where practical.
 - No feature-specific business logic.
-- Follow design-system tokens/styles.
-
-## Change Checklist
-- Preserve binary compatibility for widely used composables.
-- Check accessibility labels and test tags when relevant.
-
-## Validate
-- `./gradlew :core:ui:lintDebug`
+- Follow `core:designsystem` tokens and styles.
+- Preserve compatibility for widely reused composables.

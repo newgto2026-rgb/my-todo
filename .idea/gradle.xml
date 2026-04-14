@@ -21,8 +21,13 @@
             <option value="$PROJECT_DIR$/core/testing" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/calendar" />
+            <option value="$PROJECT_DIR$/feature/calendar/api" />
+            <option value="$PROJECT_DIR$/feature/calendar/entry" />
+            <option value="$PROJECT_DIR$/feature/calendar/impl" />
             <option value="$PROJECT_DIR$/feature/todo" />
             <option value="$PROJECT_DIR$/feature/todo/api" />
+            <option value="$PROJECT_DIR$/feature/todo/entry" />
             <option value="$PROJECT_DIR$/feature/todo/impl" />
           </set>
         </option>

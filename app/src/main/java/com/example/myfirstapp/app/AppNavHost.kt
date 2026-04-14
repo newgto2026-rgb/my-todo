@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.myfirstapp.core.ui.navigation.AppFeatureEntry
+import com.example.myfirstapp.core.navigation.AppFeatureEntry
 
 @Composable
 fun AppNavHost(entries: Set<@JvmSuppressWildcards AppFeatureEntry>) {

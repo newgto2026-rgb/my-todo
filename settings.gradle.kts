@@ -24,6 +24,7 @@ rootProject.name = "MyFirstApp"
 
 include(":app")
 include(":core:model")
+include(":core:navigation")
 include(":core:ui")
 include(":core:designsystem")
 include(":core:network")

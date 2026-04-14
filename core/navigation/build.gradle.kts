@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.example.myfirstapp.feature.todo.api"
+    namespace = "com.example.myfirstapp.core.navigation"
     compileSdk = 36
 
     defaultConfig {
@@ -22,6 +21,5 @@ android {
 }
 
 dependencies {
-    api(project(":core:navigation"))
-    implementation(libs.kotlinx.serialization.json)
+    api(libs.androidx.navigation.compose)
 }

@@ -1,16 +1,10 @@
-# :core:model Module Guide
+# :core:model Module Delta
 
-## Role
-- Pure Kotlin model definitions shared across layers.
+## Scope
+- Pure Kotlin models shared across layers.
 
-## Rules
+## Module Rules
 - No Android framework dependency.
 - Keep models immutable and serialization-friendly.
-- Avoid behavior-heavy logic here.
-
-## Change Checklist
-- Confirm backward compatibility for fields used by DB/data/domain/UI.
-- If enum/type changes, verify mappers and use cases in dependent modules.
-
-## Validate
-- `./gradlew :core:model:testDebugUnitTest`
+- Avoid behavior-heavy logic in this module.
+- If enum/type changes, verify dependent mappers and use cases.

@@ -1,6 +1,6 @@
 package com.example.myfirstapp.feature.calendar.entry.di
 
-import com.example.myfirstapp.core.ui.navigation.AppFeatureEntry
+import com.example.myfirstapp.core.navigation.AppFeatureEntry
 import com.example.myfirstapp.feature.calendar.impl.navigation.CalendarFeatureEntryImpl
 import dagger.Binds
 import dagger.Module
