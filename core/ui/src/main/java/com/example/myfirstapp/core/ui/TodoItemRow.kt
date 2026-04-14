@@ -2,6 +2,7 @@ package com.example.myfirstapp.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,8 +46,8 @@ fun TodoItemRow(
     categoryColorHex: String? = null
 ) {
     val containerColor = when {
-        isDone -> Color(0xFFD5DBE1)
-        isEmphasized -> Color(0xFFF1F4F8)
+        isDone -> Color(0xFFEEF2F7)
+        isEmphasized -> Color(0xFFE7EDF9)
         else -> Color(0xFFFFFFFF)
     }
     val subtitleColor = when {
@@ -67,7 +68,12 @@ fun TodoItemRow(
             modifier = Modifier
                 .size(24.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(if (isDone) Color(0xFF6C63FF) else Color.Transparent)
+                .background(if (isDone) Color(0xFFE8E3FF) else Color(0xFFF4F7FF))
+                .border(
+                    width = 1.5.dp,
+                    color = if (isDone) Color(0xFF6C63FF) else Color(0xFFC9D4EE),
+                    shape = RoundedCornerShape(8.dp)
+                )
                 .clickable(onClick = onToggleDone),
             contentAlignment = Alignment.Center
         ) {
@@ -75,15 +81,8 @@ fun TodoItemRow(
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = Color(0xFF6C63FF),
                     modifier = Modifier.size(15.dp)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFFD8E2FF))
                 )
             }
         }
