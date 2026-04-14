@@ -3,22 +3,19 @@ package com.example.myfirstapp.feature.todo.impl.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myfirstapp.core.domain.scheduler.TodoReminderScheduler
-import com.example.myfirstapp.core.domain.usecase.AddCategoryUseCase
 import com.example.myfirstapp.core.domain.usecase.AddTodoUseCase
-import com.example.myfirstapp.core.domain.usecase.DeleteCategoryUseCase
 import com.example.myfirstapp.core.domain.usecase.DeleteTodoUseCase
 import com.example.myfirstapp.core.domain.usecase.GetTodoUseCase
-import com.example.myfirstapp.core.domain.usecase.ObserveCategoriesUseCase
-import com.example.myfirstapp.core.domain.usecase.ObserveSelectedCategoryFilterUseCase
 import com.example.myfirstapp.core.domain.usecase.ObserveSelectedTodoFilterUseCase
+import com.example.myfirstapp.core.domain.usecase.ObserveSelectedTodoPriorityFilterUseCase
 import com.example.myfirstapp.core.domain.usecase.ObserveTodosUseCase
 import com.example.myfirstapp.core.domain.usecase.ToggleTodoDoneUseCase
-import com.example.myfirstapp.core.domain.usecase.UpdateCategoryUseCase
-import com.example.myfirstapp.core.domain.usecase.UpdateSelectedCategoryFilterUseCase
 import com.example.myfirstapp.core.domain.usecase.UpdateSelectedTodoFilterUseCase
+import com.example.myfirstapp.core.domain.usecase.UpdateSelectedTodoPriorityFilterUseCase
 import com.example.myfirstapp.core.domain.usecase.UpdateTodoUseCase
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoFilter
+import com.example.myfirstapp.core.model.TodoPriorityFilter
 import com.example.myfirstapp.feature.todo.impl.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -35,17 +32,13 @@ import kotlinx.coroutines.launch
 class TodoListViewModel @Inject constructor(
     observeTodosUseCase: ObserveTodosUseCase,
     observeSelectedTodoFilterUseCase: ObserveSelectedTodoFilterUseCase,
-    observeCategoriesUseCase: ObserveCategoriesUseCase,
-    observeSelectedCategoryFilterUseCase: ObserveSelectedCategoryFilterUseCase,
+    observeSelectedTodoPriorityFilterUseCase: ObserveSelectedTodoPriorityFilterUseCase,
     private val addTodoUseCase: AddTodoUseCase,
     private val updateTodoUseCase: UpdateTodoUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase,
     private val toggleTodoDoneUseCase: ToggleTodoDoneUseCase,
     private val updateSelectedTodoFilterUseCase: UpdateSelectedTodoFilterUseCase,
-    private val updateSelectedCategoryFilterUseCase: UpdateSelectedCategoryFilterUseCase,
-    private val addCategoryUseCase: AddCategoryUseCase,
-    private val updateCategoryUseCase: UpdateCategoryUseCase,
-    private val deleteCategoryUseCase: DeleteCategoryUseCase,
+    private val updateSelectedTodoPriorityFilterUseCase: UpdateSelectedTodoPriorityFilterUseCase,
     private val getTodoUseCase: GetTodoUseCase,
     private val todoReminderScheduler: TodoReminderScheduler
 ) : ViewModel() {
@@ -58,16 +51,14 @@ class TodoListViewModel @Inject constructor(
     val uiState: StateFlow<TodoListUiState> = combine(
         observeTodosUseCase(),
         observeSelectedTodoFilterUseCase(),
-        observeCategoriesUseCase(),
-        observeSelectedCategoryFilterUseCase(),
+        observeSelectedTodoPriorityFilterUseCase(),
         uiLocalState
-    ) { items, selectedFilter, categories, selectedCategoryId, localState ->
+    ) { items, selectedFilter, selectedPriorityFilter, localState ->
         buildTodoListUiState(
             localState = localState,
             items = items,
             selectedFilter = selectedFilter,
-            categories = categories,
-            selectedCategoryId = selectedCategoryId
+            selectedPriorityFilter = selectedPriorityFilter
         )
     }.stateIn(
         scope = viewModelScope,
@@ -103,8 +94,8 @@ class TodoListViewModel @Inject constructor(
                 updateLocalState { copy(draftReminderRepeatType = action.value.normalizeRepeatType()) }
             }
 
-            is TodoListAction.OnCategorySelectedInEditor -> {
-                updateLocalState { copy(draftCategoryId = action.categoryId) }
+            is TodoListAction.OnPrioritySelectedInEditor -> {
+                updateLocalState { copy(draftPriority = action.priority) }
             }
 
             TodoListAction.OnSaveClick -> saveTodo()
@@ -112,30 +103,7 @@ class TodoListViewModel @Inject constructor(
             is TodoListAction.OnEditClick -> openEditDialog(action.id)
             is TodoListAction.OnDeleteClick -> deleteTodo(action.id)
             is TodoListAction.OnFilterChange -> updateFilter(action.filter)
-            is TodoListAction.OnCategoryFilterChange -> updateCategoryFilter(action.categoryId)
-            TodoListAction.OnManageCategoriesClick -> updateLocalState { openCategoryManager() }
-
-            TodoListAction.OnDismissCategoryManager -> updateLocalState { dismissCategoryManager() }
-
-            is TodoListAction.OnCategoryNameInputChange -> {
-                updateLocalState { copy(categoryNameInput = action.value) }
-            }
-
-            is TodoListAction.OnCategoryColorInputChange -> {
-                updateLocalState { copy(categoryColorInput = action.value) }
-            }
-
-            is TodoListAction.OnCategoryIconInputChange -> {
-                updateLocalState { copy(categoryIconInput = action.value) }
-            }
-
-            is TodoListAction.OnCategoryEditClick -> {
-                val target = uiState.value.categories.firstOrNull { it.id == action.categoryId } ?: return
-                updateLocalState { editCategory(target) }
-            }
-
-            TodoListAction.OnCategorySaveClick -> saveCategory()
-            is TodoListAction.OnCategoryDeleteClick -> deleteCategory(action.categoryId)
+            is TodoListAction.OnPriorityFilterChange -> updatePriorityFilter(action.filter)
             TodoListAction.OnDismissDialog -> updateLocalState { dismissTodoEditor() }
         }
     }
@@ -154,25 +122,27 @@ class TodoListViewModel @Inject constructor(
                     id = current.editingItem.id,
                     title = checkNotNull(validation.normalizedTitle),
                     dueDate = validation.parsedDueDate,
-                    categoryId = current.draftCategoryId,
+                    categoryId = null,
                     dueTimeMinutes = validation.parsedDueTimeMinutes,
                     reminderAtEpochMillis = if (current.draftReminderEnabled) validation.reminderAtEpochMillis else null,
                     isReminderEnabled = current.draftReminderEnabled,
                     reminderRepeatType = ReminderRepeatType.NONE,
                     reminderRepeatDaysMask = 0,
-                    reminderLeadMinutes = if (current.draftReminderEnabled) current.draftReminderLeadMinutes else null
+                    reminderLeadMinutes = if (current.draftReminderEnabled) current.draftReminderLeadMinutes else null,
+                    priority = current.draftPriority
                 ).map { current.editingItem.id }
             } else {
                 addTodoUseCase(
                     title = checkNotNull(validation.normalizedTitle),
                     dueDate = validation.parsedDueDate,
-                    categoryId = current.draftCategoryId,
+                    categoryId = null,
                     dueTimeMinutes = validation.parsedDueTimeMinutes,
                     reminderAtEpochMillis = if (current.draftReminderEnabled) validation.reminderAtEpochMillis else null,
                     isReminderEnabled = current.draftReminderEnabled,
                     reminderRepeatType = ReminderRepeatType.NONE,
                     reminderRepeatDaysMask = 0,
-                    reminderLeadMinutes = if (current.draftReminderEnabled) current.draftReminderLeadMinutes else null
+                    reminderLeadMinutes = if (current.draftReminderEnabled) current.draftReminderLeadMinutes else null,
+                    priority = current.draftPriority
                 )
             }
 
@@ -181,38 +151,6 @@ class TodoListViewModel @Inject constructor(
                 uiLocalState.value = current.dismissTodoEditor()
             } else {
                 sideEffectMutable.emit(TodoListSideEffect.ShowSnackbar(R.string.todo_error_save_failed))
-            }
-        }
-    }
-
-    private fun saveCategory() {
-        val current = uiLocalState.value
-        val name = current.categoryNameInput.trim()
-        if (name.isBlank()) {
-            viewModelScope.launch {
-                sideEffectMutable.emit(
-                    TodoListSideEffect.ShowSnackbar(R.string.todo_error_category_name_required)
-                )
-            }
-            return
-        }
-
-        val color = current.categoryColorInput.trim().ifBlank { null }
-        val icon = current.categoryIconInput.trim().ifBlank { null }
-
-        viewModelScope.launch {
-            val result = if (current.editingCategoryId != null) {
-                updateCategoryUseCase(current.editingCategoryId, name, color, icon)
-            } else {
-                addCategoryUseCase(name, color, icon).map { Unit }
-            }
-
-            if (result.isSuccess) {
-                uiLocalState.value = current.clearCategoryEditor()
-            } else {
-                sideEffectMutable.emit(
-                    TodoListSideEffect.ShowSnackbar(R.string.todo_error_category_save_failed)
-                )
             }
         }
     }
@@ -239,7 +177,7 @@ class TodoListViewModel @Inject constructor(
             draftReminderEnabled = target.isReminderEnabled,
             draftReminderLeadMinutes = target.reminderLeadMinutes ?: DEFAULT_REMINDER_LEAD_MINUTES,
             draftReminderRepeatType = ReminderRepeatType.NONE,
-            draftCategoryId = target.categoryId,
+            draftPriority = target.priority,
             errorMessageRes = null
         )
     }
@@ -256,17 +194,6 @@ class TodoListViewModel @Inject constructor(
         }
     }
 
-    private fun deleteCategory(categoryId: Long) {
-        viewModelScope.launch {
-            deleteCategoryUseCase(categoryId)
-                .onFailure {
-                    sideEffectMutable.emit(
-                        TodoListSideEffect.ShowSnackbar(R.string.todo_error_category_delete_failed)
-                    )
-                }
-        }
-    }
-
     private fun updateFilter(filter: TodoFilter) {
         viewModelScope.launch {
             updateSelectedTodoFilterUseCase(filter)
@@ -278,13 +205,13 @@ class TodoListViewModel @Inject constructor(
         }
     }
 
-    private fun updateCategoryFilter(categoryId: Long?) {
+    private fun updatePriorityFilter(filter: TodoPriorityFilter) {
         viewModelScope.launch {
-            updateSelectedCategoryFilterUseCase(categoryId)
+            updateSelectedTodoPriorityFilterUseCase(filter)
                 .onFailure {
                     sideEffectMutable.emit(
                         TodoListSideEffect.ShowSnackbar(
-                            R.string.todo_error_category_filter_change_failed
+                            R.string.todo_error_priority_filter_change_failed
                         )
                     )
                 }

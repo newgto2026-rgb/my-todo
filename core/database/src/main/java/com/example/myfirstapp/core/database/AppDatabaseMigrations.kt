@@ -97,4 +97,10 @@ object AppDatabaseMigrations {
             db.execSQL("ALTER TABLE `todo` ADD COLUMN `reminderLeadMinutes` INTEGER")
         }
     }
+
+    val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE `todo` ADD COLUMN `priority` TEXT NOT NULL DEFAULT 'MEDIUM'")
+        }
+    }
 }

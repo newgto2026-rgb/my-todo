@@ -66,10 +66,9 @@ internal fun TodoEditorReminderSection(
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 firstRow.forEach { preset ->
-                    SelectableCategoryChip(
+                    ReminderPresetChip(
                         label = stringResource(preset.labelRes),
                         selected = reminderLeadMinutes == preset.minutes,
-                        colorHex = null,
                         enabled = reminderEnabled,
                         onClick = { onReminderLeadMinutesChange(preset.minutes) }
                     )
@@ -80,10 +79,9 @@ internal fun TodoEditorReminderSection(
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     secondRow.forEach { preset ->
-                        SelectableCategoryChip(
+                        ReminderPresetChip(
                             label = stringResource(preset.labelRes),
                             selected = reminderLeadMinutes == preset.minutes,
-                            colorHex = null,
                             enabled = reminderEnabled,
                             onClick = { onReminderLeadMinutesChange(preset.minutes) }
                         )
@@ -103,4 +101,30 @@ private enum class TodoReminderLeadPreset(
     TEN_MIN(10, R.string.todo_reminder_lead_10m),
     THIRTY_MIN(30, R.string.todo_reminder_lead_30m),
     SIXTY_MIN(60, R.string.todo_reminder_lead_60m)
+}
+
+@Composable
+private fun ReminderPresetChip(
+    label: String,
+    selected: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit
+) {
+    Surface(
+        shape = RoundedCornerShape(14.dp),
+        color = when {
+            !enabled -> Color(0xFFE8EBF3)
+            selected -> Color(0xFF5F78A6).copy(alpha = 0.18f)
+            else -> Color(0xFFE8EBF3)
+        },
+        onClick = onClick,
+        enabled = enabled
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            color = if (selected && enabled) Color(0xFF4A6697) else Color(0xFF6C7382),
+            style = MaterialTheme.typography.labelLarge
+        )
+    }
 }

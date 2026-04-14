@@ -12,18 +12,16 @@
     <string name="todo_header_profile_icon">👤</string>
     <string name="todo_header_completed_symbol">✓</string>
 
-    <string name="todo_category_all">All Categories</string>
-    <string name="todo_category_uncategorized">Uncategorized</string>
-    <string name="todo_toggle_more">More</string>
-    <string name="todo_toggle_less">Less</string>
+    <string name="todo_priority_low">Low</string>
+    <string name="todo_priority_medium">Medium</string>
+    <string name="todo_priority_high">High</string>
 
     <string name="todo_editor_title_new_task">New Task</string>
     <string name="todo_editor_task_description">TASK DESCRIPTION</string>
     <string name="todo_editor_task_placeholder">What needs to be done?</string>
     <string name="todo_editor_select_due_date">Select due date</string>
     <string name="todo_editor_select_due_time">Select due time</string>
-    <string name="todo_editor_category_label">CATEGORY</string>
-    <string name="todo_editor_manage">Manage</string>
+    <string name="todo_editor_priority_label">PRIORITY</string>
     <string name="todo_editor_reminder_label">REMINDER</string>
     <string name="todo_editor_enable_reminder">Enable reminder</string>
     <string name="todo_editor_repeat_none">None</string>
@@ -64,11 +62,8 @@
     <string name="todo_error_reminder_due_time_required">Set a due time to enable reminder.</string>
     <string name="todo_error_reminder_time_in_past">Reminder time must be later than now.</string>
     <string name="todo_error_save_failed">Failed to save.</string>
-    <string name="todo_error_category_name_required">Please enter a category name.</string>
-    <string name="todo_error_category_save_failed">Failed to save category.</string>
     <string name="todo_error_toggle_done_failed">Failed to change completion status.</string>
     <string name="todo_error_delete_failed">Failed to delete.</string>
-    <string name="todo_error_category_delete_failed">Failed to delete category.</string>
     <string name="todo_error_filter_change_failed">Failed to change filter.</string>
-    <string name="todo_error_category_filter_change_failed">Failed to change category filter.</string>
+    <string name="todo_error_priority_filter_change_failed">Failed to change priority filter.</string>
 </resources>

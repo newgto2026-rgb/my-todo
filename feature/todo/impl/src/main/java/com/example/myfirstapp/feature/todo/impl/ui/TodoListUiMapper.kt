@@ -1,10 +1,9 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
-import com.example.myfirstapp.core.model.Category
-import com.example.myfirstapp.core.model.TodoCategoryFilter
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.model.TodoItem
-import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
+import com.example.myfirstapp.core.model.TodoPriority
+import com.example.myfirstapp.core.model.TodoPriorityFilter
 import com.example.myfirstapp.feature.todo.impl.model.TodoItemUiModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -13,35 +12,23 @@ internal fun buildTodoListUiState(
     localState: TodoListUiState,
     items: List<TodoItem>,
     selectedFilter: TodoFilter,
-    categories: List<Category>,
-    selectedCategoryId: Long?
+    selectedPriorityFilter: TodoPriorityFilter
 ): TodoListUiState {
-    val normalizedSelectedCategoryId = categories.normalizeSelectedCategoryId(selectedCategoryId)
-    val categoriesById = categories.associateBy { it.id }
     val filteredItems = items
         .filterBy(selectedFilter)
-        .filterByCategory(normalizedSelectedCategoryId)
+        .filterByPriority(selectedPriorityFilter)
+        .sortedWith(
+            compareBy<TodoItem> { it.isDone }
+                .thenByDescending { it.priority.sortRank() }
+                .thenBy { it.id }
+        )
 
     return localState.copy(
-        items = filteredItems.map { it.toUiModel(categoriesById) },
-        categories = categories.map { it.toUiModel() },
+        items = filteredItems.map { it.toUiModel() },
         selectedFilter = selectedFilter,
-        selectedCategoryId = normalizedSelectedCategoryId,
+        selectedPriorityFilter = selectedPriorityFilter,
         isLoading = false
     )
-}
-
-private fun List<Category>.normalizeSelectedCategoryId(selectedCategoryId: Long?): Long? {
-    val existingIds = mapTo(mutableSetOf()) { it.id }
-    return if (
-        selectedCategoryId == null ||
-        selectedCategoryId in existingIds ||
-        selectedCategoryId == TodoCategoryFilter.UNCATEGORIZED_FILTER_ID
-    ) {
-        selectedCategoryId
-    } else {
-        null
-    }
 }
 
 private fun List<TodoItem>.filterBy(filter: TodoFilter): List<TodoItem> {
@@ -53,24 +40,21 @@ private fun List<TodoItem>.filterBy(filter: TodoFilter): List<TodoItem> {
     }
 }
 
-private fun List<TodoItem>.filterByCategory(categoryId: Long?): List<TodoItem> {
-    if (categoryId == null) return this
-    if (categoryId == TodoCategoryFilter.UNCATEGORIZED_FILTER_ID) {
-        return filter { it.categoryId == null }
-    }
-    return filter { it.categoryId == categoryId }
+private fun List<TodoItem>.filterByPriority(filter: TodoPriorityFilter): List<TodoItem> = when (filter) {
+    TodoPriorityFilter.ALL -> this
+    TodoPriorityFilter.LOW -> filter { it.priority == TodoPriority.LOW }
+    TodoPriorityFilter.MEDIUM -> filter { it.priority == TodoPriority.MEDIUM }
+    TodoPriorityFilter.HIGH -> filter { it.priority == TodoPriority.HIGH }
 }
 
-private fun Category.toUiModel(): CategoryUiModel =
-    CategoryUiModel(
-        id = id,
-        name = name,
-        colorHex = colorHex
-    )
+private fun TodoPriority.sortRank(): Int = when (this) {
+    TodoPriority.HIGH -> 3
+    TodoPriority.MEDIUM -> 2
+    TodoPriority.LOW -> 1
+}
 
-private fun TodoItem.toUiModel(categoriesById: Map<Long, Category>): TodoItemUiModel {
-    val category = categoryId?.let(categoriesById::get)
-    return TodoItemUiModel(
+private fun TodoItem.toUiModel(): TodoItemUiModel =
+    TodoItemUiModel(
         id = id,
         title = title,
         isDone = isDone,
@@ -81,8 +65,5 @@ private fun TodoItem.toUiModel(categoriesById: Map<Long, Category>): TodoItemUiM
         isReminderEnabled = isReminderEnabled,
         reminderLeadMinutes = reminderLeadMinutes,
         reminderRepeatType = reminderRepeatType,
-        categoryId = categoryId,
-        categoryName = category?.name,
-        categoryColorHex = category?.colorHex
+        priority = priority
     )
-}

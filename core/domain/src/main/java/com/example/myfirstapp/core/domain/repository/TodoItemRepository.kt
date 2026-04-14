@@ -2,6 +2,7 @@ package com.example.myfirstapp.core.domain.repository
 
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoItem
+import com.example.myfirstapp.core.model.TodoPriority
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -19,7 +20,8 @@ interface TodoItemRepository {
         isReminderEnabled: Boolean = false,
         reminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
         reminderRepeatDaysMask: Int = 0,
-        reminderLeadMinutes: Int? = null
+        reminderLeadMinutes: Int? = null,
+        priority: TodoPriority = TodoPriority.MEDIUM
     ): Result<Long>
 
     suspend fun updateTodo(
@@ -32,7 +34,8 @@ interface TodoItemRepository {
         isReminderEnabled: Boolean = false,
         reminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
         reminderRepeatDaysMask: Int = 0,
-        reminderLeadMinutes: Int? = null
+        reminderLeadMinutes: Int? = null,
+        priority: TodoPriority = TodoPriority.MEDIUM
     ): Result<Unit>
 
     suspend fun deleteTodo(id: Long): Result<Unit>

@@ -2,6 +2,7 @@ package com.example.myfirstapp.feature.todo.impl.model
 
 import androidx.compose.runtime.Immutable
 import com.example.myfirstapp.core.model.ReminderRepeatType
+import com.example.myfirstapp.core.model.TodoPriority
 
 @Immutable
 data class TodoItemUiModel(
@@ -15,7 +16,5 @@ data class TodoItemUiModel(
     val isReminderEnabled: Boolean,
     val reminderLeadMinutes: Int?,
     val reminderRepeatType: ReminderRepeatType,
-    val categoryId: Long?,
-    val categoryName: String?,
-    val categoryColorHex: String?
+    val priority: TodoPriority
 )

@@ -2,6 +2,7 @@ package com.example.myfirstapp.feature.calendar.impl.ui
 
 import androidx.compose.runtime.Immutable
 import com.example.myfirstapp.core.model.DateTodoSummary
+import com.example.myfirstapp.core.model.TodoPriority
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -29,6 +30,7 @@ data class CalendarSelectedTodoUiModel(
     val id: Long,
     val title: String,
     val isDone: Boolean,
+    val priority: TodoPriority,
     val isReminderEnabled: Boolean,
     val dueTimeLabel: String?,
     val reminderLeadMinutes: Int?

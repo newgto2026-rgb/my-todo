@@ -56,6 +56,7 @@ import com.example.myfirstapp.feature.calendar.impl.ui.CalendarSelectedTodoUiMod
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarSideEffect
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarUiState
 import com.example.myfirstapp.feature.calendar.impl.ui.CalendarViewModel
+import com.example.myfirstapp.core.model.TodoPriority
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -363,21 +364,27 @@ private fun RowScope.CalendarDayCell(
                         )
                 )
             }
-            if (!day.isSelected && hasItems) {
-                Box(
-                    modifier = Modifier
-                        .size(34.dp)
-                        .background(
-                            color = Color(0xFFDDE4FF),
-                            shape = CircleShape
-                        )
-                )
-            }
             Text(
                 text = date.dayOfMonth.toString(),
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = dateFontWeight),
                 color = textColor
             )
+        }
+
+        if (!day.isSelected && hasItems) {
+            Spacer(modifier = Modifier.height(2.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(totalCount.coerceAtMost(3)) {
+                    Box(
+                        modifier = Modifier
+                            .size(4.dp)
+                            .background(Color(0xFF8EA0C2), CircleShape)
+                    )
+                }
+            }
         }
     }
 }
@@ -447,16 +454,34 @@ private fun DayTodoItem(
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = todo.title,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                        color = if (todo.isDone) {
-                            Color(0xFF2D3338).copy(alpha = 0.42f)
-                        } else {
-                            Color(0xFF2D3338)
-                        },
-                        textDecoration = if (todo.isDone) TextDecoration.LineThrough else TextDecoration.None
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = todo.title,
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                            color = if (todo.isDone) {
+                                Color(0xFF2D3338).copy(alpha = 0.42f)
+                            } else {
+                                Color(0xFF2D3338)
+                            },
+                            textDecoration = if (todo.isDone) TextDecoration.LineThrough else TextDecoration.None
+                        )
+                        Spacer(modifier = Modifier.size(6.dp))
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = priorityColor(todo.priority).copy(alpha = 0.16f)
+                        ) {
+                            Text(
+                                text = priorityLabel(todo.priority),
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+                                color = priorityColor(todo.priority)
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(2.dp))
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -501,4 +526,17 @@ internal fun CalendarUiState.todayTaskCount(today: LocalDate): Int {
 private fun DayOfWeek.plus(days: Long): DayOfWeek {
     val normalized = ((value - 1 + days) % 7 + 7) % 7
     return DayOfWeek.of(normalized.toInt() + 1)
+}
+
+@Composable
+private fun priorityLabel(priority: TodoPriority): String = when (priority) {
+    TodoPriority.LOW -> stringResource(R.string.calendar_priority_low)
+    TodoPriority.MEDIUM -> stringResource(R.string.calendar_priority_medium)
+    TodoPriority.HIGH -> stringResource(R.string.calendar_priority_high)
+}
+
+private fun priorityColor(priority: TodoPriority): Color = when (priority) {
+    TodoPriority.LOW -> Color(0xFF6E8E72)
+    TodoPriority.MEDIUM -> Color(0xFF8B7A4E)
+    TodoPriority.HIGH -> Color(0xFF9B4B4B)
 }
