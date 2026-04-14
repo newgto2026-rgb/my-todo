@@ -160,6 +160,42 @@ fun TodoItemRow(
                         style = MaterialTheme.typography.bodySmall,
                         color = subtitleColor
                     )
+                    if (isReminderEnabled && !reminderText.isNullOrBlank()) {
+                        Spacer(Modifier.size(6.dp))
+                        Text(
+                            text = "·",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = subtitleColor
+                        )
+                        Spacer(Modifier.size(6.dp))
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            tint = subtitleColor,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(Modifier.size(4.dp))
+                        Text(
+                            text = reminderText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = subtitleColor,
+                        )
+                    }
+                }
+            } else if (isReminderEnabled && !reminderText.isNullOrBlank()) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = null,
+                        tint = subtitleColor,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(Modifier.size(4.dp))
+                    Text(
+                        text = reminderText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = subtitleColor
+                    )
                 }
             }
         }
