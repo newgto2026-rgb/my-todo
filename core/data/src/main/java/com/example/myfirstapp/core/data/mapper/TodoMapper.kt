@@ -2,6 +2,7 @@ package com.example.myfirstapp.core.data.mapper
 
 import com.example.myfirstapp.core.database.entity.TodoEntity
 import com.example.myfirstapp.core.model.ReminderRepeatType
+import com.example.myfirstapp.core.model.TodoPriority
 import com.example.myfirstapp.core.model.TodoItem
 import java.time.LocalDate
 
@@ -19,7 +20,8 @@ fun TodoEntity.toDomain(): TodoItem =
         isReminderEnabled = isReminderEnabled,
         reminderRepeatType = ReminderRepeatType.valueOf(reminderRepeatType),
         reminderRepeatDaysMask = reminderRepeatDaysMask,
-        reminderLeadMinutes = reminderLeadMinutes
+        reminderLeadMinutes = reminderLeadMinutes,
+        priority = TodoPriority.entries.find { it.name == priority } ?: TodoPriority.MEDIUM
     )
 
 fun TodoItem.toEntity(): TodoEntity =
@@ -36,5 +38,6 @@ fun TodoItem.toEntity(): TodoEntity =
         reminderLeadMinutes = reminderLeadMinutes,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        categoryId = categoryId
+        categoryId = categoryId,
+        priority = priority.name
     )

@@ -16,6 +16,8 @@ import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoCategoryFilter
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.model.TodoItem
+import com.example.myfirstapp.core.model.TodoPriority
+import com.example.myfirstapp.core.model.TodoPriorityFilter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -52,7 +54,8 @@ class TodoRepositoryImpl @Inject constructor(
         isReminderEnabled: Boolean,
         reminderRepeatType: ReminderRepeatType,
         reminderRepeatDaysMask: Int,
-        reminderLeadMinutes: Int?
+        reminderLeadMinutes: Int?,
+        priority: TodoPriority
     ): Result<Long> = runCatching {
         validateCategoryId(categoryId)
         val now = System.currentTimeMillis()
@@ -69,7 +72,8 @@ class TodoRepositoryImpl @Inject constructor(
                 reminderLeadMinutes = reminderLeadMinutes,
                 createdAt = now,
                 updatedAt = now,
-                categoryId = categoryId
+                categoryId = categoryId,
+                priority = priority.name
             )
         )
     }.onFailure { throwable ->
@@ -86,7 +90,8 @@ class TodoRepositoryImpl @Inject constructor(
         isReminderEnabled: Boolean,
         reminderRepeatType: ReminderRepeatType,
         reminderRepeatDaysMask: Int,
-        reminderLeadMinutes: Int?
+        reminderLeadMinutes: Int?,
+        priority: TodoPriority
     ): Result<Unit> = runCatching {
         validateCategoryId(categoryId)
         val existing = todoDao.getTodoById(id) ?: throw IllegalStateException("Todo not found")
@@ -101,7 +106,8 @@ class TodoRepositoryImpl @Inject constructor(
                 reminderRepeatDaysMask = reminderRepeatDaysMask,
                 reminderLeadMinutes = reminderLeadMinutes,
                 updatedAt = System.currentTimeMillis(),
-                categoryId = categoryId
+                categoryId = categoryId,
+                priority = priority.name
             )
         )
     }.onFailure { throwable ->
@@ -196,6 +202,15 @@ class TodoRepositoryImpl @Inject constructor(
         userPreferencesDataSource.setSelectedTodoCategoryFilter(categoryId)
     }.onFailure { throwable ->
         logError("setSelectedCategoryFilter", throwable)
+    }
+
+    override fun observeSelectedPriorityFilter(): Flow<TodoPriorityFilter> =
+        userPreferencesDataSource.selectedTodoPriorityFilter
+
+    override suspend fun setSelectedPriorityFilter(filter: TodoPriorityFilter): Result<Unit> = runCatching {
+        userPreferencesDataSource.setSelectedTodoPriorityFilter(filter)
+    }.onFailure { throwable ->
+        logError("setSelectedPriorityFilter", throwable)
     }
 
     private suspend fun validateCategoryId(categoryId: Long?) {

@@ -2,6 +2,7 @@ package com.example.myfirstapp.core.domain.usecase
 
 import com.example.myfirstapp.core.domain.repository.TodoItemRepository
 import com.example.myfirstapp.core.model.ReminderRepeatType
+import com.example.myfirstapp.core.model.TodoPriority
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -18,7 +19,8 @@ class UpdateTodoUseCase @Inject constructor(
         isReminderEnabled: Boolean = false,
         reminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
         reminderRepeatDaysMask: Int = 0,
-        reminderLeadMinutes: Int? = null
+        reminderLeadMinutes: Int? = null,
+        priority: TodoPriority = TodoPriority.MEDIUM
     ): Result<Unit> {
         val normalizedTitle = title.trim()
         if (normalizedTitle.isBlank()) {
@@ -34,7 +36,8 @@ class UpdateTodoUseCase @Inject constructor(
             isReminderEnabled = isReminderEnabled,
             reminderRepeatType = reminderRepeatType,
             reminderRepeatDaysMask = reminderRepeatDaysMask,
-            reminderLeadMinutes = reminderLeadMinutes
+            reminderLeadMinutes = reminderLeadMinutes,
+            priority = priority
         )
     }
 }

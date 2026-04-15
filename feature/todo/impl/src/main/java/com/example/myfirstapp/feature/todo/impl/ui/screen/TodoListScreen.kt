@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
 import com.example.myfirstapp.core.model.TodoFilter
+import com.example.myfirstapp.core.model.TodoPriority
 import com.example.myfirstapp.core.ui.TodoItemRow
 import com.example.myfirstapp.feature.todo.impl.R
 
@@ -48,7 +49,7 @@ fun TodoListRoute(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val navBackStackEntry = LocalViewModelStoreOwner.current as? NavBackStackEntry
-    val isModalVisible = uiState.isEditDialogVisible || uiState.isCategoryManagerVisible
+    val isModalVisible = uiState.isEditDialogVisible
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
@@ -106,7 +107,6 @@ private fun TodoListScreen(
     val completionProgress = completionProgress(uiState)
     val rowCompletedText = stringResource(R.string.todo_row_subtitle_completed)
     val rowTodayText = stringResource(R.string.todo_row_subtitle_today)
-    val uncategorizedText = stringResource(R.string.todo_category_uncategorized)
 
     Scaffold(
         containerColor = Color(0xFFF5F6FB),
@@ -141,10 +141,9 @@ private fun TodoListScreen(
                 selectedFilter = uiState.selectedFilter,
                 completionProgress = completionProgress
             )
-            CategoryFilterBar(
-                categories = uiState.categories,
-                selectedCategoryId = uiState.selectedCategoryId,
-                onCategorySelected = { onAction(TodoListAction.OnCategoryFilterChange(it)) }
+            PriorityFilterBar(
+                selectedPriorityFilter = uiState.selectedPriorityFilter,
+                onPrioritySelected = { onAction(TodoListAction.OnPriorityFilterChange(it)) }
             )
             Spacer(Modifier.height(12.dp))
 
@@ -188,8 +187,8 @@ private fun TodoListScreen(
                             isReminderEnabled = item.isReminderEnabled,
                             onToggleDone = { onAction(TodoListAction.OnToggleDone(item.id)) },
                             onClick = { onAction(TodoListAction.OnEditClick(item.id)) },
-                            categoryName = item.categoryName ?: uncategorizedText,
-                            categoryColorHex = item.categoryColorHex
+                            priorityLabel = priorityLabel(item.priority),
+                            priorityColor = priorityColor(item.priority)
                         )
                     }
                 }
@@ -211,16 +210,14 @@ private fun TodoListScreen(
             dueTimeInput = uiState.draftDueTimeInput,
             reminderEnabled = uiState.draftReminderEnabled,
             reminderLeadMinutes = uiState.draftReminderLeadMinutes ?: DEFAULT_REMINDER_LEAD_MINUTES,
-            categories = uiState.categories,
-            selectedCategoryId = uiState.draftCategoryId,
+            selectedPriority = uiState.draftPriority,
             errorMessageRes = uiState.errorMessageRes,
             onTitleChange = { onAction(TodoListAction.OnTitleChange(it)) },
             onDateInputChange = { onAction(TodoListAction.OnDueDateInputChange(it)) },
             onDueTimeInputChange = { onAction(TodoListAction.OnDueTimeInputChange(it)) },
             onReminderEnabledChange = { onAction(TodoListAction.OnReminderEnabledChange(it)) },
             onReminderLeadMinutesChange = { onAction(TodoListAction.OnReminderLeadMinutesChange(it)) },
-            onCategorySelected = { onAction(TodoListAction.OnCategorySelectedInEditor(it)) },
-            onManageCategoriesClick = { onAction(TodoListAction.OnManageCategoriesClick) },
+            onPrioritySelected = { onAction(TodoListAction.OnPrioritySelectedInEditor(it)) },
             onDismiss = { onAction(TodoListAction.OnDismissDialog) },
             onSave = { onAction(TodoListAction.OnSaveClick) },
             onDelete = {
@@ -230,23 +227,19 @@ private fun TodoListScreen(
             showDelete = uiState.editingItem != null
         )
     }
+}
 
-    if (uiState.isCategoryManagerVisible) {
-        CategoryManagerBottomSheet(
-            categories = uiState.categories,
-            categoryNameInput = uiState.categoryNameInput,
-            categoryColorInput = uiState.categoryColorInput,
-            categoryIconInput = uiState.categoryIconInput,
-            editingCategoryId = uiState.editingCategoryId,
-            onCategoryNameInputChange = { onAction(TodoListAction.OnCategoryNameInputChange(it)) },
-            onCategoryColorInputChange = { onAction(TodoListAction.OnCategoryColorInputChange(it)) },
-            onCategoryIconInputChange = { onAction(TodoListAction.OnCategoryIconInputChange(it)) },
-            onCategoryEditClick = { onAction(TodoListAction.OnCategoryEditClick(it)) },
-            onCategoryDeleteClick = { onAction(TodoListAction.OnCategoryDeleteClick(it)) },
-            onSaveCategoryClick = { onAction(TodoListAction.OnCategorySaveClick) },
-            onDismiss = { onAction(TodoListAction.OnDismissCategoryManager) }
-        )
-    }
+@Composable
+private fun priorityLabel(priority: TodoPriority): String = when (priority) {
+    TodoPriority.LOW -> stringResource(R.string.todo_priority_low)
+    TodoPriority.MEDIUM -> stringResource(R.string.todo_priority_medium)
+    TodoPriority.HIGH -> stringResource(R.string.todo_priority_high)
+}
+
+private fun priorityColor(priority: TodoPriority): Color = when (priority) {
+    TodoPriority.LOW -> Color(0xFF6E8E72)
+    TodoPriority.MEDIUM -> Color(0xFF8B7A4E)
+    TodoPriority.HIGH -> Color(0xFF9B4B4B)
 }
 
 private fun headerTextFor(

@@ -8,6 +8,8 @@ import com.example.myfirstapp.core.model.Category
 import com.example.myfirstapp.core.model.ReminderRepeatType
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.model.TodoItem
+import com.example.myfirstapp.core.model.TodoPriority
+import com.example.myfirstapp.core.model.TodoPriorityFilter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +26,7 @@ class FakeTodoRepository :
     private val categories = MutableStateFlow<List<Category>>(emptyList())
     private val selectedFilter = MutableStateFlow(TodoFilter.ALL)
     private val selectedCategoryFilter = MutableStateFlow<Long?>(null)
+    private val selectedPriorityFilter = MutableStateFlow(TodoPriorityFilter.ALL)
     private var idSeed = 1L
     private var categoryIdSeed = 1L
 
@@ -49,7 +52,8 @@ class FakeTodoRepository :
         isReminderEnabled: Boolean,
         reminderRepeatType: ReminderRepeatType,
         reminderRepeatDaysMask: Int,
-        reminderLeadMinutes: Int?
+        reminderLeadMinutes: Int?,
+        priority: TodoPriority
     ): Result<Long> = runCatching {
         validateCategoryId(categoryId)
         val now = System.currentTimeMillis()
@@ -67,7 +71,8 @@ class FakeTodoRepository :
             reminderRepeatType = reminderRepeatType,
             reminderRepeatDaysMask = reminderRepeatDaysMask,
             dueTimeMinutes = dueTimeMinutes,
-            reminderLeadMinutes = reminderLeadMinutes
+            reminderLeadMinutes = reminderLeadMinutes,
+            priority = priority
         )
         todos.value = listOf(item) + todos.value
         id
@@ -83,7 +88,8 @@ class FakeTodoRepository :
         isReminderEnabled: Boolean,
         reminderRepeatType: ReminderRepeatType,
         reminderRepeatDaysMask: Int,
-        reminderLeadMinutes: Int?
+        reminderLeadMinutes: Int?,
+        priority: TodoPriority
     ): Result<Unit> = runCatching {
         validateCategoryId(categoryId)
         val existing = getTodo(id) ?: error("Todo not found")
@@ -99,7 +105,8 @@ class FakeTodoRepository :
                     reminderRepeatType = reminderRepeatType,
                     reminderRepeatDaysMask = reminderRepeatDaysMask,
                     dueTimeMinutes = dueTimeMinutes,
-                    reminderLeadMinutes = reminderLeadMinutes
+                    reminderLeadMinutes = reminderLeadMinutes,
+                    priority = priority
                 )
             } else {
                 current
@@ -188,6 +195,13 @@ class FakeTodoRepository :
     override suspend fun setSelectedCategoryFilter(categoryId: Long?): Result<Unit> = runCatching {
         validateCategoryId(categoryId)
         selectedCategoryFilter.value = categoryId
+    }
+
+    override fun observeSelectedPriorityFilter(): Flow<TodoPriorityFilter> =
+        selectedPriorityFilter.asStateFlow()
+
+    override suspend fun setSelectedPriorityFilter(filter: TodoPriorityFilter): Result<Unit> = runCatching {
+        selectedPriorityFilter.value = filter
     }
 
     private fun validateCategoryId(categoryId: Long?) {

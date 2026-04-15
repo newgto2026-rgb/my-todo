@@ -6,6 +6,7 @@ import com.example.myfirstapp.core.domain.usecase.ObserveMonthlyTodoSummariesUse
 import com.example.myfirstapp.core.domain.usecase.ObserveMonthlyTodosUseCase
 import com.example.myfirstapp.core.model.DateTodoSummary
 import com.example.myfirstapp.core.model.TodoItem
+import com.example.myfirstapp.core.model.TodoPriority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -64,7 +65,17 @@ class CalendarViewModel @Inject constructor(
         todos
             .asSequence()
             .filter { it.dueDate == selectedDate }
-            .sortedWith(compareBy<TodoItem> { it.isDone }.thenBy { it.id })
+            .sortedWith(
+                compareBy<TodoItem> { it.isDone }
+                    .thenByDescending {
+                        when (it.priority) {
+                            TodoPriority.HIGH -> 3
+                            TodoPriority.MEDIUM -> 2
+                            TodoPriority.LOW -> 1
+                        }
+                    }
+                    .thenBy { it.id }
+            )
             .map { it.toSelectedTodoUiModel() }
             .toList()
     }.stateIn(
@@ -179,6 +190,7 @@ internal fun TodoItem.toSelectedTodoUiModel(): CalendarSelectedTodoUiModel =
         id = id,
         title = title,
         isDone = isDone,
+        priority = priority,
         isReminderEnabled = isReminderEnabled,
         dueTimeLabel = dueTimeMinutes?.let(::formatLocalTimeFromMinutes)
             ?: reminderAtEpochMillis?.let(::formatLocalTimeFromEpochMillis),

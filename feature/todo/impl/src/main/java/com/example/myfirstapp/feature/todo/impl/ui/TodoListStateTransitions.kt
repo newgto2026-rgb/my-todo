@@ -1,7 +1,7 @@
 package com.example.myfirstapp.feature.todo.impl.ui
 
 import com.example.myfirstapp.core.model.ReminderRepeatType
-import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
+import com.example.myfirstapp.core.model.TodoPriority
 import com.example.myfirstapp.feature.todo.impl.model.TodoEditModel
 import com.example.myfirstapp.feature.todo.impl.model.TodoItemUiModel
 
@@ -14,7 +14,7 @@ internal fun TodoListUiState.openNewTodoEditor(): TodoListUiState = copy(
     draftReminderEnabled = false,
     draftReminderLeadMinutes = DEFAULT_REMINDER_LEAD_MINUTES,
     draftReminderRepeatType = ReminderRepeatType.NONE,
-    draftCategoryId = null,
+    draftPriority = TodoPriority.MEDIUM,
     errorMessageRes = null
 )
 
@@ -27,39 +27,8 @@ internal fun TodoListUiState.dismissTodoEditor(): TodoListUiState = copy(
     draftReminderEnabled = false,
     draftReminderLeadMinutes = DEFAULT_REMINDER_LEAD_MINUTES,
     draftReminderRepeatType = ReminderRepeatType.NONE,
-    draftCategoryId = null,
+    draftPriority = TodoPriority.MEDIUM,
     errorMessageRes = null
-)
-
-internal fun TodoListUiState.openCategoryManager(): TodoListUiState = copy(
-    isCategoryManagerVisible = true,
-    editingCategoryId = null,
-    categoryNameInput = "",
-    categoryColorInput = "",
-    categoryIconInput = ""
-)
-
-internal fun TodoListUiState.dismissCategoryManager(): TodoListUiState = copy(
-    isCategoryManagerVisible = false,
-    editingCategoryId = null,
-    categoryNameInput = "",
-    categoryColorInput = "",
-    categoryIconInput = ""
-)
-
-internal fun TodoListUiState.editCategory(category: CategoryUiModel): TodoListUiState = copy(
-    isCategoryManagerVisible = true,
-    editingCategoryId = category.id,
-    categoryNameInput = category.name,
-    categoryColorInput = category.colorHex.orEmpty(),
-    categoryIconInput = ""
-)
-
-internal fun TodoListUiState.clearCategoryEditor(): TodoListUiState = copy(
-    editingCategoryId = null,
-    categoryNameInput = "",
-    categoryColorInput = "",
-    categoryIconInput = ""
 )
 
 internal fun TodoItemUiModel.toTodoEditModel(): TodoEditModel =
@@ -68,7 +37,7 @@ internal fun TodoItemUiModel.toTodoEditModel(): TodoEditModel =
         title = title,
         dueDate = parseIsoDateInput(dueDateText.orEmpty()),
         dueTimeMinutes = dueTimeTextToMinutes(dueTimeText),
-        categoryId = categoryId,
+        priority = priority,
         reminderAtEpochMillis = reminderAtEpochMillis,
         isReminderEnabled = isReminderEnabled,
         reminderRepeatType = reminderRepeatType.normalizeRepeatType(),
