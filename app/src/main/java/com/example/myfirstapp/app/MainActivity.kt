@@ -21,7 +21,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ensureNotificationPermission()
+        if (!isRunningInstrumentationTest()) {
+            ensureNotificationPermission()
+        }
 
         setContent {
             MyFirstAppTheme {
@@ -50,4 +52,9 @@ class MainActivity : ComponentActivity() {
     private companion object {
         const val REQUEST_NOTIFICATION_PERMISSION = 1001
     }
+
+    private fun isRunningInstrumentationTest(): Boolean = runCatching {
+        Class.forName("androidx.test.platform.app.InstrumentationRegistry")
+        true
+    }.getOrDefault(false)
 }

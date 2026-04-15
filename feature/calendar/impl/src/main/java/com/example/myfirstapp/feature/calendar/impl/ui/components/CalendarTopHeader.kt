@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.myfirstapp.feature.calendar.impl.R
@@ -40,6 +42,7 @@ internal fun CalendarTopHeader(
     val locale = Locale.getDefault()
     val monthFormatter = DateTimeFormatter.ofPattern("MMMM", locale)
     val yearFormatter = DateTimeFormatter.ofPattern("yyyy", locale)
+    val monthLabel = "${currentMonth.format(monthFormatter)} ${currentMonth.format(yearFormatter)}"
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -50,7 +53,9 @@ internal fun CalendarTopHeader(
             Row(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.testTag("calendar_month_label")
+                modifier = Modifier
+                    .testTag("calendar_month_label")
+                    .semantics { contentDescription = monthLabel }
             ) {
                 Text(
                     text = currentMonth.format(monthFormatter),
