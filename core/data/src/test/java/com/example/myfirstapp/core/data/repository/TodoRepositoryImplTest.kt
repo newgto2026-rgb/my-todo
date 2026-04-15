@@ -8,6 +8,7 @@ import com.example.myfirstapp.core.datastore.source.UserPreferencesDataSource
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.model.TodoItem
 import com.example.myfirstapp.core.model.TodoCategoryFilter
+import com.example.myfirstapp.core.model.TodoPriorityFilter
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -189,9 +190,11 @@ class TodoRepositoryImplTest {
     private class FakePreferencesDataSource : UserPreferencesDataSource {
         private val filterFlow = MutableStateFlow(TodoFilter.ALL)
         private val categoryFilterFlow = MutableStateFlow<Long?>(null)
+        private val priorityFilterFlow = MutableStateFlow(TodoPriorityFilter.ALL)
 
         override val selectedTodoFilter: Flow<TodoFilter> = filterFlow.asStateFlow()
         override val selectedTodoCategoryFilter: Flow<Long?> = categoryFilterFlow.asStateFlow()
+        override val selectedTodoPriorityFilter: Flow<TodoPriorityFilter> = priorityFilterFlow.asStateFlow()
 
         override suspend fun setSelectedTodoFilter(filter: TodoFilter) {
             filterFlow.value = filter
@@ -199,6 +202,10 @@ class TodoRepositoryImplTest {
 
         override suspend fun setSelectedTodoCategoryFilter(categoryId: Long?) {
             categoryFilterFlow.value = categoryId
+        }
+
+        override suspend fun setSelectedTodoPriorityFilter(filter: TodoPriorityFilter) {
+            priorityFilterFlow.value = filter
         }
     }
 

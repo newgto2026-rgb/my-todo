@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.myfirstapp.core.model.TodoFilter
+import com.example.myfirstapp.core.model.TodoPriorityFilter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -23,6 +24,13 @@ class UserPreferencesDataSourceImpl @Inject constructor(
     override val selectedTodoCategoryFilter: Flow<Long?> =
         dataStore.data.map { prefs -> prefs[SELECTED_TODO_CATEGORY_FILTER] }
 
+    override val selectedTodoPriorityFilter: Flow<TodoPriorityFilter> =
+        dataStore.data.map { prefs ->
+            val stored = prefs[SELECTED_TODO_PRIORITY_FILTER]
+            stored?.let { value -> TodoPriorityFilter.entries.find { it.name == value } }
+                ?: TodoPriorityFilter.ALL
+        }
+
     override suspend fun setSelectedTodoFilter(filter: TodoFilter) {
         dataStore.edit { prefs ->
             prefs[SELECTED_TODO_FILTER] = filter.name
@@ -39,8 +47,15 @@ class UserPreferencesDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun setSelectedTodoPriorityFilter(filter: TodoPriorityFilter) {
+        dataStore.edit { prefs ->
+            prefs[SELECTED_TODO_PRIORITY_FILTER] = filter.name
+        }
+    }
+
     private companion object {
         val SELECTED_TODO_FILTER = stringPreferencesKey("selected_todo_filter")
         val SELECTED_TODO_CATEGORY_FILTER = longPreferencesKey("selected_todo_category_filter")
+        val SELECTED_TODO_PRIORITY_FILTER = stringPreferencesKey("selected_todo_priority_filter")
     }
 }

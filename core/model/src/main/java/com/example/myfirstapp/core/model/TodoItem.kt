@@ -15,5 +15,6 @@ data class TodoItem(
     val reminderRepeatType: ReminderRepeatType = ReminderRepeatType.NONE,
     val reminderRepeatDaysMask: Int = 0,
     val dueTimeMinutes: Int? = null,
-    val reminderLeadMinutes: Int? = null
+    val reminderLeadMinutes: Int? = null,
+    val priority: TodoPriority = TodoPriority.MEDIUM
 )

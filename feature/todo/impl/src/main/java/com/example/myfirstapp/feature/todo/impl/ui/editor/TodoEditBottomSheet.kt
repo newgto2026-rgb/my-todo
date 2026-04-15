@@ -53,8 +53,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.myfirstapp.core.model.TodoPriority
 import com.example.myfirstapp.feature.todo.impl.R
-import com.example.myfirstapp.feature.todo.impl.model.CategoryUiModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -67,16 +67,14 @@ internal fun EditTodoBottomSheet(
     dueTimeInput: String,
     reminderEnabled: Boolean,
     reminderLeadMinutes: Int,
-    categories: List<CategoryUiModel>,
-    selectedCategoryId: Long?,
+    selectedPriority: TodoPriority,
     errorMessageRes: Int?,
     onTitleChange: (String) -> Unit,
     onDateInputChange: (String) -> Unit,
     onDueTimeInputChange: (String) -> Unit,
     onReminderEnabledChange: (Boolean) -> Unit,
     onReminderLeadMinutesChange: (Int) -> Unit,
-    onCategorySelected: (Long?) -> Unit,
-    onManageCategoriesClick: () -> Unit,
+    onPrioritySelected: (TodoPriority) -> Unit,
     onDismiss: () -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
@@ -251,11 +249,9 @@ internal fun EditTodoBottomSheet(
             }
 
             Spacer(Modifier.height(14.dp))
-            TodoEditorCategorySection(
-                categories = categories,
-                selectedCategoryId = selectedCategoryId,
-                onCategorySelected = onCategorySelected,
-                onManageCategoriesClick = onManageCategoriesClick
+            TodoEditorPrioritySection(
+                selectedPriority = selectedPriority,
+                onPrioritySelected = onPrioritySelected
             )
 
             Spacer(Modifier.height(14.dp))

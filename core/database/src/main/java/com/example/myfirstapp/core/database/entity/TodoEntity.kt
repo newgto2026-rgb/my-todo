@@ -34,5 +34,6 @@ data class TodoEntity(
     val reminderRepeatType: String = "NONE",
     val reminderRepeatDaysMask: Int = 0,
     val dueTimeMinutes: Int? = null,
-    val reminderLeadMinutes: Int? = null
+    val reminderLeadMinutes: Int? = null,
+    val priority: String = "MEDIUM"
 )

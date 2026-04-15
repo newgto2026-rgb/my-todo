@@ -1,6 +1,7 @@
 package com.example.myfirstapp.feature.todo.impl.model
 
 import com.example.myfirstapp.core.model.ReminderRepeatType
+import com.example.myfirstapp.core.model.TodoPriority
 import java.time.LocalDate
 
 data class TodoEditModel(
@@ -8,7 +9,7 @@ data class TodoEditModel(
     val title: String,
     val dueDate: LocalDate?,
     val dueTimeMinutes: Int?,
-    val categoryId: Long?,
+    val priority: TodoPriority,
     val reminderAtEpochMillis: Long?,
     val isReminderEnabled: Boolean,
     val reminderRepeatType: ReminderRepeatType,

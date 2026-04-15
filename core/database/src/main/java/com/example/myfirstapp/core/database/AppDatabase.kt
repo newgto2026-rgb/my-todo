@@ -11,7 +11,7 @@ import com.example.myfirstapp.core.database.entity.TodoEntity
 
 @Database(
     entities = [TodoEntity::class, CategoryEntity::class, ReminderEntity::class],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
