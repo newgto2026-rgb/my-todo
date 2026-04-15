@@ -1,16 +1,16 @@
-# :core:database Module Guide
+# :core:database 모듈 가이드
 
-## Role
-- Room database, entities, DAO, migrations.
+## 역할
+- Room 데이터베이스, 엔티티, DAO, 마이그레이션.
 
-## Rules
-- Migration safety first; never break existing schema without migration.
-- Keep DAO queries deterministic and test-covered.
+## 규칙
+- 마이그레이션 안전성을 최우선으로 두고, 마이그레이션 없는 스키마 파괴 변경을 금지한다.
+- DAO 쿼리는 결정적 동작을 유지하고 테스트로 검증한다.
 
-## Change Checklist
-- Update `schemas/` snapshots when schema changes.
-- Add/adjust migration tests for version bumps.
+## 변경 체크리스트
+- 스키마가 바뀌면 `schemas/` 스냅샷을 갱신한다.
+- 버전 상승 시 마이그레이션 테스트를 추가/수정한다.
 
-## Validate
+## 검증
 - `./gradlew :core:database:testDebugUnitTest`
 - `./gradlew :core:database:lintDebug`

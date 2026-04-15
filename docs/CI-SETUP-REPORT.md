@@ -1,65 +1,65 @@
-# CI Setup Report
+# CI 설정 보고서
 
-## Date
+## 일자
 - 2026-04-12
 
-## Scope
-- Configure GitHub Actions CI to run automatically when code is pushed or when pull requests are opened/updated.
-- Leave a detailed record of what was configured and why.
+## 범위
+- 코드 푸시 및 PR 생성/업데이트 시 GitHub Actions CI가 자동 실행되도록 설정한다.
+- 무엇을 왜 설정했는지 추적 가능한 기록을 남긴다.
 
-## What Was Added
-- Added workflow file:
+## 추가된 항목
+- 워크플로 파일 추가:
   - `.github/workflows/android-ci.yml`
 
-## Workflow Configuration
+## 워크플로 구성
 
-### Workflow Name
+### 워크플로 이름
 - `Android CI`
 
-### Triggers
-- `push` on:
+### 트리거
+- `push` 대상:
   - `main`
   - `develop`
-- `pull_request` on:
+- `pull_request` 대상:
   - `main`
   - `develop`
-- `workflow_dispatch` for manual runs from GitHub UI
+- GitHub UI 수동 실행용 `workflow_dispatch`
 
-### Concurrency
-- Enabled:
+### 동시성 제어
+- 설정:
   - `group: android-ci-${{ github.ref }}`
   - `cancel-in-progress: true`
-- Purpose:
-  - Cancel older running CI for the same branch/ref and keep only the latest run active.
+- 목적:
+  - 같은 브랜치/ref에서 이전 실행을 취소하고 최신 실행만 유지한다.
 
-### Permissions
-- Minimal permission model:
+### 권한
+- 최소 권한 모델:
   - `contents: read`
-- Purpose:
-  - Follow least-privilege defaults for CI.
+- 목적:
+  - CI에 최소 권한 원칙을 적용한다.
 
-### Runner
+### 러너
 - `ubuntu-latest`
-- Timeout:
-  - `30` minutes
+- 타임아웃:
+  - `30`분
 
-### CI Steps
-1. Checkout source (`actions/checkout@v4`)
-2. Setup Java 17 (`actions/setup-java@v4`, Temurin)
-3. Setup Gradle with cache (`gradle/actions/setup-gradle@v4`)
-4. Ensure gradlew is executable
-5. Run unit tests:
+### CI 단계
+1. 소스 체크아웃 (`actions/checkout@v4`)
+2. Java 17 설정 (`actions/setup-java@v4`, Temurin)
+3. Gradle 캐시 포함 설정 (`gradle/actions/setup-gradle@v4`)
+4. `gradlew` 실행 권한 보장
+5. 단위 테스트 실행:
    - `./gradlew --stacktrace testDebugUnitTest`
-6. Build debug artifact:
+6. 디버그 빌드 아티팩트 생성:
    - `./gradlew --stacktrace assembleDebug`
-7. Run static analysis:
+7. 정적 분석 실행:
    - `./gradlew --stacktrace lintDebug`
-8. Upload artifacts (always):
-   - Unit test results and reports
-   - Lint reports
-   - General build reports/logs
+8. 아티팩트 업로드(항상):
+   - 단위 테스트 결과/리포트
+   - 린트 리포트
+   - 일반 빌드 리포트/로그
 
-## Artifacts Uploaded
+## 업로드 아티팩트
 - `test-reports`
   - `**/build/test-results/**`
   - `**/build/reports/tests/**`
@@ -70,21 +70,21 @@
   - `app/build/reports/**`
   - `**/build/outputs/logs/**`
 
-## Expected Behavior
-- Any push to `main` or `develop` starts CI automatically.
-- Any pull request targeting `main` or `develop` starts CI automatically.
-- Failures include stacktraces and downloadable reports for diagnosis.
+## 기대 동작
+- `main` 또는 `develop`으로의 모든 push에서 CI가 자동 시작된다.
+- `main` 또는 `develop` 대상 모든 PR에서 CI가 자동 시작된다.
+- 실패 시 stacktrace와 다운로드 가능한 리포트로 원인 진단이 가능하다.
 
-## Recommended GitHub Repository Settings
-- Enable branch protection for `main`:
-  - Require pull request before merging
-  - Require status checks to pass before merging
-  - Select check: `Build, Unit Test, Lint`
-- Optional:
-  - Apply same rules to `develop`
-  - Require linear history
-  - Dismiss stale approvals when new commits are pushed
+## 권장 GitHub 저장소 설정
+- `main` 브랜치 보호 활성화:
+  - 머지 전 PR 필수
+  - 머지 전 상태 체크 통과 필수
+  - 체크 항목: `Build, Unit Test, Lint`
+- 선택 사항:
+  - `develop`에도 동일 규칙 적용
+  - 선형 히스토리 강제
+  - 새 커밋 푸시 시 기존 승인 무효화
 
-## Notes
-- This setup does not run instrumentation tests (`connectedDebugAndroidTest`) because emulator jobs are slower and usually split into a dedicated workflow.
-- Existing local uncommitted IDE files were intentionally left untouched.
+## 참고
+- 이 설정은 에뮬레이터 기반 계측 테스트(`connectedDebugAndroidTest`)를 실행하지 않는다. 해당 작업은 일반적으로 더 느리므로 전용 워크플로로 분리하는 것을 권장한다.
+- 기존 로컬 미커밋 IDE 파일은 의도적으로 변경하지 않았다.

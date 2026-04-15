@@ -1,16 +1,16 @@
-# :core:ui Module Guide
+# :core:ui 모듈 가이드
 
-## Role
-- Reusable UI components shared by multiple features.
+## 역할
+- 여러 기능에서 재사용되는 UI 컴포넌트.
 
-## Rules
-- Keep components stateless where possible.
-- No feature-specific business logic.
-- Follow design-system tokens/styles.
+## 규칙
+- 가능한 한 상태 없는(stateless) 컴포넌트로 유지한다.
+- 기능 전용 비즈니스 로직을 넣지 않는다.
+- 디자인 시스템 토큰/스타일을 따른다.
 
-## Change Checklist
-- Preserve binary compatibility for widely used composables.
-- Check accessibility labels and test tags when relevant.
+## 변경 체크리스트
+- 널리 쓰이는 컴포저블의 바이너리 호환성을 유지한다.
+- 해당 시 접근성 라벨과 테스트 태그를 점검한다.
 
-## Validate
+## 검증
 - `./gradlew :core:ui:lintDebug`

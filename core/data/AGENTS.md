@@ -1,18 +1,18 @@
-# :core:data Module Guide
+# :core:data 모듈 가이드
 
-## Role
-- Repository implementations bridging domain and data sources.
-- Mapping between entities/models.
+## 역할
+- 도메인과 데이터 소스를 연결하는 리포지토리 구현.
+- 엔티티/모델 간 매핑.
 
-## Rules
-- Implement only domain contracts from `core:domain`.
-- Keep mapping explicit and side-effect boundaries clear.
-- A single implementation may bind to multiple focused contracts, but keep method ownership clear by concern.
+## 규칙
+- `core:domain`의 도메인 계약만 구현한다.
+- 매핑은 명시적으로 유지하고 사이드 이펙트 경계를 분명히 한다.
+- 하나의 구현이 여러 계약을 바인딩할 수 있지만 관심사별 메서드 소유권은 명확히 유지한다.
 
-## Change Checklist
-- If repository behavior changes, re-check related use cases.
-- Keep mapper tests updated for schema/model changes.
+## 변경 체크리스트
+- 리포지토리 동작이 바뀌면 연관 유스케이스를 재검증한다.
+- 스키마/모델 변경 시 매퍼 테스트를 함께 갱신한다.
 
-## Validate
+## 검증
 - `./gradlew :core:data:testDebugUnitTest`
 - `./gradlew :core:data:lintDebug`
