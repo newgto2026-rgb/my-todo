@@ -49,6 +49,9 @@ jobs:
       - name: Build debug APK
         run: ./gradlew --stacktrace assembleDebug
 
+      - name: Compile androidTest sources
+        run: ./gradlew --stacktrace :app:compileDebugAndroidTestKotlin
+
       - name: Run strict lint (all variants)
         run: ./gradlew --stacktrace lint
 

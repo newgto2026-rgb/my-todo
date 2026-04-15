@@ -20,8 +20,13 @@
 - After:
 
 ## Tests
+- UI/Navigation changed? (`Yes/No`)
 - Automated:
   - `./gradlew ...`
+- androidTest compile:
+  - `./gradlew :app:compileDebugAndroidTestKotlin`
+- connected androidTest:
+  - `./gradlew :app:connectedDebugAndroidTest` (or reason if skipped)
 - Manual:
   - Scenario and result
 
