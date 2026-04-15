@@ -24,7 +24,6 @@
     <string name="todo_editor_priority_label">중요도</string>
     <string name="todo_editor_reminder_label">리마인더</string>
     <string name="todo_editor_enable_reminder">리마인더 사용</string>
-    <string name="todo_editor_repeat_none">없음</string>
     <string name="todo_reminder_lead_at_time">정시</string>
     <string name="todo_reminder_lead_5m">5분 전</string>
     <string name="todo_reminder_lead_10m">10분 전</string>
@@ -41,15 +40,6 @@
 
     <string name="todo_row_subtitle_completed">@string/todo_filter_completed</string>
     <string name="todo_row_subtitle_today">@string/todo_filter_today</string>
-
-    <string name="todo_category_manager_title">카테고리 관리</string>
-    <string name="todo_category_manager_name">이름</string>
-    <string name="todo_category_manager_color">색상</string>
-    <string name="todo_category_manager_icon_optional">아이콘 키(선택)</string>
-    <string name="todo_category_manager_add">카테고리 추가</string>
-    <string name="todo_category_manager_update">카테고리 수정</string>
-    <string name="todo_category_manager_current">현재 카테고리</string>
-    <string name="todo_category_manager_close">닫기</string>
 
     <string name="todo_error_title_required">제목을 입력해주세요.</string>
     <string name="todo_error_due_date_format">날짜 형식은 yyyy-MM-dd 입니다.</string>
