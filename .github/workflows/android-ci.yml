@@ -54,6 +54,7 @@ jobs:
 
       - name: Attempt connected androidTest (UI)
         id: ui_instrumented
+        timeout-minutes: 20
         continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -61,8 +62,29 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_6
+          emulator-boot-timeout: 900
+          emulator-options: >-
+            -no-window
+            -no-snapshot
+            -no-boot-anim
+            -gpu swiftshader_indirect
           disable-animations: true
-          script: ./gradlew --stacktrace :app:connectedDebugAndroidTest
+          script: |
+            set -euo pipefail
+            adb wait-for-device
+            timeout 180s bash -c 'until [[ "$(adb shell getprop sys.boot_completed | tr -d "\r")" == "1" ]]; do sleep 2; done'
+
+            set +e
+            ./gradlew --stacktrace :app:connectedDebugAndroidTest
+            test_status=$?
+            set -e
+
+            mkdir -p app/build/reports/androidTests
+            adb shell getprop > app/build/reports/androidTests/device-props.txt || true
+            adb logcat -d > app/build/reports/androidTests/logcat.txt || true
+            adb shell dumpsys activity > app/build/reports/androidTests/dumpsys-activity.txt || true
+
+            exit "$test_status"
 
       - name: Report UI test attempt result
         if: always()
@@ -89,6 +111,17 @@ jobs:
             **/build/reports/tests/**
             **/build/reports/androidTests/**
             **/build/outputs/androidTest-results/**
+          if-no-files-found: warn
+
+      - name: Upload emulator diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emulator-diagnostics
+          path: |
+            app/build/reports/androidTests/logcat.txt
+            app/build/reports/androidTests/device-props.txt
+            app/build/reports/androidTests/dumpsys-activity.txt
           if-no-files-found: warn
 
       - name: Upload lint reports
