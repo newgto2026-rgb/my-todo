@@ -72,7 +72,23 @@ jobs:
           script: |
             set -euo pipefail
             adb wait-for-device
-            timeout 180s bash -c 'until [[ "$(adb shell getprop sys.boot_completed | tr -d "\r")" == "1" ]]; do sleep 2; done'
+            timeout 240s bash -c '
+              while true; do
+                state="$(adb get-state 2>/dev/null || true)"
+                if [[ "$state" != "device" ]]; then
+                  adb reconnect offline >/dev/null 2>&1 || true
+                  sleep 2
+                  continue
+                fi
+
+                boot_completed="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r" || true)"
+                if [[ "$boot_completed" == "1" ]]; then
+                  break
+                fi
+
+                sleep 2
+              done
+            '
 
             set +e
             ./gradlew --stacktrace :app:connectedDebugAndroidTest
