@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.espresso.Espresso.pressBack
 import com.example.myfirstapp.app.MainActivity
 import com.example.myfirstapp.core.database.AppDatabase
 import com.example.myfirstapp.core.domain.usecase.AddTodoUseCase
@@ -92,25 +93,25 @@ class CalendarUiTest {
     }
 
     @Test
-    fun dateTap_withTodos_showsBottomSheetList() {
+    fun dateTap_withTodos_showsAgendaList() {
         openCalendarTab()
 
         composeTestRule.onNodeWithTag("calendar_day_$today").performClick()
 
-        composeTestRule.onNodeWithTag("calendar_day_todo_sheet").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("calendar_day_todo_list_title").assertIsDisplayed()
         composeTestRule.onNodeWithText("Calendar UI - today").assertIsDisplayed()
         composeTestRule.onNodeWithText("Calendar UI - today second").assertIsDisplayed()
     }
 
     @Test
-    fun dateTap_withoutTodos_showsEmptyState() {
+    fun dateTap_withoutTodos_showsAgendaEmptyState() {
         openCalendarTab()
 
         val emptyDate = findEmptyDateInCurrentMonth()
         composeTestRule.onNodeWithTag("calendar_day_$emptyDate").performClick()
 
-        composeTestRule.onNodeWithTag("calendar_day_todo_sheet").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("calendar_day_todo_sheet_empty").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("calendar_day_todo_list_title").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("calendar_day_todo_list_empty").assertIsDisplayed()
     }
 
     @Test
@@ -121,6 +122,22 @@ class CalendarUiTest {
         composeTestRule.onNodeWithTag("calendar_day_todo_item_$todayTodoId").performClick()
 
         composeTestRule.onNodeWithTag("task_title_input").assertIsDisplayed().assertTextContains("Calendar UI - today")
+    }
+
+    @Test
+    fun todoEditSheetDismiss_returnsToCalendarContext() {
+        openCalendarTab()
+
+        composeTestRule.onNodeWithTag("calendar_day_$today").performClick()
+        composeTestRule.onNodeWithTag("calendar_day_todo_item_$todayTodoId").performClick()
+        composeTestRule.onNodeWithTag("task_title_input").assertIsDisplayed()
+
+        pressBack()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag("app_tab_calendar", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("calendar_month_label").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("calendar_day_todo_list_title").assertIsDisplayed()
     }
 
     private fun openCalendarTab() {
