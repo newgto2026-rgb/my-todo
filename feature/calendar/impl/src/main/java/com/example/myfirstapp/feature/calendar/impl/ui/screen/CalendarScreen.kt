@@ -95,6 +95,7 @@ private fun CalendarScreen(
     val locale = Locale.getDefault()
     val monthFormatter = DateTimeFormatter.ofPattern("MMMM", locale)
     val yearFormatter = DateTimeFormatter.ofPattern("yyyy", locale)
+    val monthLabel = "${uiState.currentMonth.format(monthFormatter)} ${uiState.currentMonth.format(yearFormatter)}"
     val selectedDateLabel = uiState.selectedDate.format(DateTimeFormatter.ofPattern("yyyy MMM d", locale))
     val selectedDateCount = uiState.selectedDateTodos.size
     val todayCount = uiState.todayTaskCount(today = LocalDate.now())
@@ -117,7 +118,9 @@ private fun CalendarScreen(
                     Row(
                         verticalAlignment = Alignment.Bottom,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        modifier = Modifier.testTag("calendar_month_label")
+                        modifier = Modifier
+                            .testTag("calendar_month_label")
+                            .semantics { contentDescription = monthLabel }
                     ) {
                         Text(
                             text = uiState.currentMonth.format(monthFormatter),
