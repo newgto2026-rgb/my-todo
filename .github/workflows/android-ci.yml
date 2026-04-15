@@ -52,6 +52,27 @@ jobs:
       - name: Compile androidTest sources
         run: ./gradlew --stacktrace :app:compileDebugAndroidTestKotlin
 
+      - name: Attempt connected androidTest (UI)
+        id: ui_instrumented
+        continue-on-error: true
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: ./gradlew --stacktrace :app:connectedDebugAndroidTest
+
+      - name: Report UI test attempt result
+        if: always()
+        run: |
+          if [ "${{ steps.ui_instrumented.outcome }}" = "success" ]; then
+            echo "UI instrumented test attempt: success"
+          else
+            echo "UI instrumented test attempt: failed (non-blocking)"
+          fi
+
       - name: Run strict lint (all variants)
         run: ./gradlew --stacktrace lint
 
@@ -66,6 +87,8 @@ jobs:
           path: |
             **/build/test-results/**
             **/build/reports/tests/**
+            **/build/reports/androidTests/**
+            **/build/outputs/androidTest-results/**
           if-no-files-found: warn
 
       - name: Upload lint reports
