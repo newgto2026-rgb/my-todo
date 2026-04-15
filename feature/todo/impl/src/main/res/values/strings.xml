@@ -50,9 +50,6 @@
     <string name="todo_category_manager_update">Update category</string>
     <string name="todo_category_manager_current">Current categories</string>
     <string name="todo_category_manager_close">Close</string>
-    <string name="todo_category_manager_no_color">@string/todo_editor_repeat_none</string>
-    <string name="todo_category_manager_edit">Edit category</string>
-    <string name="todo_category_manager_delete">Delete category</string>
 
     <string name="todo_error_title_required">Please enter a title.</string>
     <string name="todo_error_due_date_format">Date format must be yyyy-MM-dd.</string>

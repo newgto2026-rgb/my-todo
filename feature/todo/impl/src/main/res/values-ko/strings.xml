@@ -50,9 +50,6 @@
     <string name="todo_category_manager_update">카테고리 수정</string>
     <string name="todo_category_manager_current">현재 카테고리</string>
     <string name="todo_category_manager_close">닫기</string>
-    <string name="todo_category_manager_no_color">@string/todo_editor_repeat_none</string>
-    <string name="todo_category_manager_edit">카테고리 편집</string>
-    <string name="todo_category_manager_delete">카테고리 삭제</string>
 
     <string name="todo_error_title_required">제목을 입력해주세요.</string>
     <string name="todo_error_due_date_format">날짜 형식은 yyyy-MM-dd 입니다.</string>
