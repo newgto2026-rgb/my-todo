@@ -16,7 +16,7 @@ class CalendarFeatureEntryImpl @Inject constructor() : CalendarFeatureEntry {
         navGraphBuilder.composable<CalendarRoute> {
             CalendarRouteScreen(
                 onNavigateToTodoEdit = { todoId ->
-                    navController.navigate(TodoEditRoute(todoId))
+                    navController.navigate(TodoEditRoute(todoId = todoId, editOnly = true))
                 }
             )
         }

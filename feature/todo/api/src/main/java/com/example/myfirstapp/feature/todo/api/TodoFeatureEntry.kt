@@ -13,6 +13,9 @@ data object TodoTodayRoute
 data object TodoCompletedRoute
 
 @Serializable
-data class TodoEditRoute(val todoId: Long)
+data class TodoEditRoute(
+    val todoId: Long,
+    val editOnly: Boolean = false
+)
 
 interface TodoFeatureEntry : AppFeatureEntry
