@@ -43,6 +43,7 @@
 - 사용자 노출 문자열은 `values`, `values-ko` 리소스로 관리한다.
 - 최상위 탭은 구현된 feature 라우트에만 매핑한다.
 - 탭 아이콘은 텍스트 글리프 대체가 아닌 명시적 아이콘 에셋을 사용한다.
+- 모든 뷰는 기능 단위로 분리하고, 화면 조립(`ui/screen`)과 하위 구성요소(`ui/components`)를 구분해 배치한다.
 
 ### PR 설명 정책
 - 모든 PR 설명은 `.github/pull_request_template.md`를 따른다.
