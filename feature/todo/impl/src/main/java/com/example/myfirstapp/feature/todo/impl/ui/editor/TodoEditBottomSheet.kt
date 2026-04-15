@@ -130,7 +130,12 @@ internal fun EditTodoBottomSheet(
                     color = Color(0xFF323640)
                 )
                 Spacer(Modifier.weight(1f))
-                Surface(shape = CircleShape, color = Color(0xFFEAECF3), onClick = onDismiss) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color(0xFFEAECF3),
+                    onClick = onDismiss,
+                    modifier = Modifier.testTag("task_edit_close")
+                ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = null,
