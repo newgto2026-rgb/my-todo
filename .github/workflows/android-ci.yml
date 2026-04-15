@@ -16,7 +16,7 @@ on:
 
 concurrency:
   group: android-ci-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -49,68 +49,6 @@ jobs:
       - name: Build debug APK
         run: ./gradlew --stacktrace assembleDebug
 
-      - name: Compile androidTest sources
-        run: ./gradlew --stacktrace :app:compileDebugAndroidTestKotlin
-
-      - name: Attempt connected androidTest (UI)
-        id: ui_instrumented
-        timeout-minutes: 20
-        continue-on-error: true
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          profile: pixel_6
-          emulator-boot-timeout: 900
-          emulator-options: >-
-            -no-window
-            -no-snapshot
-            -no-boot-anim
-            -gpu swiftshader_indirect
-          disable-animations: true
-          script: |
-            set -euo pipefail
-            adb wait-for-device
-            timeout 240s bash -c '
-              while true; do
-                state="$(adb get-state 2>/dev/null || true)"
-                if [[ "$state" != "device" ]]; then
-                  adb reconnect offline >/dev/null 2>&1 || true
-                  sleep 2
-                  continue
-                fi
-
-                boot_completed="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r" || true)"
-                if [[ "$boot_completed" == "1" ]]; then
-                  break
-                fi
-
-                sleep 2
-              done
-            '
-
-            set +e
-            ./gradlew --stacktrace :app:connectedDebugAndroidTest
-            test_status=$?
-            set -e
-
-            mkdir -p app/build/reports/androidTests
-            adb shell getprop > app/build/reports/androidTests/device-props.txt || true
-            adb logcat -d > app/build/reports/androidTests/logcat.txt || true
-            adb shell dumpsys activity > app/build/reports/androidTests/dumpsys-activity.txt || true
-
-            exit "$test_status"
-
-      - name: Report UI test attempt result
-        if: always()
-        run: |
-          if [ "${{ steps.ui_instrumented.outcome }}" = "success" ]; then
-            echo "UI instrumented test attempt: success"
-          else
-            echo "UI instrumented test attempt: failed (non-blocking)"
-          fi
-
       - name: Run strict lint (all variants)
         run: ./gradlew --stacktrace lint
 
@@ -125,19 +63,6 @@ jobs:
           path: |
             **/build/test-results/**
             **/build/reports/tests/**
-            **/build/reports/androidTests/**
-            **/build/outputs/androidTest-results/**
-          if-no-files-found: warn
-
-      - name: Upload emulator diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: emulator-diagnostics
-          path: |
-            app/build/reports/androidTests/logcat.txt
-            app/build/reports/androidTests/device-props.txt
-            app/build/reports/androidTests/dumpsys-activity.txt
           if-no-files-found: warn
 
       - name: Upload lint reports

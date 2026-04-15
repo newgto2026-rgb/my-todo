@@ -21,12 +21,13 @@
 
 ## Tests
 - UI/Navigation changed? (`Yes/No`)
+- Pre-PR/PUSH local UI verification done? (`Yes/No`)
 - Automated:
   - `./gradlew ...`
 - androidTest compile:
   - `./gradlew :app:compileDebugAndroidTestKotlin`
 - connected androidTest:
-  - `./gradlew :app:connectedDebugAndroidTest` (or reason if skipped)
+  - `./gradlew :app:connectedDebugAndroidTest`
 - Manual:
   - Scenario and result
 

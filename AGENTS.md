@@ -15,8 +15,8 @@
 2. 영향 모듈 린트를 실행한다.
 3. 필요 시 앱 빌드 또는 통합 테스트를 실행한다.
 4. 테스트 결과와 변경 모듈을 PR 설명에 명시한다.
-5. UI/Navigation 변경 시 `./gradlew :app:connectedDebugAndroidTest`를 실행한다.
-6. 로컬 기기/에뮬레이터 부재 등으로 5번 실행이 불가능하면, 최소 `./gradlew :app:compileDebugAndroidTestKotlin` 실행 결과와 미실행 사유를 PR에 남긴다.
+5. UI/Navigation 변경 시 PR/PUSH 전에 로컬에서 `./gradlew :app:compileDebugAndroidTestKotlin`를 실행한다.
+6. UI/Navigation 변경 시 PR/PUSH 전에 로컬에서 `./gradlew :app:connectedDebugAndroidTest`를 실행한다.
 
 ## 전역 필수 정책
 ### 작업/브랜치 정책
@@ -32,7 +32,7 @@
 - PR 커밋 메시지는 구조적이고 설명 가능하게 작성한다.
 - use case/ViewModel 단위 테스트를 우선한다.
 - 핵심 사용자 플로우에는 UI 테스트를 추가한다.
-- UI/Navigation 변경 PR은 계측 테스트(connectedAndroidTest 또는 최소 androidTest 컴파일) 결과를 필수로 첨부한다.
+- UI/Navigation 변경은 PR/PUSH 전 로컬 계측 테스트(connectedAndroidTest) 결과를 필수로 첨부한다.
 - Flow 테스트에는 Turbine, 공용 fake/rule은 `core:testing`을 재사용한다.
 
 ### 아키텍처/의존 정책
