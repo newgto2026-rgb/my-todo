@@ -31,7 +31,13 @@ class TodoFeatureEntryImpl @Inject constructor() : TodoFeatureEntry {
             val route = backStackEntry.toRoute<TodoEditRoute>()
             TodoListRoute(
                 presetFilter = TodoFilter.ALL,
-                initialEditTodoId = route.todoId
+                initialEditTodoId = route.todoId,
+                isEditOnlyEntry = route.editOnly,
+                onEditOnlyExit = {
+                    if (route.editOnly) {
+                        navController.popBackStack()
+                    }
+                }
             )
         }
     }
