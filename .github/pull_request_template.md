@@ -8,12 +8,6 @@
 - In scope
 - Out of scope
 
-## PRD Linkage (Required)
-- PRD ID: `PRD-xxx`
-- PRD Doc: `docs/prd/PRD-xxx.md`
-- PRD Status: `approved`
-- Scope Modules in PRD:
-
 ## Design / Approach
 - Key decisions and why
 - Alternatives considered (brief)
