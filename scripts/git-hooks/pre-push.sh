@@ -2,10 +2,6 @@
 
 set -eu
 
-SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
-# shellcheck disable=SC1091
-. "$SCRIPT_DIR/common.sh"
-
 while read -r local_ref local_sha remote_ref remote_sha; do
   [ -z "$local_ref" ] && continue
 
@@ -17,8 +13,3 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   esac
 
 done
-
-branch="$(current_branch)"
-if [ -n "$branch" ] && ! is_exempt_branch "$branch"; then
-  assert_prd_exists_for_branch
-fi
