@@ -1,15 +1,15 @@
-# :core:designsystem Module Guide
+# :core:designsystem 모듈 가이드
 
-## Role
-- App theme, typography, color tokens, shared visual primitives.
+## 역할
+- 앱 테마, 타이포그래피, 색상 토큰, 공용 시각 프리미티브.
 
-## Rules
-- Centralize visual constants and theming decisions.
-- Avoid feature-specific naming in shared tokens.
+## 규칙
+- 시각 상수와 테마 결정을 중앙화한다.
+- 공용 토큰에 기능 전용 네이밍을 넣지 않는다.
 
-## Change Checklist
-- Verify dark/light behavior and text contrast.
-- Ensure changes do not silently regress downstream UI.
+## 변경 체크리스트
+- 다크/라이트 동작과 텍스트 대비를 검증한다.
+- 변경이 하위 UI에 조용히 회귀를 만들지 않는지 확인한다.
 
-## Validate
+## 검증
 - `./gradlew :core:designsystem:lintDebug`

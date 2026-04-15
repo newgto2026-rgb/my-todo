@@ -1,13 +1,13 @@
-# PRD Policy
+# PRD 정책
 
-모든 신규 구현 작업은 PRD와 연결되어야 합니다.
+모든 신규 구현 작업은 PRD와 연결되어야 한다.
 
-## Naming
-- Branch: `feat/PRD-123-...` 또는 `fix/PRD-123-...`
-- PRD file: `docs/prd/PRD-123.md`
-- Commit message: `[PRD-123]` 포함
+## 네이밍
+- 브랜치: `feat/PRD-123-...` 또는 `fix/PRD-123-...`
+- PRD 파일: `docs/prd/PRD-123.md`
+- 커밋 메시지: `[PRD-123]` 포함
 
-## Required front matter
+## 필수 프런트매터
 ```yaml
 prd_id: PRD-123
 status: approved

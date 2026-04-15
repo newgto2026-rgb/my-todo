@@ -1,12 +1,12 @@
-# :feature:calendar:impl Module Guide
+# :feature:calendar:impl 모듈 가이드
 
-## Role
-- Calendar feature implementation: screen composition and feature entry wiring.
+## 역할
+- Calendar 기능 구현: 화면 구성과 기능 진입 연결.
 
-## Rules
-- Keep screen state-driven and ready for `UiState + Action + SideEffect` extension.
-- Keep user-visible text in resources.
+## 규칙
+- 화면은 상태 중심으로 유지하고 `UiState + Action + SideEffect` 확장 가능 구조를 준비한다.
+- 사용자 노출 텍스트는 리소스로 관리한다.
 
-## Validate
+## 검증
 - `./gradlew :feature:calendar:impl:testDebugUnitTest`
 - `./gradlew :feature:calendar:impl:lintDebug`

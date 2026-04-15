@@ -1,11 +1,11 @@
-# :feature:calendar:entry Module Guide
+# :feature:calendar:entry 모듈 가이드
 
-## Role
-- Hilt multibinding entry point registration for calendar feature.
+## 역할
+- Calendar 기능의 Hilt 멀티바인딩 진입점 등록.
 
-## Rules
-- Bind only via `AppFeatureEntry` set multibinding.
-- Keep `app` module decoupled from `:feature:calendar:impl`.
+## 규칙
+- `AppFeatureEntry` set 멀티바인딩으로만 바인딩한다.
+- `app` 모듈이 `:feature:calendar:impl`에 직접 결합되지 않게 유지한다.
 
-## Validate
+## 검증
 - `./gradlew :feature:calendar:entry:assembleDebug`
