@@ -364,27 +364,21 @@ private fun RowScope.CalendarDayCell(
                         )
                 )
             }
+            if (!day.isSelected && hasItems) {
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .background(
+                            color = Color(0xFFDDE4FF),
+                            shape = CircleShape
+                        )
+                )
+            }
             Text(
                 text = date.dayOfMonth.toString(),
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = dateFontWeight),
                 color = textColor
             )
-        }
-
-        if (!day.isSelected && hasItems) {
-            Spacer(modifier = Modifier.height(2.dp))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                repeat(totalCount.coerceAtMost(3)) {
-                    Box(
-                        modifier = Modifier
-                            .size(4.dp)
-                            .background(Color(0xFF8EA0C2), CircleShape)
-                    )
-                }
-            }
         }
     }
 }
