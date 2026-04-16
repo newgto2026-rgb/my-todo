@@ -23,7 +23,6 @@ import com.example.myfirstapp.feature.calendar.impl.ui.CalendarViewModel
 import com.example.myfirstapp.feature.calendar.impl.ui.components.CalendarAgendaSection
 import com.example.myfirstapp.feature.calendar.impl.ui.components.CalendarMonthGrid
 import com.example.myfirstapp.feature.calendar.impl.ui.components.CalendarTopHeader
-import java.time.LocalDate
 
 @Composable
 fun CalendarRouteScreen(
@@ -51,8 +50,6 @@ private fun CalendarScreen(
     uiState: CalendarUiState,
     onAction: (CalendarAction) -> Unit
 ) {
-    val todayCount = uiState.todayTaskCount(today = LocalDate.now())
-
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFFF8F9FC)
@@ -64,7 +61,7 @@ private fun CalendarScreen(
         ) {
             CalendarTopHeader(
                 currentMonth = uiState.currentMonth,
-                todayCount = todayCount,
+                todayCount = uiState.todayTaskCount,
                 onPreviousMonthClick = { onAction(CalendarAction.OnPreviousMonthClick) },
                 onNextMonthClick = { onAction(CalendarAction.OnNextMonthClick) }
             )
@@ -93,9 +90,4 @@ private fun CalendarScreen(
             )
         }
     }
-}
-
-internal fun CalendarUiState.todayTaskCount(today: LocalDate): Int {
-    val summary = summariesByDate[today] ?: return 0
-    return summary.indicatorCount + summary.overflowCount
 }
