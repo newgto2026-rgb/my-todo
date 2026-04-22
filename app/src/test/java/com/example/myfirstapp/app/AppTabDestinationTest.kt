@@ -12,19 +12,19 @@ class AppTabDestinationTest {
     @Test
     fun tabs_includeCalendarRoute() {
         assertThat(AppTabDestination.tabs.map { it.route }).contains(
-            requireNotNull(CalendarRoute::class.qualifiedName)
+            CalendarRoute
         )
     }
 
     @Test
     fun fromRoute_returnsExpectedTabs() {
-        assertThat(AppTabDestination.fromRoute(requireNotNull(TodoAllRoute::class.qualifiedName)))
+        assertThat(AppTabDestination.fromRoute(TodoAllRoute))
             .isEqualTo(AppTabDestination.ALL)
-        assertThat(AppTabDestination.fromRoute(requireNotNull(TodoTodayRoute::class.qualifiedName)))
+        assertThat(AppTabDestination.fromRoute(TodoTodayRoute))
             .isEqualTo(AppTabDestination.TODAY)
-        assertThat(AppTabDestination.fromRoute(requireNotNull(TodoCompletedRoute::class.qualifiedName)))
+        assertThat(AppTabDestination.fromRoute(TodoCompletedRoute))
             .isEqualTo(AppTabDestination.COMPLETED)
-        assertThat(AppTabDestination.fromRoute(requireNotNull(CalendarRoute::class.qualifiedName)))
+        assertThat(AppTabDestination.fromRoute(CalendarRoute))
             .isEqualTo(AppTabDestination.CALENDAR)
     }
 
