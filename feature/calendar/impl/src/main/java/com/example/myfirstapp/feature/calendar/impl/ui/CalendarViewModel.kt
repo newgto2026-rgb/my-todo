@@ -211,7 +211,7 @@ private fun formatLocalTimeFromEpochMillis(epochMillis: Long): String =
         .toLocalTime()
         .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
 
-private fun Map<LocalDate, DateTodoSummary>.todayTaskCount(today: LocalDate): Int {
+internal fun Map<LocalDate, DateTodoSummary>.todayTaskCount(today: LocalDate): Int {
     val summary = this[today] ?: return 0
     return summary.indicatorCount + summary.overflowCount
 }
