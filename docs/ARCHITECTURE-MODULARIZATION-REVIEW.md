@@ -59,8 +59,8 @@
   - 하드코딩 UI 라벨/메시지를 다음 파일에서 리소스로 전환:
     - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoListScreen.kt`
     - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoFilterBar.kt`
-    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoCategoryFilterBar.kt`
-    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoEditorCategorySection.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/components/TodoPriorityFilterBar.kt`
+    - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/editor/TodoEditorPrioritySection.kt`
     - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoEditorReminderSection.kt`
     - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoEditBottomSheet.kt`
     - `feature/todo/impl/src/main/java/com/example/myfirstapp/feature/todo/impl/ui/TodoHeader.kt`
