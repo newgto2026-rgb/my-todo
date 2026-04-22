@@ -2,20 +2,21 @@ package com.example.myfirstapp.feature.todo.api
 
 import com.example.myfirstapp.core.ui.navigation.AppFeatureEntry
 import kotlinx.serialization.Serializable
+import androidx.navigation3.runtime.NavKey
 
 @Serializable
-data object TodoAllRoute
+data object TodoAllRoute : NavKey
 
 @Serializable
-data object TodoTodayRoute
+data object TodoTodayRoute : NavKey
 
 @Serializable
-data object TodoCompletedRoute
+data object TodoCompletedRoute : NavKey
 
 @Serializable
 data class TodoEditRoute(
     val todoId: Long,
     val editOnly: Boolean = false
-)
+) : NavKey
 
 interface TodoFeatureEntry : AppFeatureEntry

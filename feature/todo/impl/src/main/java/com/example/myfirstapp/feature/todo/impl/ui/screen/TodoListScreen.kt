@@ -32,10 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.navigation.NavBackStackEntry
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.model.TodoPriority
 import com.example.myfirstapp.core.ui.TodoItemRow
@@ -47,12 +45,12 @@ fun TodoListRoute(
     initialEditTodoId: Long? = null,
     isEditOnlyEntry: Boolean = false,
     onEditOnlyExit: (() -> Unit)? = null,
+    onBackBlockedChange: (Boolean) -> Unit = {},
     viewModel: TodoListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    val navBackStackEntry = LocalViewModelStoreOwner.current as? NavBackStackEntry
     val isModalVisible = uiState.isEditDialogVisible
     var hasHandledInitialEdit by remember(initialEditTodoId) {
         mutableStateOf(initialEditTodoId == null)
@@ -86,8 +84,8 @@ fun TodoListRoute(
         }
     }
 
-    LaunchedEffect(navBackStackEntry, isModalVisible) {
-        navBackStackEntry?.savedStateHandle?.set("app_back_blocked", isModalVisible)
+    LaunchedEffect(isModalVisible, onBackBlockedChange) {
+        onBackBlockedChange(isModalVisible)
     }
 
     LaunchedEffect(isEditOnlyEntry, isModalVisible, seenEditSheetInEditOnly) {
@@ -102,9 +100,9 @@ fun TodoListRoute(
         }
     }
 
-    DisposableEffect(navBackStackEntry) {
+    DisposableEffect(onBackBlockedChange) {
         onDispose {
-            navBackStackEntry?.savedStateHandle?.set("app_back_blocked", false)
+            onBackBlockedChange(false)
         }
     }
 
