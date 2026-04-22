@@ -4,7 +4,6 @@ import com.example.myfirstapp.core.domain.usecase.ObserveMonthlyTodoSummariesUse
 import com.example.myfirstapp.core.domain.usecase.ObserveMonthlyTodosUseCase
 import com.example.myfirstapp.core.model.DateTodoSummary
 import com.example.myfirstapp.core.model.ReminderRepeatType
-import com.example.myfirstapp.feature.calendar.impl.ui.screen.todayTaskCount
 import com.example.myfirstapp.core.testing.repository.FakeTodoRepository
 import com.example.myfirstapp.core.testing.rule.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
@@ -214,7 +213,7 @@ class CalendarViewModelTest {
     }
 
     @Test
-    fun todayTaskCount_returnsIndicatorAndOverflowSum() {
+    fun todayTaskCount_isExposedByUiState() {
         val today = LocalDate.of(2026, 4, 9)
         val uiState = CalendarUiState(
             currentMonth = YearMonth.of(2026, 4),
@@ -228,11 +227,11 @@ class CalendarViewModelTest {
                     overflowCount = 2
                 )
             ),
+            todayTaskCount = 5,
             selectedDateTodos = emptyList()
         )
 
-        assertThat(uiState.todayTaskCount(today)).isEqualTo(5)
-        assertThat(uiState.todayTaskCount(today.plusDays(1))).isEqualTo(0)
+        assertThat(uiState.todayTaskCount).isEqualTo(5)
     }
 
     private fun createViewModel(repository: FakeTodoRepository): CalendarViewModel =

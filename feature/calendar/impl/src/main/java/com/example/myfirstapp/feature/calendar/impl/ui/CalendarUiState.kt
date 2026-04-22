@@ -12,6 +12,7 @@ data class CalendarUiState(
     val selectedDate: LocalDate,
     val days: List<CalendarDayUiModel>,
     val summariesByDate: Map<LocalDate, DateTodoSummary>,
+    val todayTaskCount: Int,
     val selectedDateTodos: List<CalendarSelectedTodoUiModel>
 )
 

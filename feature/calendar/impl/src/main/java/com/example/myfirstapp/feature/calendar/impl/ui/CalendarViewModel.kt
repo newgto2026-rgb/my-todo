@@ -104,6 +104,7 @@ class CalendarViewModel @Inject constructor(
                 summariesByDate = summaries
             ),
             summariesByDate = summaries,
+            todayTaskCount = summaries.todayTaskCount(today = LocalDate.now()),
             selectedDateTodos = dateTodos
         )
     }.stateIn(
@@ -114,6 +115,7 @@ class CalendarViewModel @Inject constructor(
             selectedDate = selectedDateState.value.normalizeToMonth(monthState.value),
             days = emptyList(),
             summariesByDate = emptyMap(),
+            todayTaskCount = 0,
             selectedDateTodos = emptyList()
         )
     )
@@ -208,3 +210,8 @@ private fun formatLocalTimeFromEpochMillis(epochMillis: Long): String =
         .atZone(java.time.ZoneId.systemDefault())
         .toLocalTime()
         .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+
+internal fun Map<LocalDate, DateTodoSummary>.todayTaskCount(today: LocalDate): Int {
+    val summary = this[today] ?: return 0
+    return summary.indicatorCount + summary.overflowCount
+}

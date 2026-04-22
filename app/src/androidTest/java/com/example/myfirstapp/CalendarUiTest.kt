@@ -123,6 +123,21 @@ class CalendarUiTest {
         composeTestRule.onNodeWithTag("task_title_input").assertIsDisplayed().assertTextContains("Calendar UI - today")
     }
 
+    @Test
+    fun todoEditSheetDismiss_returnsToCalendarContext() {
+        openCalendarTab()
+
+        composeTestRule.onNodeWithTag("calendar_day_$today").performClick()
+        composeTestRule.onNodeWithTag("calendar_day_todo_item_$todayTodoId").performClick()
+        composeTestRule.onNodeWithTag("task_title_input").assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag("task_edit_close").performClick()
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithTag("app_tab_calendar", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("calendar_month_label").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("calendar_day_todo_sheet").assertIsDisplayed()
+    }
     private fun openCalendarTab() {
         composeTestRule.onNodeWithTag("app_tab_calendar", useUnmergedTree = true).performClick()
         composeTestRule.onNodeWithTag("calendar_month_label").assertIsDisplayed()
@@ -130,8 +145,8 @@ class CalendarUiTest {
 
     private fun monthLabelText(): String {
         val semanticsNode = composeTestRule.onNodeWithTag("calendar_month_label").fetchSemanticsNode()
-        val textList = semanticsNode.config.getOrElse(SemanticsProperties.Text) { emptyList() }
-        return textList.joinToString(separator = "") { it.text }
+        val descriptionList = semanticsNode.config.getOrElse(SemanticsProperties.ContentDescription) { emptyList() }
+        return descriptionList.joinToString(separator = " ").trim()
     }
 
     private fun findEmptyDateInCurrentMonth(): LocalDate {
