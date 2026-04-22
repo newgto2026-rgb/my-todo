@@ -21,6 +21,41 @@ add_lint_task() {
   fi
 }
 
+resolve_base_ref() {
+  origin_head_ref="$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null || true)"
+  if [ -n "$origin_head_ref" ]; then
+    printf "%s\n" "$origin_head_ref"
+    return
+  fi
+
+  if git show-ref --verify --quiet refs/remotes/origin/main; then
+    printf "%s\n" "refs/remotes/origin/main"
+    return
+  fi
+
+  if git show-ref --verify --quiet refs/remotes/origin/master; then
+    printf "%s\n" "refs/remotes/origin/master"
+    return
+  fi
+
+  printf "%s\n" ""
+}
+
+collect_changed_files_from_base() {
+  local_sha="$1"
+  base_ref="$2"
+  if [ -z "$base_ref" ]; then
+    return 1
+  fi
+
+  base_sha="$(git merge-base "$local_sha" "$base_ref" 2>/dev/null || true)"
+  if [ -z "$base_sha" ]; then
+    return 1
+  fi
+
+  git diff --name-only "$base_sha..$local_sha" >> "$changed_files_tmp"
+}
+
 while read -r local_ref local_sha remote_ref remote_sha; do
   [ -z "$local_ref" ] && continue
 
@@ -40,14 +75,21 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   fi
 
   if [ "$remote_sha" = "$zero_sha" ]; then
-    base_sha="$(git merge-base "$local_sha" refs/remotes/origin/main 2>/dev/null || true)"
-    if [ -n "$base_sha" ]; then
-      git diff --name-only "$base_sha..$local_sha" >> "$changed_files_tmp"
-    else
-      git show --name-only --pretty="" "$local_sha" >> "$changed_files_tmp"
+    base_ref="$(resolve_base_ref)"
+    if ! collect_changed_files_from_base "$local_sha" "$base_ref"; then
+      should_run_full_lint=1
+      echo "[Quality Gate] 기준 브랜치를 찾을 수 없어 전체 lint로 폴백합니다." >&2
     fi
   else
-    git diff --name-only "$remote_sha..$local_sha" >> "$changed_files_tmp"
+    if git cat-file -e "${remote_sha}^{commit}" 2>/dev/null; then
+      git diff --name-only "$remote_sha..$local_sha" >> "$changed_files_tmp"
+    else
+      base_ref="$(resolve_base_ref)"
+      if ! collect_changed_files_from_base "$local_sha" "$base_ref"; then
+        should_run_full_lint=1
+        echo "[Quality Gate] 원격 기준 SHA를 로컬에서 찾지 못해 전체 lint로 폴백합니다." >&2
+      fi
+    fi
   fi
 done
 
