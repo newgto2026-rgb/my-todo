@@ -48,6 +48,17 @@
 ### PR 설명 정책
 - 모든 PR 설명은 `.github/pull_request_template.md`를 따른다.
 
+## Review guidelines
+- PR 리뷰는 실제 동작 오류, 회귀 위험, 아키텍처/모듈 경계 위반, 테스트 누락을 우선한다.
+- `core:* -> feature:*` 의존 추가, `feature:*:api`와 `feature:*:impl` 책임 혼합, 앱 셸에서 구현 상세 직접 참조는 P1로 지적한다.
+- ViewModel/use case/domain/data 변경에 대응 단위 테스트가 없거나, 핵심 사용자 플로우 변경에 UI 테스트가 없으면 P1로 지적한다.
+- 사용자 노출 문자열이 `values`, `values-ko` 리소스가 아닌 코드에 하드코딩되면 P1로 지적한다.
+- Compose UI에서 사이드 이펙트가 ViewModel/use case 레이어가 아닌 컴포저블 내부에 구현되면 P1로 지적한다.
+- 최상위 탭이 미구현 feature 라우트에 연결되거나, 탭 아이콘이 명시적 아이콘 에셋이 아닌 텍스트 글리프로 대체되면 P1로 지적한다.
+- Room 마이그레이션, DataStore 스키마, 네트워크 API 계약 변경은 하위 호환성/마이그레이션 검증 누락을 P1로 지적한다.
+- 문서/주석/포맷 변경만 있는 경우에는 동작 리스크가 없으면 차단성 리뷰를 남기지 않는다.
+- 스타일 취향보다 재현 가능한 버그, 정책 위반, 유지보수 비용 증가를 중심으로 코멘트한다.
+
 ## 기본 검증 명령어
 - 앱 빌드: `./gradlew assembleDebug`
 - 단위 테스트: `./gradlew testDebugUnitTest`
