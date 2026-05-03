@@ -62,6 +62,7 @@ import java.time.ZoneId
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun EditTodoBottomSheet(
+    sheetTitle: String,
     title: String,
     dueDateInput: String,
     dueTimeInput: String,
@@ -125,7 +126,7 @@ internal fun EditTodoBottomSheet(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = stringResource(R.string.todo_editor_title_new_task),
+                    text = sheetTitle,
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color(0xFF323640)
                 )
