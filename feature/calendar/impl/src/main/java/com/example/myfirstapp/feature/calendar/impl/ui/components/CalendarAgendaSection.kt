@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ internal fun CalendarAgendaSection(
     selectedDate: LocalDate,
     selectedDateTodos: List<CalendarSelectedTodoUiModel>,
     onTodoClick: (Long) -> Unit,
+    onAddTodoClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val locale = Locale.getDefault()
@@ -65,6 +67,14 @@ internal fun CalendarAgendaSection(
                     color = Color(0xFF45526D)
                 )
             }
+        }
+        TextButton(
+            onClick = onAddTodoClick,
+            modifier = Modifier
+                .align(Alignment.End)
+                .testTag("calendar_add_todo_for_date")
+        ) {
+            Text(stringResource(R.string.calendar_add_task_for_date))
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(

@@ -27,6 +27,7 @@ import com.example.myfirstapp.feature.calendar.impl.ui.components.CalendarTopHea
 @Composable
 fun CalendarRouteScreen(
     onNavigateToTodoEdit: (Long) -> Unit,
+    onNavigateToTodoAdd: (java.time.LocalDate) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -35,6 +36,7 @@ fun CalendarRouteScreen(
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is CalendarSideEffect.NavigateToTodoEdit -> onNavigateToTodoEdit(sideEffect.todoId)
+                is CalendarSideEffect.NavigateToTodoAdd -> onNavigateToTodoAdd(sideEffect.dueDate)
             }
         }
     }
@@ -86,6 +88,7 @@ private fun CalendarScreen(
                 selectedDate = uiState.selectedDate,
                 selectedDateTodos = uiState.selectedDateTodos,
                 onTodoClick = { todoId -> onAction(CalendarAction.OnTodoClick(todoId)) },
+                onAddTodoClick = { onAction(CalendarAction.OnAddTodoClick) },
                 modifier = Modifier.fillMaxWidth()
             )
         }

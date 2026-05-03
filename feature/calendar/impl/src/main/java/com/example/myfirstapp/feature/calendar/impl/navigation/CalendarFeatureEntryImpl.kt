@@ -4,6 +4,7 @@ import com.example.myfirstapp.core.ui.navigation.AppNavigator
 import com.example.myfirstapp.feature.calendar.api.CalendarFeatureEntry
 import com.example.myfirstapp.feature.calendar.api.CalendarRoute
 import com.example.myfirstapp.feature.calendar.impl.ui.screen.CalendarRouteScreen
+import com.example.myfirstapp.feature.todo.api.TodoAddRoute
 import com.example.myfirstapp.feature.todo.api.TodoEditRoute
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
@@ -17,6 +18,9 @@ class CalendarFeatureEntryImpl @Inject constructor() : CalendarFeatureEntry {
             CalendarRouteScreen(
                 onNavigateToTodoEdit = { todoId ->
                     navigator.navigate(TodoEditRoute(todoId = todoId, editOnly = true))
+                },
+                onNavigateToTodoAdd = { dueDate ->
+                    navigator.navigate(TodoAddRoute(dueDate = dueDate.toString(), editOnly = true))
                 }
             )
         }

@@ -19,4 +19,10 @@ data class TodoEditRoute(
     val editOnly: Boolean = false
 ) : NavKey
 
+@Serializable
+data class TodoAddRoute(
+    val dueDate: String? = null,
+    val editOnly: Boolean = false
+) : NavKey
+
 interface TodoFeatureEntry : AppFeatureEntry

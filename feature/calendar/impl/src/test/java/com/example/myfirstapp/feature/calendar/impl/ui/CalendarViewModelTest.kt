@@ -92,6 +92,23 @@ class CalendarViewModelTest {
     }
 
     @Test
+    fun addTodoClickAction_emitsSelectedDateAddSideEffect() = runTest {
+        val repository = FakeTodoRepository()
+        val viewModel = createViewModel(repository)
+        val targetDate = viewModel.uiState.value.currentMonth.atDay(12)
+
+        viewModel.onAction(CalendarAction.OnDateClick(targetDate))
+        advanceUntilIdle()
+
+        val emitted = async { viewModel.sideEffect.first() }
+        viewModel.onAction(CalendarAction.OnAddTodoClick)
+        advanceUntilIdle()
+
+        assertThat(emitted.await()).isEqualTo(CalendarSideEffect.NavigateToTodoAdd(targetDate))
+    }
+
+
+    @Test
     fun selectedDateTodos_includeOnlySelectedDateTodos() = runTest {
         val repository = FakeTodoRepository()
         val viewModel = createViewModel(repository)

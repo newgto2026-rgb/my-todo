@@ -133,6 +133,12 @@ class CalendarViewModel @Inject constructor(
                     sideEffectMutable.emit(CalendarSideEffect.NavigateToTodoEdit(action.todoId))
                 }
             }
+
+            CalendarAction.OnAddTodoClick -> {
+                viewModelScope.launch {
+                    sideEffectMutable.emit(CalendarSideEffect.NavigateToTodoAdd(selectedDateState.value))
+                }
+            }
         }
     }
 

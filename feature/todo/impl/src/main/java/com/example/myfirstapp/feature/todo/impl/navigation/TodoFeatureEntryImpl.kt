@@ -2,6 +2,7 @@ package com.example.myfirstapp.feature.todo.impl.navigation
 
 import com.example.myfirstapp.core.model.TodoFilter
 import com.example.myfirstapp.core.ui.navigation.AppNavigator
+import com.example.myfirstapp.feature.todo.api.TodoAddRoute
 import com.example.myfirstapp.feature.todo.api.TodoAllRoute
 import com.example.myfirstapp.feature.todo.api.TodoCompletedRoute
 import com.example.myfirstapp.feature.todo.api.TodoEditRoute
@@ -10,6 +11,7 @@ import com.example.myfirstapp.feature.todo.api.TodoTodayRoute
 import com.example.myfirstapp.feature.todo.impl.ui.TodoListRoute
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import java.time.LocalDate
 import javax.inject.Inject
 
 class TodoFeatureEntryImpl @Inject constructor() : TodoFeatureEntry {
@@ -39,6 +41,19 @@ class TodoFeatureEntryImpl @Inject constructor() : TodoFeatureEntry {
             TodoListRoute(
                 presetFilter = TodoFilter.ALL,
                 initialEditTodoId = route.todoId,
+                isEditOnlyEntry = route.editOnly,
+                onEditOnlyExit = {
+                    if (route.editOnly) {
+                        navigator.goBack()
+                    }
+                },
+                onBackBlockedChange = navigator::setBackBlocked
+            )
+        }
+        entryProviderScope.entry<TodoAddRoute> { route ->
+            TodoListRoute(
+                presetFilter = TodoFilter.ALL,
+                initialAddDueDate = route.dueDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
                 isEditOnlyEntry = route.editOnly,
                 onEditOnlyExit = {
                     if (route.editOnly) {
