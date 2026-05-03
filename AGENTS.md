@@ -39,6 +39,17 @@
 - UI는 UDF(`UiState + ViewModel + Action/SideEffect`)를 우선한다.
 - 사이드 이펙트는 컴포저블 내부가 아닌 ViewModel/use case 레이어에서 처리한다.
 
+### 로직 책임 용어
+- 비즈니스 로직은 서비스가 제공해야 하는 의미, 가능/불가능 판단, 상태 전이, 정책 계산을 뜻한다.
+- 애플리케이션 로직은 기능 수행 절차를 조율하는 로직이다. 예: repository에서 필요한 데이터를 가져오고, 현재 시간/사용자 조건을 준비한 뒤 도메인 규칙을 실행한다.
+- 프레젠테이션 로직은 도메인/use case 결과를 `UiState`, `UiModel`, `SideEffect`로 바꾸는 로직이다. 예: `isCancelable`을 버튼 활성화, 안내 문구, 토스트 이벤트로 바꾼다.
+- 데이터 로직은 DTO/DB Entity/DataStore 값을 읽고 쓰고 동기화하며 도메인 모델로 매핑하는 로직이다.
+- 같은 use case 안에 애플리케이션 로직과 비즈니스 로직이 함께 있을 수 있다. 단, 화면 표현 문구/색상/컴포넌트 상태는 use case가 아니라 ViewModel/UI mapper에서 결정한다.
+- Repository에는 데이터 접근/매핑/캐시/동기화 로직만 둔다. 취소 가능 여부, 배송 가능 여부, 권한, 할인, 상태 전이 같은 서비스 정책은 entity/use case/domain service에 둔다.
+- Entity/domain model은 단순 데이터 컨테이너로 제한하지 않는다. 자기 필드만으로 판단 가능한 규칙은 계산 속성/메서드로 둘 수 있으며, 외부 I/O나 repository 호출은 하지 않는다.
+- View/Composable은 `UiState`를 렌더링하고 사용자 이벤트를 전달한다. View에는 프레젠테이션 로직, 비즈니스 로직, 애플리케이션 로직을 추가하지 않는다.
+- 화면 문구 선택, 버튼 활성화, 리스트 섹션 구성, 토스트/네비게이션 `SideEffect` 결정은 ViewModel/UI mapper에서 `UiState`로 미리 가공한다.
+
 ### UI/리소스 정책
 - 사용자 노출 문자열은 `values`, `values-ko` 리소스로 관리한다.
 - 최상위 탭은 구현된 feature 라우트에만 매핑한다.

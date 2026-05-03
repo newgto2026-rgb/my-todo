@@ -7,6 +7,9 @@
 ## 규칙
 - `core:domain`의 도메인 계약만 구현한다.
 - 매핑은 명시적으로 유지하고 사이드 이펙트 경계를 분명히 한다.
+- Repository 구현에는 데이터 접근, DTO/DB Entity/DataStore 값과 domain model 사이의 매핑, 캐시/동기화 로직만 둔다.
+- 서비스 정책 판단(취소 가능, 배송 가능, 권한, 할인, 상태 전이)은 Repository에 숨기지 않고 domain entity/use case/domain service에 둔다.
+- 여러 데이터 소스를 합쳐 domain model을 만들 수 있지만, 그 과정에서 정책 결정이 필요하면 use case/domain으로 올린다.
 - 하나의 구현이 여러 계약을 바인딩할 수 있지만 관심사별 메서드 소유권은 명확히 유지한다.
 
 ## 변경 체크리스트
