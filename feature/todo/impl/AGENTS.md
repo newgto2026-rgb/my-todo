@@ -7,6 +7,11 @@
 - 하나의 화면 플로우는 `UiState + Action + SideEffect + ViewModel` 구조를 유지한다.
 - 사이드 이펙트는 ViewModel/use case 레이어에서 처리한다.
 - 사용자 노출 텍스트는 리소스에서 가져온다.
+- ViewModel은 화면 상태와 프레젠테이션 로직을 담당한다. 사용자 이벤트를 use case로 연결하고 결과를 `UiState`/`UiModel`/`SideEffect`로 변환한다.
+- Todo 완료 가능 여부, 오늘/기한 지남 포함 조건, 알림 대상 여부 같은 서비스 규칙은 use case/domain/entity에 둔다.
+- Composable/View에는 프레젠테이션 로직, 비즈니스 로직, 애플리케이션 로직을 추가하지 않는다.
+- Composable은 ViewModel/UI mapper가 만든 `UiState`/`UiModel`을 그대로 렌더링하고 이벤트만 전달한다.
+- UI mapper/formatter는 domain 결과를 화면 문구, 버튼 상태, 리스트 섹션, 빈 상태로 바꾸는 프레젠테이션 로직만 담당한다.
 
 ## UI 폴더 규약
 - `ui/screen/`: 라우트 + 화면 진입 구성(`TodoListRoute`, 화면 레벨 연결).
