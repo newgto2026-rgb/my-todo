@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Branch | `codex/update-cloudflare-tunnel` |
-| PR | `TBD` |
+| PR | `https://github.com/newgto2026-rgb/your-todo/pull/112` |
 | Primary AI Model | `GPT-5 Codex` |
 | Task Type | `bugfix` |
 | Rework Count | `0` |
@@ -36,4 +36,4 @@ No check failures recorded yet.
 
 ## Non-Rework Follow-up Commits
 
-No non-rework follow-up commits recorded yet.
+- `HEAD` - Record PR URL in branch metrics after PR creation.
