@@ -8,7 +8,7 @@ plugins {
 
 val serverBaseUrlProperty = providers.gradleProperty("yourtodo.serverBaseUrl")
 val aiServerBaseUrlProperty = providers.gradleProperty("yourtodo.aiServerBaseUrl")
-val activeDebugServerBaseUrl = "https://rewards-mentioned-plymouth-victoria.trycloudflare.com/"
+val activeDebugServerBaseUrl = "https://gentle-computer-glow-workshop.trycloudflare.com/"
 
 fun quotedBuildConfigString(value: String) = "\"$value\""
 
